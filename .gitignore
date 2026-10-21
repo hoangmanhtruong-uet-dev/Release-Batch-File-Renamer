@@ -1,0 +1,41 @@
+# ==============================================================================
+# .gitignore — Batch File Renamer
+# ==============================================================================
+
+# ---- Kết quả build / đóng gói ----
+[Bb]in/
+[Oo]bj/
+artifacts/
+BenchmarkDotNet.Artifacts/
+publish/
+*.msix
+*.appx
+*.msixbundle
+*.appxbundle
+*.zip
+
+# ---- Chứng chỉ ký dev (KHÔNG BAO GIỜ commit) ----
+*.pfx
+*.p12
+*.cer
+*.crt
+*.pem
+*.key
+build/certs/
+
+# ---- IDE / công cụ ----
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ---- Hệ điều hành ----
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# ---- Ghi chú cục bộ ----
+*.log

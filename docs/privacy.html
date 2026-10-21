@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Chính sách quyền riêng tư — Batch File Renamer</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --text: #1b2430;
+      --muted: #5d6b7a;
+      --border: #d9e0e8;
+      --accent: #0b6bcb;
+      --accent-soft: #eaf3ff;
+      --shadow: 0 10px 30px rgba(22, 42, 66, .08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #11161d;
+        --surface: #18202a;
+        --text: #e9eef5;
+        --muted: #a8b5c4;
+        --border: #2d3a49;
+        --accent: #69b1ff;
+        --accent-soft: #1d3047;
+        --shadow: 0 10px 30px rgba(0, 0, 0, .28);
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      padding: 32px 18px 64px;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.7 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .page {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    header {
+      padding: 34px 38px 28px;
+      background: linear-gradient(135deg, var(--accent-soft), transparent 72%);
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.35rem); line-height: 1.2; }
+    .meta { margin: 14px 0 0; color: var(--muted); font-size: .95rem; }
+    .lang-nav { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .lang-nav a {
+      display: inline-block;
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: .88rem;
+      text-decoration: none;
+    }
+    .lang-nav a:hover { border-color: var(--accent); color: var(--accent); }
+    main { padding: 8px 38px 42px; }
+    section { padding: 26px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: 0; }
+    h2 { margin: 0 0 14px; font-size: 1.28rem; line-height: 1.35; }
+    h3 { margin: 22px 0 8px; font-size: 1.04rem; }
+    p { margin: 0 0 12px; }
+    ul { margin: 10px 0 14px; padding-left: 22px; }
+    li { margin: 6px 0; }
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--text);
+      font: .9em/1.4 "Cascadia Mono", Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    .callout {
+      margin: 18px 0;
+      padding: 15px 17px;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+      background: var(--accent-soft);
+    }
+    .callout strong { display: block; margin-bottom: 4px; }
+    .lang-divider {
+      margin: 30px 0 4px;
+      padding-top: 26px;
+      border-top: 2px solid var(--border);
+    }
+    footer {
+      padding: 22px 38px 30px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .88rem;
+    }
+    a { color: var(--accent); }
+    @media (max-width: 640px) {
+      body { padding: 12px 10px 36px; }
+      header, main, footer { padding-left: 20px; padding-right: 20px; }
+      .page { border-radius: 12px; }
+    }
+    @media print {
+      body { padding: 0; background: #fff; }
+      .page { box-shadow: none; border: 0; }
+      .lang-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <p class="eyebrow">Batch File Renamer</p>
+      <h1>Chính sách quyền riêng tư</h1>
+      <p class="meta">
+        Ngày có hiệu lực: <strong>20/10/2026</strong><br>
+        Ứng dụng: Batch File Renamer (BFR) · Nhà phát triển: Batch File Renamer Team
+      </p>
+      <nav class="lang-nav" aria-label="Chọn ngôn ngữ">
+        <a href="#vi">Tiếng Việt</a>
+        <a href="#en">English</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="vi" lang="vi">
+        <h2>Tiếng Việt</h2>
+
+        <div class="callout">
+          <strong>Cam kết cốt lõi: 100% cục bộ, không thu thập dữ liệu</strong>
+          BFR không gửi tên tệp, đường dẫn, nội dung tệp, siêu dữ liệu hay thông tin cá nhân ra khỏi thiết bị của bạn. Kết nối mạng duy nhất xảy ra khi bạn kiểm tra hoặc mua gói Pro trong Microsoft Store.
+        </div>
+
+        <h3>1. Phạm vi và nguyên tắc</h3>
+        <p>
+          Batch File Renamer (“BFR”) là tiện ích đổi tên hàng loạt cho Windows, được thiết kế theo nguyên tắc
+          <strong>Privacy by Design</strong>. Ứng dụng không có máy chủ từ xa, không có tài khoản người dùng,
+          không có SDK quảng cáo hay phân tích hành vi và không bán dữ liệu cho bên thứ ba.
+        </p>
+
+        <h3>2. Dữ liệu hệ thống tệp</h3>
+        <ul>
+          <li>
+            <strong>Tên tệp và đường dẫn:</strong> chỉ được đọc vào bộ nhớ khi bạn chủ động chọn tệp/thư mục,
+            kéo thả vào ứng dụng hoặc mở BFR từ menu ngữ cảnh File Explorer.
+          </li>
+          <li>
+            <strong>Siêu dữ liệu ảnh/tài liệu:</strong> các trường ngày chụp như <code>DateTimeOriginal</code>
+            hoặc <code>DateTimeDigitized</code> chỉ được đọc cục bộ khi bạn dùng quy tắc đổi tên theo ngày.
+            Dữ liệu này chỉ dùng để tạo tên mới.
+          </li>
+          <li>
+            <strong>Nhật ký hoàn tác:</strong> được lưu tại <code>%LocalAppData%\BatchFileRenamer\journal</code>
+            để hỗ trợ Hoàn tác và khôi phục sau sự cố. Bạn có thể xóa thư mục này bất kỳ lúc nào;
+            việc xóa sẽ làm mất khả năng hoàn tác các lần đổi tên trước đó.
+          </li>
+          <li>
+            <strong>Danh sách tệp tạm từ Explorer:</strong> khi bạn chọn nhiều tệp, COM server cục bộ ghi danh sách
+            vào <code>%TEMP%\BatchFileRenamer\shell</code>, sau đó ứng dụng đọc và xóa tệp này ngay khi xử lý xong.
+            Tệp tạm không được gửi qua mạng.
+          </li>
+        </ul>
+
+        <h3>3. Giao tiếp giữa các tiến trình</h3>
+        <p>
+          BFR dùng Named Pipe nội bộ (<code>BatchFileRenamer_IPC_Pipe</code>) và Mutex chỉ để chuyển danh sách
+          đường dẫn từ lần mở thứ hai sang cửa sổ đang chạy. Kênh này nằm hoàn toàn trên máy cục bộ, giới hạn
+          trong phiên đăng nhập hiện tại và không mở ra Internet.
+        </p>
+
+        <h3>4. Quyền thực thi và menu Explorer</h3>
+        <p>
+          Gói MSIX khai báo năng lực <code>runFullTrust</code> vì ứng dụng cần đổi tên tệp trên đĩa và tích hợp
+          menu ngữ cảnh File Explorer. Ứng dụng chạy với quyền người dùng thông thường
+          (<code>asInvoker</code>), không yêu cầu quyền Quản trị viên.
+        </p>
+
+        <h3>5. Mua trong ứng dụng (Microsoft Store IAP)</h3>
+        <p>
+          Khi bạn kiểm tra hoặc mua gói <strong>Pro (mua đứt trọn đời)</strong>, ứng dụng dùng API
+          <code>Windows.Services.Store</code> của hệ điều hành để <strong>kiểm tra giấy phép và thực hiện giao dịch
+          mua trực tiếp với Microsoft Store</strong>. Đây là kênh có kết nối mạng duy nhất của ứng dụng.
+        </p>
+        <ul>
+          <li>Ứng dụng <strong>không gửi</strong> tên tệp, đường dẫn, nội dung tệp hay siêu dữ liệu lên Store.</li>
+          <li>Chỉ có <strong>mã sản phẩm add-on</strong> và phiên đăng nhập Store do hệ điều hành quản lý.</li>
+          <li>Thanh toán, thuế và hoàn tiền do Microsoft Store xử lý; ứng dụng không nhận thông tin thẻ.</li>
+          <li>Khi ngoại tuyến, ứng dụng dùng giấy phép đã lưu cục bộ và giữ nguyên cấp hiện tại.</li>
+          <li>Bản ZIP (portable) không dùng Store IAP và luôn ở cấp Free.</li>
+        </ul>
+
+        <h3>6. Kiểm tra cập nhật (bản portable, tuỳ chọn)</h3>
+        <p>
+          Khi bạn <strong>bật</strong> chức năng “Kiểm tra cập nhật” (mặc định <strong>TẮT</strong>) hoặc bấm nút kiểm tra,
+          ứng dụng gọi <strong>một URL công khai do bạn cấu hình</strong> (mặc định là API “latest release” của GitHub)
+          để đọc số phiên bản mới nhất.
+        </p>
+        <ul>
+          <li>Ứng dụng <strong>không gửi</strong> tên tệp, đường dẫn, nội dung tệp hay thông tin cá nhân; chỉ gửi một yêu cầu HTTP thông thường kèm User-Agent.</li>
+          <li>Nếu không bật hoặc máy ngoại tuyến, ứng dụng <strong>không</strong> thực hiện kết nối này.</li>
+          <li>Bản cài từ Microsoft Store được Store cập nhật tự động nên không dùng chức năng này.</li>
+        </ul>
+        <h3>7. Thời gian lưu trữ và lựa chọn của bạn</h3>
+        <p>
+          BFR không có cơ sở dữ liệu đám mây và không lưu dữ liệu ngoài máy của bạn. Nhật ký hoàn tác và tệp tạm
+          chỉ tồn tại cục bộ cho đến khi bạn xóa hoặc ứng dụng dọn dẹp. Gỡ cài đặt ứng dụng không tự động xóa
+          nhật ký trong <code>%LocalAppData%</code>; bạn có thể xóa thủ công nếu muốn.
+        </p>
+
+        <h3>8. Trẻ em và dữ liệu nhạy cảm</h3>
+        <p>
+          BFR không hướng tới trẻ em và không cố ý thu thập dữ liệu của trẻ em. Vì ứng dụng không thu thập
+          dữ liệu cá nhân, không có hồ sơ người dùng nào được tạo.
+        </p>
+
+        <h3>9. Thay đổi chính sách</h3>
+        <p>
+          Nếu chính sách thay đổi, phiên bản mới sẽ được công bố tại trang này kèm ngày có hiệu lực mới.
+          Các thay đổi quan trọng sẽ được ghi rõ trong ghi chú phát hành.
+        </p>
+
+        <h3>10. Liên hệ</h3>
+        <p>
+          Câu hỏi về quyền riêng tư: vui lòng mở issue tại kho mã nguồn chính thức của dự án
+          hoặc gửi email tới địa chỉ liên hệ được công bố trên trang Store của ứng dụng.
+        </p>
+      </section>
+
+      <section id="en" lang="en">
+        <div class="lang-divider"></div>
+        <h2>English</h2>
+
+        <div class="callout">
+          <strong>Core commitment: 100% local, no data collection</strong>
+          BFR does not send file names, paths, file contents, metadata, or personal information off your device. The only network connection happens when you check or buy the Pro add-on in the Microsoft Store.
+        </div>
+
+        <h3>1. Scope and principles</h3>
+        <p>
+          Batch File Renamer (“BFR”) is a Windows batch-renaming utility built with
+          <strong>Privacy by Design</strong>. The app has no remote servers, no user accounts, no advertising or
+          analytics SDKs, and never sells data to third parties.
+        </p>
+
+        <h3>2. File system data</h3>
+        <ul>
+          <li>
+            <strong>File names and paths:</strong> read into memory only when you explicitly select files/folders,
+            drag and drop them into the app, or open BFR from the File Explorer context menu.
+          </li>
+          <li>
+            <strong>Photo/document metadata:</strong> date fields such as <code>DateTimeOriginal</code> or
+            <code>DateTimeDigitized</code> are read locally only when you use date-based renaming rules.
+            The data is used solely to construct new file names.
+          </li>
+          <li>
+            <strong>Undo journal:</strong> stored at <code>%LocalAppData%\BatchFileRenamer\journal</code> to support
+            Undo and crash recovery. You may delete this folder at any time; doing so removes the ability to undo
+            previous rename operations.
+          </li>
+          <li>
+            <strong>Temporary Explorer file list:</strong> when you select many files, the local COM server writes
+            the list to <code>%TEMP%\BatchFileRenamer\shell</code>; the app reads and deletes it as soon as the
+            batch is processed. The file is never transmitted over a network.
+          </li>
+        </ul>
+
+        <h3>3. Inter-process communication</h3>
+        <p>
+          BFR uses a local Named Pipe (<code>BatchFileRenamer_IPC_Pipe</code>) and a Mutex only to pass file paths
+          from a second launch to the running window. Communication stays on the local machine, is limited to the
+          current user session, and is not exposed to the Internet.
+        </p>
+
+        <h3>4. Execution permissions and Explorer integration</h3>
+        <p>
+          The MSIX package declares the <code>runFullTrust</code> capability because the app must rename files on
+          disk and integrate with the File Explorer context menu. The app runs as a standard user process
+          (<code>asInvoker</code>) and never requests Administrator privileges.
+        </p>
+
+        <h3>5. In-app purchase (Microsoft Store IAP)</h3>
+        <p>
+          When you check or buy the <strong>Pro (lifetime) add-on</strong>, the app uses the operating system's
+          <code>Windows.Services.Store</code> API to <strong>verify the license and complete the purchase directly
+          with the Microsoft Store</strong>. This is the only network connection the app makes.
+        </p>
+        <ul>
+          <li>The app <strong>never sends</strong> file names, paths, file contents or metadata to the Store.</li>
+          <li>Only the <strong>add-on product ID</strong> and the Store session managed by the operating system are involved.</li>
+          <li>Payment, taxes and refunds are handled by the Microsoft Store; the app never sees your card details.</li>
+          <li>When offline, the app uses the locally cached license and keeps your current tier.</li>
+          <li>The portable ZIP distribution does not use Store IAP and always stays on the Free tier.</li>
+        </ul>
+
+        <h3>6. Update check (portable build, opt-in)</h3>
+        <p>
+          When you <strong>enable</strong> “Check for updates” (off by default) or press the check button, the app calls
+          <strong>a public URL configured by you</strong> (by default the GitHub “latest release” API) to read the newest
+          version number.
+        </p>
+        <ul>
+          <li>The app <strong>never sends</strong> file names, paths, file contents or personal information; it only makes a normal HTTP request with a User-Agent.</li>
+          <li>If the option is off or the machine is offline, the app makes <strong>no</strong> such connection.</li>
+          <li>The Microsoft Store build updates automatically and does not use this feature.</li>
+        </ul>
+        <h3>7. Retention and your choices</h3>
+        <p>
+          BFR has no cloud database and stores no data outside your machine. Undo journals and temporary files
+          remain local until deleted or cleaned up by the app. Uninstalling the app does not automatically delete
+          journals under <code>%LocalAppData%</code>; you may remove them manually.
+        </p>
+
+        <h3>8. Children and sensitive data</h3>
+        <p>
+          BFR is not directed at children and does not knowingly collect children’s data. Because the app does not
+          collect personal data, no user profile is created.
+        </p>
+
+        <h3>9. Policy changes</h3>
+        <p>
+          If this policy changes, the new version will be published on this page with a new effective date.
+          Material changes will be noted in the release notes.
+        </p>
+
+        <h3>10. Contact</h3>
+        <p>
+          Privacy questions: please open an issue in the project’s official source repository or use the contact
+          address published on the app’s Store listing.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      Batch File Renamer · Chính sách quyền riêng tư / Privacy Policy · Cập nhật 20/10/2026
+    </footer>
+  </div>
+</body>
+</html>

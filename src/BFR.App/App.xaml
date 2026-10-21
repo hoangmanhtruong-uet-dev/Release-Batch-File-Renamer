@@ -1,0 +1,25 @@
+<Application x:Class="BFR.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:BFR.App.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Strings.vi.xaml" />
+                <ResourceDictionary Source="Themes/Theme.xaml" />
+                <ResourceDictionary Source="Themes/Theme.Light.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Bộ chuyển đổi dùng chung cho MỌI cửa sổ (không khai báo lại trong từng view). -->
+            <conv:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
+            <conv:StringToVisibilityConverter x:Key="StringToVis" />
+            <conv:ZeroCountToVisibilityConverter x:Key="ZeroToVis" />
+            <conv:ParameterKindToVisibilityConverter x:Key="ParameterKindToVis" />
+            <conv:ParameterKindToVisibilityConverter x:Key="ParameterKindToTextVis" />
+            <conv:ParameterKindToVisibilityConverter x:Key="ParameterKindToChoiceVis" />
+            <conv:NullToVisibilityConverter x:Key="NullToVis" />
+            <conv:NotNullToVisibilityConverter x:Key="NotNullToVis" />
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

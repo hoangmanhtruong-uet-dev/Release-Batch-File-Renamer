@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
+  xmlns:desktop10="http://schemas.microsoft.com/appx/manifest/desktop/windows10/10"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  IgnorableNamespaces="uap uap3 rescap desktop desktop4 desktop5 desktop10">
+
+  <Identity
+    Name="BatchFileRenamer"
+    Publisher="CN=BatchFileRenamerDev"
+    Version="1.2.0.0"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>Batch File Renamer</DisplayName>
+    <PublisherDisplayName>Batch File Renamer</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Công cụ đổi tên hàng loạt tệp và thư mục an toàn, mạnh mẽ cho Windows.</Description>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22621.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="vi-VN" />
+    <Resource Language="en-US" />
+  </Resources>
+
+  <Applications>
+    <!-- Ứng dụng GUI chính -->
+    <Application Id="BatchFileRenamerApp"
+      Executable="BatchFileRenamer.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Batch File Renamer"
+        Description="Đổi tên hàng loạt tệp và thư mục an toàn với Preview thời gian thực và khôi phục sự cố."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="BFR" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- COM local server IExplorerCommand dùng chung cho menu mới và menu cổ điển.
+             Chạy out-of-process để gói MSIX có thể self-contained, không phụ thuộc
+             .NET 8 runtime cài sẵn trên máy người dùng. -->
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:ExeServer Executable="BFR.Shell.exe"
+                           Arguments="-Embedding"
+                           DisplayName="Batch File Renamer Explorer Command">
+              <com:Class Id="6B0F3C2A-7E4D-4A8B-9C1D-2F5E8A7B6C4D"
+                         DisplayName="Batch File Renamer Explorer Command" />
+            </com:ExeServer>
+          </com:ComServer>
+        </com:Extension>
+
+        <!-- Menu ngữ cảnh hiện đại: tệp, thư mục và nền thư mục.
+             desktop5 hỗ trợ Windows 10 1809+ và Windows 11. -->
+        <desktop4:Extension Category="windows.fileExplorerContextMenus">
+          <desktop4:FileExplorerContextMenus>
+            <desktop5:ItemType Type="*">
+              <desktop5:Verb Id="BatchRenameFile"
+                             Clsid="6B0F3C2A-7E4D-4A8B-9C1D-2F5E8A7B6C4D" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type="Directory">
+              <desktop5:Verb Id="BatchRenameFolder"
+                             Clsid="6B0F3C2A-7E4D-4A8B-9C1D-2F5E8A7B6C4D" />
+            </desktop5:ItemType>
+            <!-- Nền thư mục chỉ có từ Windows 11 22H2 (desktop10); Windows 10
+                 không có loại mục này. -->
+            <desktop10:ItemType Type="Directory\Background">
+              <desktop10:Verb Id="BatchRenameFolderBackground"
+                               Clsid="6B0F3C2A-7E4D-4A8B-9C1D-2F5E8A7B6C4D" />
+            </desktop10:ItemType>
+          </desktop4:FileExplorerContextMenus>
+        </desktop4:Extension>
+
+      </Extensions>
+    </Application>
+
+    <!-- CLI bfr.exe với AppExecutionAlias -->
+    <Application Id="BatchFileRenamerCli"
+      Executable="bfr.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Batch File Renamer CLI"
+        Description="Giao diện dòng lệnh bfr"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.appExecutionAlias"
+                          Executable="bfr.exe"
+                          EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="bfr.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- Desktop Bridge full trust capability (yêu cầu ghi chú thẩm định Store) -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

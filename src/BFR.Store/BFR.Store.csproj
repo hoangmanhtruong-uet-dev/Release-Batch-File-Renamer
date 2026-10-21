@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>BFR.Store</AssemblyName>
+    <RootNamespace>BFR.Store</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <!-- Dùng Windows Runtime cho Store IAP nên cần TFM windows10.* -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BFR.Core\BFR.Core.csproj" />
+  </ItemGroup>
+
+</Project>

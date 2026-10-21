@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- Cần WinRT để kiểm tra giấy phép Microsoft Store (IAP) trong bản cài MSIX. -->
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>bfr</AssemblyName>
+    <RootNamespace>BFR.Cli</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BFR.Core\BFR.Core.csproj" />
+    <ProjectReference Include="..\BFR.Store\BFR.Store.csproj" />
+  </ItemGroup>
+
+</Project>

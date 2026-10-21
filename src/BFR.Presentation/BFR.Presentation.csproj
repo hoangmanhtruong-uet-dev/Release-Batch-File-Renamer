@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>BFR.Presentation</RootNamespace>
+    <AssemblyName>BFR.Presentation</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <!-- Lớp trình bày: ViewModel + logic giấy phép, KHÔNG phụ thuộc WPF
+         (để unit test được trong mọi môi trường, kể cả máy có WDAC chặn nạp assembly UI). -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BFR.Core\BFR.Core.csproj" />
+  </ItemGroup>
+
+</Project>

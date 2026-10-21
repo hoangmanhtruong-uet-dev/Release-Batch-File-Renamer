@@ -1,0 +1,48 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ============ Token màu — bản sáng ============ -->
+    <!-- Mọi view chỉ dùng các token này, không hard-code màu. -->
+
+    <Color x:Key="ColorAccent">#FF0F6CBD</Color>
+    <SolidColorBrush x:Key="AppBackground" Color="#FFF3F3F3" />
+    <SolidColorBrush x:Key="PanelBackground" Color="#FFFBFBFB" />
+    <SolidColorBrush x:Key="SurfaceBackground" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="SurfaceHover" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="SurfaceSelected" Color="#FFE7F1FB" />
+    <SolidColorBrush x:Key="CardBackground" Color="#FFFFFFFF" />
+
+    <SolidColorBrush x:Key="TextPrimary" Color="#FF1B1B1B" />
+    <SolidColorBrush x:Key="TextSecondary" Color="#FF5C5C5C" />
+    <SolidColorBrush x:Key="TextDisabled" Color="#FF9A9A9A" />
+    <SolidColorBrush x:Key="TextOnAccent" Color="#FFFFFFFF" />
+
+    <SolidColorBrush x:Key="Accent" Color="#FF0F6CBD" />
+    <SolidColorBrush x:Key="AccentHover" Color="#FF115EA3" />
+    <SolidColorBrush x:Key="AccentPressed" Color="#FF0C3B5E" />
+    <SolidColorBrush x:Key="AccentSoft" Color="#FFE7F1FB" />
+    <SolidColorBrush x:Key="AccentBorder" Color="#FFB9D6F2" />
+
+    <SolidColorBrush x:Key="Border" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="BorderStrong" Color="#FFC8C8C8" />
+    <SolidColorBrush x:Key="Divider" Color="#FFEAEAEA" />
+
+    <SolidColorBrush x:Key="Success" Color="#FF0F7B3F" />
+    <SolidColorBrush x:Key="SuccessSoft" Color="#FFE3F5EA" />
+    <SolidColorBrush x:Key="Warning" Color="#FF9A5B00" />
+    <SolidColorBrush x:Key="WarningSoft" Color="#FFFFF2DC" />
+    <SolidColorBrush x:Key="Error" Color="#FFC42B1C" />
+    <SolidColorBrush x:Key="ErrorSoft" Color="#FFFDE7E9" />
+    <SolidColorBrush x:Key="Info" Color="#FF0F6CBD" />
+    <SolidColorBrush x:Key="InfoSoft" Color="#FFE7F1FB" />
+
+    <SolidColorBrush x:Key="DiffAdded" Color="#FFCDEBD8" />
+    <SolidColorBrush x:Key="DiffRemoved" Color="#FFF7D4D4" />
+    <SolidColorBrush x:Key="DiffAddedText" Color="#FF0B5C33" />
+    <SolidColorBrush x:Key="DiffRemovedText" Color="#FF8C1D18" />
+
+    <SolidColorBrush x:Key="ChipBackground" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="ChipBorder" Color="#FFDCDCDC" />
+    <SolidColorBrush x:Key="ChipSelectedBackground" Color="#FFE7F1FB" />
+    <SolidColorBrush x:Key="ChipSelectedBorder" Color="#FF0F6CBD" />
+</ResourceDictionary>
