@@ -12,14 +12,14 @@
   IgnorableNamespaces="uap uap3 rescap desktop desktop4 desktop5 desktop10">
 
   <Identity
-    Name="BatchFileRenamer"
-    Publisher="CN=BatchFileRenamerDev"
+    Name="MTDStudio.BFR-BatchFileRenamer"
+    Publisher="CN=F6CFEAEE-C755-4C7E-BDC5-FD89DA169656"
     Version="1.2.0.0"
     ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>Batch File Renamer</DisplayName>
-    <PublisherDisplayName>Batch File Renamer</PublisherDisplayName>
+    <DisplayName>BFR - Batch File Renamer</DisplayName>
+    <PublisherDisplayName>MTD Studio</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
     <Description>Công cụ đổi tên hàng loạt tệp và thư mục an toàn, mạnh mẽ cho Windows.</Description>
   </Properties>
@@ -39,7 +39,7 @@
       Executable="BatchFileRenamer.exe"
       EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="Batch File Renamer"
+        DisplayName="BFR - Batch File Renamer"
         Description="Đổi tên hàng loạt tệp và thư mục an toàn với Preview thời gian thực và khôi phục sự cố."
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
