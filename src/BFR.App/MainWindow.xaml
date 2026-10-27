@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:BFR.App"
         xmlns:conv="clr-namespace:BFR.App.Converters"
-        Title="{DynamicResource WindowTitle}" Height="780" Width="1340"
-        MinHeight="600" MinWidth="1000"
+        Title="{DynamicResource WindowTitle}" Height="820" Width="1380"
+        MinHeight="620" MinWidth="1020"
         WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        Icon="Resources/app.ico"
         Background="{DynamicResource AppBackground}"
         FontFamily="{StaticResource AppFont}"
         FontSize="{StaticResource AppFontSizeBody}"
@@ -14,153 +16,199 @@
         AllowDrop="True" DragOver="Window_DragOver" Drop="Window_Drop"
         AutomationProperties.Name="Batch File Renamer Main Window">
 
+    <!-- Cấu hình thanh tiêu đề tràn viền Fluent Design (Windows 11) -->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="42"
+                      CornerRadius="0"
+                      GlassFrameThickness="0"
+                      ResizeBorderThickness="6"
+                      UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
     <Window.Resources>
+        <!-- Menu ngữ cảnh cho từng dòng trong bảng xem trước (v1.0.2) -->
+        <ContextMenu x:Key="RowContextMenu" Style="{StaticResource AppContextMenuStyle}">
+            <MenuItem Header="{DynamicResource CtxOpenFile}" Click="ContextMenu_OpenFile_Click" Style="{StaticResource AppMenuItemStyle}">
+                <MenuItem.Icon>
+                    <TextBlock Text="&#xE7C3;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="{DynamicResource TextSecondary}" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="{DynamicResource CtxOpenFolder}" Click="ContextMenu_OpenFolder_Click" Style="{StaticResource AppMenuItemStyle}">
+                <MenuItem.Icon>
+                    <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="{DynamicResource TextSecondary}" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="{DynamicResource CtxCopyOldName}" Click="ContextMenu_CopyOldName_Click" Style="{StaticResource AppMenuItemStyle}">
+                <MenuItem.Icon>
+                    <TextBlock Text="&#xE8C8;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="{DynamicResource TextSecondary}" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="{DynamicResource CtxCopyNewName}" Click="ContextMenu_CopyNewName_Click" Style="{StaticResource AppMenuItemStyle}">
+                <MenuItem.Icon>
+                    <TextBlock Text="&#xE8C8;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="{DynamicResource TextSecondary}" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="{DynamicResource CtxToggleSelect}" Click="ContextMenu_ToggleSelect_Click" Style="{StaticResource AppMenuItemStyle}" />
+            <MenuItem Header="{DynamicResource CtxRemoveFromList}" Click="ContextMenu_RemoveFromList_Click" Style="{StaticResource AppMenuItemStyle}">
+                <MenuItem.Icon>
+                    <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="14" Foreground="{DynamicResource Error}" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
 
-
-        <!-- ================= Thẻ quy tắc (Rule Builder) ================= -->
+        <!-- Thẻ quy tắc hiện đại phong cách PowerToys / WinUI 3 -->
         <DataTemplate x:Key="RuleCardTemplate">
-            <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="10"
+            <Border Style="{StaticResource InteractiveCardStyle}" Margin="0,0,0,8" Padding="12,10"
                     AllowDrop="True" DragOver="RuleCard_DragOver" Drop="RuleCard_Drop">
                 <StackPanel>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
+                        <!-- Tay nắm kéo thả -->
                         <TextBlock Grid.Column="0" Text="&#xE700;" FontFamily="{StaticResource IconFont}"
                                    FontSize="14" Foreground="{DynamicResource TextDisabled}"
                                    VerticalAlignment="Center" Cursor="SizeAll" Background="Transparent"
-                                   MouseLeftButtonDown="RuleDragStart_Click"
+                                   MouseLeftButtonDown="RuleDragStart_Click" Margin="0,0,10,0"
                                    ToolTip="{DynamicResource RuleDragHint}"
                                    AutomationProperties.Name="{DynamicResource RuleDragHandleA11y}" />
 
-                        <CheckBox Grid.Column="1" Margin="8,0,0,0" IsChecked="{Binding IsEnabled, Mode=TwoWay}"
-                                  Style="{StaticResource AppCheckBoxStyle}"
-                                  AutomationProperties.Name="{DynamicResource RuleToggleA11y}" />
-
-                        <StackPanel Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold"
+                        <!-- Tên & Tóm tắt tham số quy tắc -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="13"
                                        Foreground="{DynamicResource TextPrimary}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{Binding Summary}" Style="{StaticResource CaptionTextStyle}"
-                                       TextTrimming="CharacterEllipsis" />
+                                       Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
                         </StackPanel>
 
+                        <!-- Toggle Switch bật/tắt nhanh quy tắc -->
+                        <CheckBox Grid.Column="2" IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+                                  Style="{StaticResource AppToggleSwitchStyle}" Margin="6,0,4,0"
+                                  VerticalAlignment="Center"
+                                  AutomationProperties.Name="{DynamicResource RuleToggleA11y}" />
+
+                        <!-- Nút mở Regex Tester (nếu quy tắc hỗ trợ) -->
                         <Button Grid.Column="3" Style="{StaticResource IconButtonStyle}" Content="&#xE946;"
-                                Click="RuleRegexTester_Click" Tag="{Binding}" Margin="0,0,2,0"
+                                Click="RuleRegexTester_Click" Tag="{Binding}" Margin="2,0"
                                 ToolTip="{DynamicResource RegexTesterOpen}"
                                 Visibility="{Binding CanOpenRegexTester, Converter={StaticResource BoolToVis}}"
                                 AutomationProperties.Name="Open regex tester" />
 
-                        <Button Grid.Column="4" Style="{StaticResource IconButtonStyle}" Content="&#xE70E;"
-                                Command="{Binding MoveUpCommand}" Margin="0,0,2,0"
-                                ToolTip="{DynamicResource RuleMoveUp}"
-                                AutomationProperties.Name="Move rule up" />
-
-                        <Button Grid.Column="5" Style="{StaticResource IconButtonStyle}" Content="&#xE70D;"
-                                Command="{Binding MoveDownCommand}" Margin="0,0,2,0"
-                                ToolTip="{DynamicResource RuleMoveDown}"
-                                AutomationProperties.Name="Move rule down" />
-
-                        <Button Grid.Column="6" Style="{StaticResource IconButtonStyle}" Content="&#xE70F;"
-                                Click="RuleToggleExpand_Click" Tag="{Binding}"
-                                AutomationProperties.Name="{DynamicResource RuleEditHint}" />
-
-                        <Button Grid.Column="7" Style="{StaticResource IconButtonStyle}" Content="&#xE74D;"
-                                Click="RuleDelete_Click" Tag="{Binding}"
-                                AutomationProperties.Name="{DynamicResource RuleDelete}" />
+                        <!-- Nút menu thao tác quy tắc (⋯) -->
+                        <Button Grid.Column="4" Style="{StaticResource IconButtonStyle}" Content="&#xE712;"
+                                Click="RuleMoreMenu_Click" Tag="{Binding}" Margin="2,0,0,0"
+                                ToolTip="{DynamicResource RuleEditHint}"
+                                AutomationProperties.Name="Rule actions" />
                     </Grid>
 
-                    <!-- Bảng tham số mở rộng tại chỗ (accordion) -->
-                    <ItemsControl ItemsSource="{Binding Parameters}" Margin="34,10,0,0"
-                                  Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,0,0,6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="170" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center"
-                                               Style="{StaticResource CaptionTextStyle}" />
-                                    <CheckBox Grid.Column="1" IsChecked="{Binding BoolValue, Mode=TwoWay}"
-                                              Style="{StaticResource AppCheckBoxStyle}"
-                                              Visibility="{Binding Kind, Converter={StaticResource ParameterKindToVis}, ConverterParameter=Toggle}" />
-                                    <TextBox Grid.Column="1" Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged}"
-                                             Style="{StaticResource AppTextBoxStyle}"
-                                             Visibility="{Binding Kind, Converter={StaticResource ParameterKindToTextVis}, ConverterParameter=Text}" />
-                                    <ComboBox Grid.Column="1" ItemsSource="{Binding Options}"
-                                              SelectedItem="{Binding SelectedOption, Mode=TwoWay}"
-                                              Style="{StaticResource AppComboBoxStyle}"
-                                              Visibility="{Binding Kind, Converter={StaticResource ParameterKindToChoiceVis}, ConverterParameter=Choice}">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Label}" />
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <!-- Bảng tham số chỉnh sửa accordion tại chỗ -->
+                    <Border Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}"
+                            Margin="0,10,0,0" Padding="12,10" CornerRadius="6"
+                            Background="{DynamicResource SurfaceHover}" BorderBrush="{DynamicResource Divider}" BorderThickness="1">
+                        <ItemsControl ItemsSource="{Binding Parameters}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center"
+                                                   Style="{StaticResource CaptionTextStyle}" />
+                                        <CheckBox Grid.Column="1" IsChecked="{Binding BoolValue, Mode=TwoWay}"
+                                                  Style="{StaticResource AppToggleSwitchStyle}"
+                                                  Visibility="{Binding Kind, Converter={StaticResource ParameterKindToVis}, ConverterParameter=Toggle}" />
+                                        <TextBox Grid.Column="1" Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged}"
+                                                 Style="{StaticResource AppTextBoxStyle}"
+                                                 Visibility="{Binding Kind, Converter={StaticResource ParameterKindToTextVis}, ConverterParameter=Text}" />
+                                        <ComboBox Grid.Column="1" ItemsSource="{Binding Options}"
+                                                  SelectedItem="{Binding SelectedOption, Mode=TwoWay}"
+                                                  Style="{StaticResource AppComboBoxStyle}"
+                                                  Visibility="{Binding Kind, Converter={StaticResource ParameterKindToChoiceVis}, ConverterParameter=Choice}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Label}" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
                 </StackPanel>
             </Border>
         </DataTemplate>
 
-        <!-- ================= Cột tên có diff màu ================= -->
+        <!-- Cột tên cũ có highlight đoạn bị thay đổi -->
         <DataTemplate x:Key="OldNameTemplate">
-            <ItemsControl ItemsSource="{Binding OldSegments}">
+            <ItemsControl ItemsSource="{Binding OldSegments}" VerticalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Text}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextDecorations" Value="None" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Highlight}" Value="True">
-                                            <Setter Property="Background" Value="{DynamicResource DiffRemoved}" />
-                                            <Setter Property="Foreground" Value="{DynamicResource DiffRemovedText}" />
-                                            <Setter Property="TextDecorations" Value="Strikethrough" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+                        <Border x:Name="SegBorder" CornerRadius="3" Padding="2,0" Background="Transparent">
+                            <TextBlock Text="{Binding Text}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextDecorations" Value="None" />
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Highlight}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource DiffRemovedText}" />
+                                                <Setter Property="TextDecorations" Value="Strikethrough" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Highlight}" Value="True">
+                                <Setter TargetName="SegBorder" Property="Background" Value="{DynamicResource DiffRemoved}" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </DataTemplate>
 
+        <!-- Cột tên mới có highlight đoạn thêm mới -->
         <DataTemplate x:Key="NewNameTemplate">
-            <ItemsControl ItemsSource="{Binding NewSegments}">
+            <ItemsControl ItemsSource="{Binding NewSegments}" VerticalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Text}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextDecorations" Value="None" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Highlight}" Value="True">
-                                            <Setter Property="Background" Value="{DynamicResource DiffAdded}" />
-                                            <Setter Property="Foreground" Value="{DynamicResource DiffAddedText}" />
-                                            <Setter Property="FontWeight" Value="SemiBold" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+                        <Border x:Name="SegBorder" CornerRadius="3" Padding="2,0" Background="Transparent">
+                            <TextBlock Text="{Binding Text}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Highlight}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource DiffAddedText}" />
+                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Highlight}" Value="True">
+                                <Setter TargetName="SegBorder" Property="Background" Value="{DynamicResource DiffAdded}" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -169,405 +217,485 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="42" />  <!-- Row 0: Custom Window Chrome Titlebar -->
+            <RowDefinition Height="Auto" /> <!-- Row 1: CommandBar -->
+            <RowDefinition Height="*" />    <!-- Row 2: Content (Rule Builder + Preview Grid) -->
+            <RowDefinition Height="Auto" /> <!-- Row 3: Action Bar Footer -->
         </Grid.RowDefinitions>
 
-        <!-- ================= Hàng tiêu đề ứng dụng ================= -->
-        <Border Grid.Row="0" Background="{DynamicResource PanelBackground}"
-                BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1">
-            <Grid Margin="14,8">
+        <!-- ================= 0. Custom Fluent TitleBar ================= -->
+        <Grid Grid.Row="0" Background="{DynamicResource PanelBackground}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Logo, Tên App & Huy hiệu phiên bản -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                <Border Width="24" Height="24" CornerRadius="6" Background="{DynamicResource Accent}"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="&#xE8C5;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                               Foreground="{DynamicResource TextOnAccent}" HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="{DynamicResource WindowTitle}" Margin="10,0,8,0" FontSize="13"
+                           FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}"
+                           VerticalAlignment="Center" />
+
+                <!-- Badge cấp phép (Free / Pro) -->
+                <Button x:Name="TierBadge" Style="{StaticResource SubtleButtonStyle}"
+                        Click="TierBadge_Click" Padding="8,2" Height="22" Margin="4,0,0,0"
+                        Background="{DynamicResource AccentSoft}"
+                        BorderBrush="{DynamicResource AccentBorder}" BorderThickness="1"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        AutomationProperties.Name="License tier">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                                    CornerRadius="11" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <TextBlock x:Name="TierBadgeText" Text="Free" FontWeight="SemiBold" FontSize="10.5"
+                               Foreground="{DynamicResource Accent}" />
+                </Button>
+
+                <Button x:Name="UpgradeButton" Style="{StaticResource PrimaryButtonStyle}"
+                        Content="{DynamicResource Upgrade}" Click="Upgrade_Click"
+                        Padding="8,2" Height="22" FontSize="11" Margin="6,0,0,0"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        AutomationProperties.Name="Upgrade to Pro" />
+            </StackPanel>
+
+            <!-- Tiện ích & Nút điều khiển cửa sổ chuẩn Windows 11 -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Stretch">
+                <Button x:Name="SettingsButton" Style="{StaticResource SubtleButtonStyle}"
+                        Content="&#xE713;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                        Click="Settings_Click" Width="36" Height="36" Padding="0" Margin="0,0,6,0"
+                        VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True"
+                        ToolTip="{DynamicResource SettingsButton}"
+                        AutomationProperties.Name="Open settings" />
+
+                <!-- Caption Buttons (Min, Max, Close) -->
+                <Button Style="{StaticResource CaptionButtonStyle}" Click="TitleBar_Minimize_Click"
+                        Content="&#xE921;" ToolTip="Minimize" />
+                <Button Style="{StaticResource CaptionButtonStyle}" Click="TitleBar_Maximize_Click"
+                        ToolTip="Maximize">
+                    <TextBlock x:Name="MaximizeButtonGlyph" Text="&#xE922;" FontFamily="{StaticResource IconFont}" FontSize="11" />
+                </Button>
+                <Button Style="{StaticResource CloseCaptionButtonStyle}" Click="TitleBar_Close_Click"
+                        Content="&#xE8BB;" ToolTip="Close" />
+            </StackPanel>
+        </Grid>
+
+        <!-- ================= 1. Thanh công cụ (CommandBar) ================= -->
+        <Border Grid.Row="1" Background="{DynamicResource SurfaceBackground}"
+                BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,1" Padding="14,8">
+            <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="&#xE8C5;" FontFamily="{StaticResource IconFont}" FontSize="18"
-                               Foreground="{DynamicResource Accent}" VerticalAlignment="Center" />
-                    <TextBlock Text="{DynamicResource AppTagline}" Margin="8,0,0,0" FontSize="14"
-                               FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}"
-                               VerticalAlignment="Center" />
-                </StackPanel>
-
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button x:Name="TierBadge" Style="{StaticResource SubtleButtonStyle}"
-                            Click="TierBadge_Click" Padding="10,4" Margin="0,0,10,0"
-                            Background="{DynamicResource AccentSoft}"
-                            BorderBrush="{DynamicResource AccentBorder}" BorderThickness="1"
-                            AutomationProperties.Name="License tier">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="Bd" Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
-                                        CornerRadius="10" Padding="{TemplateBinding Padding}">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Accent}" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                        <TextBlock x:Name="TierBadgeText" Text="Free" FontWeight="SemiBold" FontSize="11.5"
-                                   Foreground="{DynamicResource Accent}" />
+                    <!-- Nhóm nạp tệp nguồn -->
+                    <Button Style="{StaticResource PrimaryButtonStyle}" Click="AddFiles_Click" Padding="14,6">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
+                            <TextBlock Text="{DynamicResource AddFilesButton}" Margin="6,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
                     </Button>
 
-                    <Button x:Name="SettingsButton" Style="{StaticResource SubtleButtonStyle}"
-                            Content="{DynamicResource SettingsButton}" Click="Settings_Click"
-                            AutomationProperties.Name="Open settings" />
+                    <Button Style="{StaticResource SecondaryButtonStyle}" Click="AddFolder_Click" Margin="6,0,0,0" Padding="12,6">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
+                            <TextBlock Text="{DynamicResource AddFolderButton}" Margin="6,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
 
-                    <Button x:Name="UpgradeButton" Style="{StaticResource PrimaryButtonStyle}"
-                            Content="{DynamicResource Upgrade}" Click="Upgrade_Click" Margin="6,0,0,0"
-                            AutomationProperties.Name="Upgrade to Pro" />
+                    <Rectangle Style="{StaticResource VerticalDividerStyle}" />
+
+                    <!-- Nhóm tùy chọn quét -->
+                    <ToggleButton Style="{StaticResource ChipToggleStyle}" Content="{DynamicResource RecursiveChip}"
+                                  IsChecked="{Binding IsRecursive, Mode=TwoWay}"
+                                  AutomationProperties.Name="Include subfolders" />
+                    <ToggleButton Style="{StaticResource ChipToggleStyle}" Content="{DynamicResource IncludeFoldersChip}"
+                                  IsChecked="{Binding IncludeFolders, Mode=TwoWay}"
+                                  AutomationProperties.Name="Include folders" />
+
+                    <Rectangle Style="{StaticResource VerticalDividerStyle}" />
+
+                    <!-- Bộ chọn sắp xếp -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{DynamicResource SortByLabel}" VerticalAlignment="Center"
+                                   Style="{StaticResource CaptionTextStyle}" Margin="0,0,6,0" />
+                        <ComboBox x:Name="SortCombo" Width="170" SelectionChanged="SortCombo_SelectionChanged"
+                                  Style="{StaticResource AppComboBoxStyle}"
+                                  AutomationProperties.Name="Sort order">
+                            <ComboBoxItem Content="{DynamicResource SortNameNatural}" Tag="NameNatural" />
+                            <ComboBoxItem Content="{DynamicResource SortName}" Tag="NameOrdinal" />
+                            <ComboBoxItem Content="{DynamicResource SortCreated}" Tag="Created" />
+                            <ComboBoxItem Content="{DynamicResource SortModified}" Tag="Modified" />
+                            <ComboBoxItem Content="{DynamicResource SortSize}" Tag="Size" />
+                            <ComboBoxItem Content="{DynamicResource SortLoadOrder}" Tag="LoadOrder" />
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Nhóm thao tác bên phải -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource SubtleButtonStyle}" Click="ClearList_Click"
+                            ToolTip="{DynamicResource ClearListButton}" Margin="0,0,4,0"
+                            AutomationProperties.Name="Clear list">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                            <TextBlock Text="{DynamicResource ClearListButton}" Margin="6,0,0,0" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource SecondaryButtonStyle}" Click="MoreMenu_Click" Padding="10,5"
+                            AutomationProperties.Name="More actions">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE712;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                            <TextBlock Text="{DynamicResource MoreMenu}" Margin="6,0,0,0" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- ================= Thanh lệnh (CommandBar, 1 hàng) ================= -->
-        <Grid Grid.Row="1" Margin="14,10,14,4">
+        <!-- ================= 2. Vùng làm việc chính ================= -->
+        <Grid Grid.Row="2" Margin="14,10,14,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="380" MinWidth="300" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="520" />
             </Grid.ColumnDefinitions>
 
-            <WrapPanel Grid.Column="0" Orientation="Horizontal">
-                <Button Style="{StaticResource PrimaryButtonStyle}" Click="AddFiles_Click" Padding="14,6">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}"
-                                   FontSize="13" VerticalAlignment="Center" />
-                        <TextBlock Text="{DynamicResource AddFilesButton}" Margin="6,0,0,0" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-
-                <Button Style="{StaticResource SecondaryButtonStyle}" Click="AddFolder_Click" Margin="6,0,0,0">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}"
-                                   FontSize="13" VerticalAlignment="Center" />
-                        <TextBlock Text="{DynamicResource AddFolderButton}" Margin="6,0,0,0" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-
-                <ToggleButton Style="{StaticResource ChipToggleStyle}" Content="{DynamicResource RecursiveChip}"
-                              IsChecked="{Binding IsRecursive, Mode=TwoWay}" Margin="12,0,0,0"
-                              AutomationProperties.Name="Include subfolders" />
-                <ToggleButton Style="{StaticResource ChipToggleStyle}" Content="{DynamicResource IncludeFoldersChip}"
-                              IsChecked="{Binding IncludeFolders, Mode=TwoWay}"
-                              AutomationProperties.Name="Include folders" />
-
-                <StackPanel Orientation="Horizontal" Margin="12,0,0,0" VerticalAlignment="Center">
-                    <TextBlock Text="{DynamicResource SortByLabel}" VerticalAlignment="Center"
-                               Style="{StaticResource CaptionTextStyle}" Margin="0,0,6,0" />
-                    <ComboBox x:Name="SortCombo" Width="170" SelectionChanged="SortCombo_SelectionChanged"
-                              Style="{StaticResource AppComboBoxStyle}"
-                              AutomationProperties.Name="Sort order">
-                        <ComboBoxItem Content="{DynamicResource SortNameNatural}" Tag="NameNatural" />
-                        <ComboBoxItem Content="{DynamicResource SortName}" Tag="NameOrdinal" />
-                        <ComboBoxItem Content="{DynamicResource SortCreated}" Tag="Created" />
-                        <ComboBoxItem Content="{DynamicResource SortModified}" Tag="Modified" />
-                        <ComboBoxItem Content="{DynamicResource SortSize}" Tag="Size" />
-                        <ComboBoxItem Content="{DynamicResource SortLoadOrder}" Tag="LoadOrder" />
-                    </ComboBox>
-                </StackPanel>
-            </WrapPanel>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button Style="{StaticResource SubtleButtonStyle}" Click="ClearList_Click"
-                        AutomationProperties.Name="Clear list">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="13" />
-                        <TextBlock Text="{DynamicResource ClearListButton}" Margin="6,0,0,0" />
-                    </StackPanel>
-                </Button>
-
-                <Button Style="{StaticResource SecondaryButtonStyle}" Click="MoreMenu_Click" Margin="6,0,0,0"
-                        AutomationProperties.Name="More actions">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE712;" FontFamily="{StaticResource IconFont}" FontSize="13" />
-                        <TextBlock Text="{DynamicResource MoreMenu}" Margin="6,0,0,0" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
-
-        <!-- ================= Vùng làm việc: Rule Builder | Preview ================= -->
-        <Grid Grid.Row="2" Margin="14,4,14,8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="360" MinWidth="280" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" MinWidth="480" />
-            </Grid.ColumnDefinitions>
-
-            <!-- Trái: Rule Builder -->
-            <DockPanel Grid.Column="0" Background="{DynamicResource PanelBackground}" Margin="0,0,0,0">
-                <Grid DockPanel.Dock="Top" Margin="12,10,12,6">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <TextBlock Text="{DynamicResource RuleBuilderHeader}" Style="{StaticResource PanelHeaderTextStyle}" />
-                        <ComboBox x:Name="PresetCombo" Margin="0,6,0,0"
-                                  Style="{StaticResource AppComboBoxStyle}"
-                                  SelectionChanged="PresetCombo_SelectionChanged"
-                                  AutomationProperties.Name="Preset selection">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" />
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                    </StackPanel>
-                    <Button Grid.Column="1" Style="{StaticResource IconButtonStyle}" Content="&#xE712;"
-                            Click="PresetMenu_Click" VerticalAlignment="Top"
-                            AutomationProperties.Name="Preset menu" />
-                </Grid>
-
-                <DockPanel DockPanel.Dock="Bottom" Margin="12,6,12,12">
-                    <Button Style="{StaticResource SecondaryButtonStyle}" Click="SavePreset_Click" Margin="0,0,6,0"
-                            AutomationProperties.Name="Save as preset button">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE74E;" FontFamily="{StaticResource IconFont}" FontSize="13" />
-                            <TextBlock Text="{DynamicResource SaveAsPresetButton}" Margin="6,0,0,0" />
+            <!-- Cột trái: Rule Builder -->
+            <Border Grid.Column="0" Background="{DynamicResource PanelBackground}"
+                    BorderBrush="{DynamicResource Border}" BorderThickness="1"
+                    CornerRadius="{StaticResource RadiusCard}" Padding="10">
+                <DockPanel>
+                    <!-- Tiêu đề & Chọn Preset -->
+                    <Grid DockPanel.Dock="Top" Margin="4,2,4,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource RuleBuilderHeader}" Style="{StaticResource PanelHeaderTextStyle}" />
+                            <ComboBox x:Name="PresetCombo" Margin="0,6,0,0"
+                                      Style="{StaticResource AppComboBoxStyle}"
+                                      SelectionChanged="PresetCombo_SelectionChanged"
+                                      AutomationProperties.Name="Preset selection">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource SecondaryButtonStyle}" Click="AddRule_Click"
-                            AutomationProperties.Name="Add rule button">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" />
-                            <TextBlock Text="{DynamicResource AddRuleButton}" Margin="6,0,0,0" />
-                        </StackPanel>
-                    </Button>
+                        <Button Grid.Column="1" Style="{StaticResource IconButtonStyle}" Content="&#xE712;"
+                                Click="PresetMenu_Click" VerticalAlignment="Bottom" Margin="4,0,0,0"
+                                ToolTip="{DynamicResource RuleMenuManage}"
+                                AutomationProperties.Name="Preset menu" />
+                    </Grid>
+
+                    <!-- Nút thêm quy tắc / lưu preset dưới đáy -->
+                    <DockPanel DockPanel.Dock="Bottom" Margin="4,10,4,2">
+                        <Button Style="{StaticResource SecondaryButtonStyle}" Click="SavePreset_Click" Margin="0,0,6,0"
+                                AutomationProperties.Name="Save as preset button">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE74E;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                                <TextBlock Text="{DynamicResource SaveAsPresetButton}" Margin="6,0,0,0" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource PrimaryButtonStyle}" Click="AddRule_Click"
+                                AutomationProperties.Name="Add rule button">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                                <TextBlock Text="{DynamicResource AddRuleButton}" Margin="6,0,0,0" />
+                            </StackPanel>
+                        </Button>
+                    </DockPanel>
+
+                    <!-- Danh sách rỗng -->
+                    <Grid DockPanel.Dock="Top" Margin="4,6">
+                        <TextBlock Text="{DynamicResource RulesEmpty}" Style="{StaticResource CaptionTextStyle}"
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding Rules.Count, Converter={StaticResource ZeroToVis}}" />
+                    </Grid>
+
+                    <!-- Cuộn danh sách thẻ quy tắc -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="2,2,4,2">
+                        <ItemsControl x:Name="RulesItems" ItemsSource="{Binding Rules}"
+                                      ItemTemplate="{StaticResource RuleCardTemplate}" />
+                    </ScrollViewer>
                 </DockPanel>
+            </Border>
 
-                <Grid DockPanel.Dock="Top" Margin="12,0">
-                    <TextBlock Text="{DynamicResource RulesEmpty}" Style="{StaticResource CaptionTextStyle}"
-                               TextWrapping="Wrap"
-                               Visibility="{Binding Rules.Count, Converter={StaticResource ZeroToVis}}" />
-                </Grid>
-
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12,0,8,0">
-                    <ItemsControl x:Name="RulesItems" ItemsSource="{Binding Rules}"
-                                  ItemTemplate="{StaticResource RuleCardTemplate}" />
-                </ScrollViewer>
-            </DockPanel>
-
-            <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Stretch"
+            <!-- Thanh kéo phân chia độ rộng -->
+            <GridSplitter Grid.Column="1" Width="8" HorizontalAlignment="Stretch"
                           Background="Transparent" ResizeBehavior="PreviousAndNext"
                           AutomationProperties.Name="Resize rule panel" />
 
-            <!-- Phải: bảng xem trước -->
-            <Grid Grid.Column="2" Background="{DynamicResource PanelBackground}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+            <!-- Cột phải: Bảng xem trước kết quả đổi tên -->
+            <Border Grid.Column="2" Background="{DynamicResource PanelBackground}"
+                    BorderBrush="{DynamicResource Border}" BorderThickness="1"
+                    CornerRadius="{StaticResource RadiusCard}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <DataGrid x:Name="PreviewGrid" Grid.Row="0" Style="{StaticResource PreviewDataGridStyle}"
-                          ColumnHeaderStyle="{StaticResource PreviewHeaderStyle}"
-                          RowStyle="{StaticResource PreviewRowStyle}"
-                          CellStyle="{StaticResource PreviewCellStyle}"
-                          ItemsSource="{Binding FilteredRows}"
-                          SelectionChanged="PreviewGrid_SelectionChanged"
-                          AutomationProperties.Name="Preview table">
-                    <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="{DynamicResource ColSelect}" Width="52">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" HorizontalAlignment="Center"
-                                              Focusable="False" Style="{StaticResource AppCheckBoxStyle}"
-                                              AutomationProperties.Name="Include file in rename" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                    <DataGrid x:Name="PreviewGrid" Grid.Row="0" Style="{StaticResource PreviewDataGridStyle}"
+                              ColumnHeaderStyle="{StaticResource PreviewHeaderStyle}"
+                              CellStyle="{StaticResource PreviewCellStyle}"
+                              ItemsSource="{Binding FilteredRows}"
+                              SelectionChanged="PreviewGrid_SelectionChanged"
+                              AutomationProperties.Name="Preview table">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow" BasedOn="{StaticResource PreviewRowStyle}">
+                                <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <!-- Cột Checkbox chọn từng dòng -->
+                            <DataGridTemplateColumn Width="48" CanUserSort="False">
+                                <DataGridTemplateColumn.HeaderTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding DataContext.AreAllRowsSelected, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  Style="{StaticResource AppCheckBoxStyle}"
+                                                  ToolTip="{DynamicResource ColSelectTooltip}"
+                                                  AutomationProperties.Name="Select or deselect all files" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.HeaderTemplate>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" Focusable="False"
+                                                  Style="{StaticResource AppCheckBoxStyle}"
+                                                  AutomationProperties.Name="Include file in rename" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="{DynamicResource ColOld}" Width="*"
-                                                CellTemplate="{StaticResource OldNameTemplate}" />
+                            <!-- Cột Tên cũ -->
+                            <DataGridTemplateColumn Header="{DynamicResource ColOld}" Width="*"
+                                                    SortMemberPath="OldName" CanUserSort="True"
+                                                    CellTemplate="{StaticResource OldNameTemplate}" />
 
-                        <DataGridTemplateColumn Header="{DynamicResource ColNew}" Width="*"
-                                                CellTemplate="{StaticResource NewNameTemplate}" />
+                            <!-- Cột Tên mới -->
+                            <DataGridTemplateColumn Header="{DynamicResource ColNew}" Width="*"
+                                                    SortMemberPath="NewName" CanUserSort="True"
+                                                    CellTemplate="{StaticResource NewNameTemplate}" />
 
-                        <DataGridTemplateColumn Header="{DynamicResource ColStatus}" Width="150">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding StatusIcon}" FontFamily="{StaticResource IconFont}"
-                                                   FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Ok">
-                                                            <Setter Property="Foreground" Value="{DynamicResource Success}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Conflict">
-                                                            <Setter Property="Foreground" Value="{DynamicResource Warning}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="InvalidName">
-                                                            <Setter Property="Foreground" Value="{DynamicResource Error}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="PathTooLong">
-                                                            <Setter Property="Foreground" Value="{DynamicResource Error}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondary}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Ok">
-                                                            <Setter Property="Foreground" Value="{DynamicResource Success}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Conflict">
-                                                            <Setter Property="Foreground" Value="{DynamicResource Warning}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="InvalidName">
-                                                            <Setter Property="Foreground" Value="{DynamicResource Error}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                            <!-- Cột Trạng thái dạng Pill Badge hiện đại -->
+                            <DataGridTemplateColumn Header="{DynamicResource ColStatus}" Width="140"
+                                                    SortMemberPath="StatusText" CanUserSort="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border x:Name="StatusPill" CornerRadius="10" Padding="8,3"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                Background="{DynamicResource ChipBackground}">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock x:Name="StatusIcon" Text="{Binding StatusIcon}"
+                                                           FontFamily="{StaticResource IconFont}" FontSize="11"
+                                                           Margin="0,0,5,0" VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource TextSecondary}" />
+                                                <TextBlock x:Name="StatusLabel" Text="{Binding StatusText}"
+                                                           FontSize="11" FontWeight="Medium" VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource TextSecondary}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="Ok">
+                                                <Setter TargetName="StatusPill" Property="Background" Value="{DynamicResource SuccessSoft}" />
+                                                <Setter TargetName="StatusIcon" Property="Foreground" Value="{DynamicResource Success}" />
+                                                <Setter TargetName="StatusLabel" Property="Foreground" Value="{DynamicResource Success}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Conflict">
+                                                <Setter TargetName="StatusPill" Property="Background" Value="{DynamicResource WarningSoft}" />
+                                                <Setter TargetName="StatusIcon" Property="Foreground" Value="{DynamicResource Warning}" />
+                                                <Setter TargetName="StatusLabel" Property="Foreground" Value="{DynamicResource Warning}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="InvalidName">
+                                                <Setter TargetName="StatusPill" Property="Background" Value="{DynamicResource ErrorSoft}" />
+                                                <Setter TargetName="StatusIcon" Property="Foreground" Value="{DynamicResource Error}" />
+                                                <Setter TargetName="StatusLabel" Property="Foreground" Value="{DynamicResource Error}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="PathTooLong">
+                                                <Setter TargetName="StatusPill" Property="Background" Value="{DynamicResource ErrorSoft}" />
+                                                <Setter TargetName="StatusIcon" Property="Foreground" Value="{DynamicResource Error}" />
+                                                <Setter TargetName="StatusLabel" Property="Foreground" Value="{DynamicResource Error}" />
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="{DynamicResource ColFolder}" Width="220">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FolderText}" TextTrimming="CharacterEllipsis"
-                                               Style="{StaticResource CaptionTextStyle}"
-                                               ToolTip="{Binding FolderText}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                            <!-- Cột Thư mục -->
+                            <DataGridTemplateColumn Header="{DynamicResource ColFolder}" Width="200" SortMemberPath="FolderText" CanUserSort="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding FolderText}" TextTrimming="CharacterEllipsis"
+                                                   Style="{StaticResource CaptionTextStyle}"
+                                                   VerticalAlignment="Center"
+                                                   ToolTip="{Binding FolderText}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
-                <!-- Hàng lọc + tìm kiếm -->
-                <Grid Grid.Row="1" Margin="12,8,12,4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <RadioButton x:Name="FilterAll" Style="{StaticResource AppRadioButtonStyle}" GroupName="PreviewFilter" Content="{DynamicResource FilterAll}"
-                                     IsChecked="True" Checked="Filter_Checked" Tag="All" Margin="0,0,6,0"
-                                     AutomationProperties.Name="Filter all" />
-                        <RadioButton x:Name="FilterWillChange" Style="{StaticResource AppRadioButtonStyle}" GroupName="PreviewFilter" Content="{DynamicResource FilterWillChange}"
-                                     Checked="Filter_Checked" Tag="WillChange" Margin="0,0,6,0"
-                                     AutomationProperties.Name="Filter will change" />
-                        <RadioButton x:Name="FilterUnchanged" Style="{StaticResource AppRadioButtonStyle}" GroupName="PreviewFilter" Content="{DynamicResource FilterUnchanged}"
-                                     Checked="Filter_Checked" Tag="Unchanged" Margin="0,0,6,0"
-                                     AutomationProperties.Name="Filter unchanged" />
-                        <RadioButton x:Name="FilterProblems" Style="{StaticResource AppRadioButtonStyle}" GroupName="PreviewFilter" Content="{DynamicResource FilterProblems}"
-                                     Checked="Filter_Checked" Tag="Problems" Margin="0,0,12,0"
-                                     AutomationProperties.Name="Filter problems" />
-                    </StackPanel>
+                    <!-- Thanh bộ lọc dạng Segmented Tab + Ô tìm kiếm -->
+                    <Grid Grid.Row="1" Margin="12,8,12,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="PreviewSearchBox" Grid.Column="1" Width="220"
-                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                             Style="{StaticResource AppTextBoxStyle}"
-                             AutomationProperties.Name="Search files" />
+                        <!-- Segmented Filter Container -->
+                        <Border Grid.Column="0" Background="{DynamicResource ChipBackground}"
+                                CornerRadius="8" Padding="3" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton x:Name="FilterAll" Style="{StaticResource SegmentedRadioButtonStyle}" GroupName="PreviewFilter" Content="{DynamicResource FilterAll}"
+                                             IsChecked="True" Checked="Filter_Checked" Tag="All"
+                                             AutomationProperties.Name="Filter all" />
+                                <RadioButton x:Name="FilterWillChange" Style="{StaticResource SegmentedRadioButtonStyle}" GroupName="PreviewFilter" Content="{DynamicResource FilterWillChange}"
+                                             Checked="Filter_Checked" Tag="WillChange"
+                                             AutomationProperties.Name="Filter will change" />
+                                <RadioButton x:Name="FilterUnchanged" Style="{StaticResource SegmentedRadioButtonStyle}" GroupName="PreviewFilter" Content="{DynamicResource FilterUnchanged}"
+                                             Checked="Filter_Checked" Tag="Unchanged"
+                                             AutomationProperties.Name="Filter unchanged" />
+                                <RadioButton x:Name="FilterProblems" Style="{StaticResource SegmentedRadioButtonStyle}" GroupName="PreviewFilter" Content="{DynamicResource FilterProblems}"
+                                             Checked="Filter_Checked" Tag="Problems"
+                                             AutomationProperties.Name="Filter problems" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Ô tìm kiếm tệp -->
+                        <Grid Grid.Column="1" Width="230" VerticalAlignment="Center">
+                            <TextBox x:Name="PreviewSearchBox"
+                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource AppTextBoxStyle}" Padding="26,5,8,5"
+                                     AutomationProperties.Name="Search files" />
+                            <TextBlock Text="&#xE721;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                                       Foreground="{DynamicResource TextDisabled}"
+                                       VerticalAlignment="Center" HorizontalAlignment="Left"
+                                       Margin="8,0,0,0" IsHitTestVisible="False" />
+                        </Grid>
+                    </Grid>
+
+                    <!-- Ngăn Rule Trace (timeline theo dõi vết đổi tên) -->
+                    <Border Grid.Row="2" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="12,8">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource TraceHeader}" Style="{StaticResource PanelHeaderTextStyle}" Margin="0,0,0,4" />
+                            <TextBlock Text="{DynamicResource TraceEmpty}" Style="{StaticResource CaptionTextStyle}"
+                                       Visibility="{Binding SelectedRow, Converter={StaticResource NullToVis}}" />
+                            <ItemsControl ItemsSource="{Binding TraceSteps}"
+                                          Visibility="{Binding SelectedRow, Converter={StaticResource NotNullToVis}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="16" />
+                                                <ColumnDefinition Width="160" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="&#xE16A;" FontSize="11"
+                                                       FontFamily="{StaticResource IconFont}"
+                                                       Foreground="{DynamicResource Accent}" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Title}" FontWeight="SemiBold"
+                                                       FontSize="11.5" Foreground="{DynamicResource TextPrimary}"
+                                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Grid.Column="2" Text="{Binding Detail}" FontSize="11.5"
+                                                       Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
                 </Grid>
+            </Border>
 
-                <!-- Ngăn Rule Trace (timeline) -->
-                <Border Grid.Row="2" BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="12,8">
-                    <StackPanel>
-                        <TextBlock Text="{DynamicResource TraceHeader}" Style="{StaticResource PanelHeaderTextStyle}"
-                                   Margin="0,0,0,4" />
-                        <TextBlock Text="{DynamicResource TraceEmpty}" Style="{StaticResource CaptionTextStyle}"
-                                   Visibility="{Binding SelectedRow, Converter={StaticResource NullToVis}}" />
-                        <ItemsControl ItemsSource="{Binding TraceSteps}"
-                                      Visibility="{Binding SelectedRow, Converter={StaticResource NotNullToVis}}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,1,0,1">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="14" />
-                                            <ColumnDefinition Width="150" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="&#xE16A;" FontSize="10"
-                                                   FontFamily="{StaticResource IconFont}"
-                                                   Foreground="{DynamicResource Accent}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="1" Text="{Binding Title}" FontWeight="SemiBold"
-                                                   FontSize="11.5" Foreground="{DynamicResource TextPrimary}"
-                                                   VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Grid.Column="2" Text="{Binding Detail}" FontSize="11.5"
-                                                   Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center"
-                                                   TextTrimming="CharacterEllipsis" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
-            </Grid>
-
-            <!-- Empty state -->
+            <!-- Màn hình trạng thái rỗng (Empty State Hero) -->
             <Border Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource AppBackground}"
+                    CornerRadius="{StaticResource RadiusCard}"
                     Visibility="{Binding IsEmptyStateVisible, Converter={StaticResource BoolToVis}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="640">
-                    <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="48"
-                               Foreground="{DynamicResource Accent}" HorizontalAlignment="Center" />
-                    <TextBlock Text="{DynamicResource EmptyTitle}" FontSize="20" FontWeight="SemiBold"
-                               Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center" Margin="0,10,0,0" />
+                    <Border Width="64" Height="64" CornerRadius="16" Background="{DynamicResource AccentSoft}"
+                            HorizontalAlignment="Center" Margin="0,0,0,16">
+                        <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="32"
+                                   Foreground="{DynamicResource Accent}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="{DynamicResource EmptyTitle}" FontSize="22" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center" />
                     <TextBlock Text="{DynamicResource EmptyHint}" Style="{StaticResource BodyTextStyle}"
                                Foreground="{DynamicResource TextSecondary}" TextAlignment="Center" TextWrapping="Wrap"
-                               Margin="0,6,0,0" />
+                               Margin="0,8,0,0" />
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
-                        <Button Style="{StaticResource PrimaryButtonStyle}" Click="AddFiles_Click" Content="{DynamicResource AddFilesButton}" />
-                        <Button Style="{StaticResource SecondaryButtonStyle}" Click="AddFolder_Click" Margin="8,0,0,0"
-                                Content="{DynamicResource AddFolderButton}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                        <Button Style="{StaticResource PrimaryButtonStyle}" Click="AddFiles_Click" Content="{DynamicResource AddFilesButton}" Padding="16,8" />
+                        <Button Style="{StaticResource SecondaryButtonStyle}" Click="AddFolder_Click" Margin="10,0,0,0"
+                                Content="{DynamicResource AddFolderButton}" Padding="14,8" />
                     </StackPanel>
 
                     <TextBlock Text="{DynamicResource EmptySuggestions}" Style="{StaticResource PanelHeaderTextStyle}"
-                               HorizontalAlignment="Center" Margin="0,22,0,8" />
+                               HorizontalAlignment="Center" Margin="0,28,0,10" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button Style="{StaticResource SecondaryButtonStyle}" Click="SuggestPreset_Click" Tag="Đánh số theo thứ tự"
-                                Content="{DynamicResource SuggestNumbering}" />
+                                Content="{DynamicResource SuggestNumbering}" Padding="10,6" />
                         <Button Style="{StaticResource SecondaryButtonStyle}" Click="SuggestPreset_Click" Tag="Dọn dẹp tên tệp"
-                                Content="{DynamicResource SuggestTrim}" Margin="8,0,0,0" />
+                                Content="{DynamicResource SuggestTrim}" Margin="8,0,0,0" Padding="10,6" />
                         <Button Style="{StaticResource SecondaryButtonStyle}" Click="SuggestPreset_Click" Tag="Ảnh theo ngày chụp"
-                                Content="{DynamicResource SuggestDate}" Margin="8,0,0,0" />
+                                Content="{DynamicResource SuggestDate}" Margin="8,0,0,0" Padding="10,6" />
                     </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>
 
-        <!-- ================= Thanh hành động dưới ================= -->
+        <!-- ================= 3. Thanh hành động đáy (Footer Action Bar) ================= -->
         <Border Grid.Row="3" Background="{DynamicResource PanelBackground}"
-                BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0">
-            <Grid Margin="14,10">
+                BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="14,10">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
+                <!-- Tóm tắt số lượng & Tiến trình -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- Chip lọc trạng thái -->
-                    <Border Background="{DynamicResource ChipBackground}" BorderBrush="{DynamicResource ChipBorder}"
-                            BorderThickness="1" CornerRadius="12" Padding="10,4" Margin="0,0,6,0">
-                        <TextBlock Text="{Binding StatusSummary}" FontSize="11.5" Foreground="{DynamicResource TextSecondary}" />
+                    <Border Background="{DynamicResource ChipBackground}" BorderBrush="{DynamicResource Border}"
+                            BorderThickness="1" CornerRadius="8" Padding="12,6" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                                       Foreground="{DynamicResource Accent}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <TextBlock Text="{Binding StatusSummary}" FontSize="12" FontWeight="Medium"
+                                       Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
+                        </StackPanel>
                     </Border>
 
-                    <TextBlock x:Name="StatusText" VerticalAlignment="Center" FontSize="11.5"
+                    <TextBlock x:Name="StatusText" VerticalAlignment="Center" FontSize="12"
                                Foreground="{DynamicResource TextSecondary}" Margin="4,0,0,0" />
 
                     <!-- InfoBar thành công -->
                     <Border Background="{DynamicResource SuccessSoft}" BorderBrush="{DynamicResource Success}"
-                            BorderThickness="1" CornerRadius="6" Padding="10,4" Margin="0,0,6,0"
+                            BorderThickness="1" CornerRadius="6" Padding="10,4" Margin="6,0,0,0"
                             Visibility="{Binding HasSuccessMessage, Converter={StaticResource BoolToVis}}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE73E;" FontFamily="{StaticResource IconFont}" FontSize="13"
@@ -584,7 +712,7 @@
                     </Border>
 
                     <!-- Tiến trình -->
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0"
                                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}">
                         <ProgressBar IsIndeterminate="True" Width="120" Height="4" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding BusyText}" Margin="8,0,0,0" Style="{StaticResource CaptionTextStyle}"
@@ -594,14 +722,22 @@
                     </StackPanel>
                 </StackPanel>
 
+                <!-- Nút Hoàn tác & Áp dụng -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button Style="{StaticResource SecondaryButtonStyle}" Content="{DynamicResource Undo}" Click="Undo_Click"
-                            Command="{Binding UndoCommand}" Margin="0,0,8,0"
+                            Command="{Binding UndoCommand}" Margin="0,0,8,0" Padding="14,7"
                             AutomationProperties.Name="Undo last rename" />
+
                     <Button x:Name="ApplyButton" Style="{StaticResource PrimaryButtonStyle}" Click="Apply_Click"
-                            Command="{Binding ApplyCommand}" MinWidth="180"
-                            Content="{Binding ApplyButtonText}"
-                            AutomationProperties.Name="Apply renaming" />
+                            Command="{Binding ApplyCommand}" MinWidth="200" Height="36"
+                            AutomationProperties.Name="Apply renaming">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                                       Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding ApplyButtonText}" FontWeight="SemiBold" FontSize="13"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>

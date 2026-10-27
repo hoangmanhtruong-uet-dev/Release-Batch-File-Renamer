@@ -21,6 +21,16 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        AppDomain.CurrentDomain.UnhandledException += (s, ev) =>
+        {
+            try { File.WriteAllText(Path.Combine(Path.GetTempPath(), "bfr-crash.txt"), ev.ExceptionObject?.ToString() ?? "null"); } catch { }
+        };
+
+        DispatcherUnhandledException += (s, ev) =>
+        {
+            try { File.WriteAllText(Path.Combine(Path.GetTempPath(), "bfr-crash.txt"), ev.Exception.ToString()); } catch { }
+        };
+
         var payload = ParseArgs(e.Args);
 
         // Hỗ trợ lệnh đăng ký nhanh menu chuột phải từ phím tắt hoặc cài đặt
@@ -98,7 +108,7 @@ public partial class App : Application
             tierOverride: devTier,
             trialEnabled: true);
 
-        var provider = new MicrosoftStoreLicenseProvider();
+        var provider = packaged ? new MicrosoftStoreLicenseProvider() : null;
         return new LicenseCoordinator(license, provider);
     }
 

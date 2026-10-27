@@ -53,7 +53,7 @@ public sealed class UpdateCheckResult
 public static class UpdateRunner
 {
     /// <summary>Phiên bản hiện tại của ứng dụng.</summary>
-    public const string CurrentVersion = "1.2.0";
+    public const string CurrentVersion = "1.2.2";
 
     /// <summary>Kiểm tra cập nhật từ nguồn đã cấu hình.</summary>
     public static async Task<UpdateCheckResult> CheckAsync()

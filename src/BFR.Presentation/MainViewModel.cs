@@ -41,6 +41,7 @@ public sealed class MainViewModel : ObservableObject
     private readonly LicenseTier _metadataTier;
 
     private readonly List<string> _sources = new();
+    private readonly HashSet<string> _excludedPaths = new(StringComparer.OrdinalIgnoreCase);
     private CancellationTokenSource? _cts;
     private Preset _preset = new();
     private PreviewResult? _preview;
@@ -243,6 +244,8 @@ public sealed class MainViewModel : ObservableObject
     public void ClearList()
     {
         _sources.Clear();
+        _excludedPaths.Clear();
+        foreach (var r in Rows) r.PropertyChanged -= OnRowPropertyChanged;
         Rows.Clear();
         _preview = null;
         OnCountsChanged();
@@ -510,6 +513,11 @@ public sealed class MainViewModel : ObservableObject
                     MaxDepth = IsRecursive ? _license.License.MaxRecursionDepth : 0
                 }, cts.Token);
 
+                if (_excludedPaths.Count > 0)
+                {
+                    items = items.Where(f => !_excludedPaths.Contains(f.FullPath)).ToList();
+                }
+
                 items = SortItems(items, SortBy);
 
                 var context = new RuleContext(DateTime.Now, Guid.NewGuid().ToString("N"));
@@ -530,18 +538,21 @@ public sealed class MainViewModel : ObservableObject
             var previousSelection = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
             foreach (var row in Rows) previousSelection[row.File.FullPath] = row.IsSelected;
 
+            foreach (var r in Rows) r.PropertyChanged -= OnRowPropertyChanged;
             Rows.Clear();
             foreach (var item in preview.Items)
             {
                 var isSelected = previousSelection.TryGetValue(item.File.FullPath, out var kept) ? kept : true;
-                Rows.Add(new PreviewRowViewModel(
+                var row = new PreviewRowViewModel(
                     item.File,
                     item.OldName,
                     item.NewName,
                     item.Status,
                     item.Detail,
                     isSelected,
-                    _strings));
+                    _strings);
+                row.PropertyChanged += OnRowPropertyChanged;
+                Rows.Add(row);
             }
 
             OnCountsChanged();
@@ -662,9 +673,48 @@ public sealed class MainViewModel : ObservableObject
             || row.FolderText.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
     }
 
-    private void SetAllSelected(bool selected)
+    private void OnRowPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(PreviewRowViewModel.IsSelected))
+        {
+            OnCountsChanged();
+        }
+    }
+
+    /// <summary>Trạng thái chọn tất cả (true: tất cả, false: không dòng nào, null: một phần).</summary>
+    public bool? AreAllRowsSelected
+    {
+        get
+        {
+            if (Rows.Count == 0) return false;
+            var selectedCount = Rows.Count(r => r.IsSelected);
+            if (selectedCount == 0) return false;
+            if (selectedCount == Rows.Count) return true;
+            return null;
+        }
+        set
+        {
+            if (value.HasValue)
+            {
+                SetAllSelected(value.Value);
+            }
+        }
+    }
+
+    public void SetAllSelected(bool selected)
     {
         foreach (var row in Rows) row.IsSelected = selected;
+        OnCountsChanged();
+    }
+
+    public void RemoveRow(PreviewRowViewModel row)
+    {
+        var path = row.File.FullPath;
+        _sources.RemoveAll(p => string.Equals(p, path, StringComparison.OrdinalIgnoreCase));
+        _excludedPaths.Add(path);
+        row.PropertyChanged -= OnRowPropertyChanged;
+        Rows.Remove(row);
+        FilteredRows.Remove(row);
         OnCountsChanged();
     }
 
@@ -700,7 +750,7 @@ public sealed class MainViewModel : ObservableObject
         try
         {
             var steps = new RenamePlanner().Plan(pairs);
-            var result = await Task.Run(() => new RenameExecutor(_fs, _journalDir).Execute(steps, "1.2.0"))
+            var result = await Task.Run(() => new RenameExecutor(_fs, _journalDir).Execute(steps, "1.2.2"))
                 .ConfigureAwait(true);
 
             _history.Add(new HistoryEntry
@@ -807,6 +857,7 @@ public sealed class MainViewModel : ObservableObject
         Raise(nameof(UnchangedCount));
         Raise(nameof(ErrorCount));
         Raise(nameof(SelectedCount));
+        Raise(nameof(AreAllRowsSelected));
         Raise(nameof(CanApply));
         Raise(nameof(CanUndo));
         Raise(nameof(StatusSummary));

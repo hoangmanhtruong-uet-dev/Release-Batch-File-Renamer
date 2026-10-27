@@ -25,8 +25,13 @@ public sealed class AppSettings
     public string? WatchPreset { get; set; }
 
     /// <summary>Giao diện: "System", "Light" hoặc "Dark".</summary>
-
     public string Theme { get; set; } = "System";
+
+    /// <summary>Số lần đổi tên thành công (dùng để gợi ý đánh giá Store sau 2 lần).</summary>
+    public int SuccessfulRenameCount { get; set; } = 0;
+
+    /// <summary>Đã hiển thị gợi ý đánh giá Store chưa.</summary>
+    public bool HasPromptedRating { get; set; } = false;
 
     /// <summary>Giá hiển thị của Pro (dự phòng khi Store không trả giá). Không hard-code trong mã nguồn.</summary>
     public string? ProPriceText { get; set; }

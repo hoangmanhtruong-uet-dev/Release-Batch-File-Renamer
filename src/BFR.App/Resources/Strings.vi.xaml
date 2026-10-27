@@ -143,6 +143,8 @@
     <sys:String x:Key="RuleToggleA11y">Bật hoặc tắt quy tắc</sys:String>
     <sys:String x:Key="RuleDelete">Xoá quy tắc</sys:String>
     <sys:String x:Key="RuleEditHint">Mở tuỳ chọn của quy tắc</sys:String>
+    <sys:String x:Key="RuleCollapse">Thu gọn tuỳ chọn</sys:String>
+    <sys:String x:Key="RuleExpand">Mở rộng tuỳ chọn</sys:String>
     <sys:String x:Key="RuleMenuSave">Lưu thành preset mới</sys:String>
     <sys:String x:Key="RuleMenuImport">Nhập preset</sys:String>
     <sys:String x:Key="RuleMenuExport">Xuất preset</sys:String>
@@ -401,4 +403,15 @@
     <sys:String x:Key="WatchOptionsTitle">Thiết lập theo dõi</sys:String>
     <sys:String x:Key="WatchLogTitle">Sự kiện gần đây</sys:String>
     <sys:String x:Key="UpdateDownload">Tải bản mới</sys:String>
+    <sys:String x:Key="ColSelectTooltip">Chọn hoặc bỏ chọn tất cả</sys:String>
+    <sys:String x:Key="CtxOpenFile">Mở tệp</sys:String>
+    <sys:String x:Key="CtxOpenFolder">Mở thư mục trong Explorer</sys:String>
+    <sys:String x:Key="CtxCopyOldName">Sao chép tên cũ</sys:String>
+    <sys:String x:Key="CtxCopyNewName">Sao chép tên mới</sys:String>
+    <sys:String x:Key="CtxToggleSelect">Bật/Tắt chọn tệp này</sys:String>
+    <sys:String x:Key="CtxRemoveFromList">Xóa khỏi danh sách</sys:String>
+    <sys:String x:Key="MenuRateApp">Đánh giá ứng dụng</sys:String>
+    <sys:String x:Key="RateApp">⭐ Đánh giá ứng dụng trên Microsoft Store</sys:String>
+    <sys:String x:Key="RateAppTitle">Đánh giá BFR</sys:String>
+    <sys:String x:Key="RateAppPrompt">Bạn có thấy BFR hữu ích không? Hãy dành chút thời gian đánh giá trên Microsoft Store để ủng hộ nhà phát triển nhé!</sys:String>
 </ResourceDictionary>

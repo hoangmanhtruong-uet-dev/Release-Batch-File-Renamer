@@ -205,7 +205,23 @@ public class SettingsWindow : Window
         content.Children.Add(Caption(Loc.T("SettingsPrivacyHint")));
 
         content.Children.Add(Header(Loc.T("SettingsAbout")));
-        content.Children.Add(Caption(Loc.F("SettingsVersion", "1.2.0")));
+        content.Children.Add(Caption(Loc.F("SettingsVersion", "1.2.2")));
+
+        var rateButton = new Button
+        {
+            Content = Loc.T("RateApp"),
+            Style = (Style)Application.Current.FindResource("SecondaryButtonStyle"),
+            Padding = new Thickness(14, 6, 14, 6),
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(0, 8, 0, 0)
+        };
+        AutomationProperties.SetName(rateButton, "Rate this app");
+        rateButton.Click += async (_, _) =>
+        {
+            var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            await BFR.Store.StoreRatingService.RequestRateAndReviewAsync(hwnd);
+        };
+        content.Children.Add(rateButton);
 
         var close = new Button
         {

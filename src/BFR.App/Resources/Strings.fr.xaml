@@ -143,6 +143,8 @@
     <sys:String x:Key="RuleToggleA11y">Activer ou désactiver la règle</sys:String>
     <sys:String x:Key="RuleDelete">Supprimer la règle</sys:String>
     <sys:String x:Key="RuleEditHint">Ouvrir les options de la règle</sys:String>
+    <sys:String x:Key="RuleCollapse">Réduire les options</sys:String>
+    <sys:String x:Key="RuleExpand">Développer les options</sys:String>
     <sys:String x:Key="RuleMenuSave">Enregistrer comme nouveau préréglage</sys:String>
     <sys:String x:Key="RuleMenuImport">Importer un préréglage</sys:String>
     <sys:String x:Key="RuleMenuExport">Exporter le préréglage</sys:String>
@@ -401,4 +403,15 @@
     <sys:String x:Key="WatchOptionsTitle">Réglages de surveillance</sys:String>
     <sys:String x:Key="WatchLogTitle">Événements récents</sys:String>
     <sys:String x:Key="UpdateDownload">Télécharger la nouvelle version</sys:String>
+    <sys:String x:Key="ColSelectTooltip">Tout sélectionner ou désélectionner</sys:String>
+    <sys:String x:Key="CtxOpenFile">Ouvrir le fichier</sys:String>
+    <sys:String x:Key="CtxOpenFolder">Ouvrir le dossier dans l'Explorateur</sys:String>
+    <sys:String x:Key="CtxCopyOldName">Copier l'ancien nom</sys:String>
+    <sys:String x:Key="CtxCopyNewName">Copier le nouveau nom</sys:String>
+    <sys:String x:Key="CtxToggleSelect">Basculer la sélection</sys:String>
+    <sys:String x:Key="CtxRemoveFromList">Retirer de la liste</sys:String>
+    <sys:String x:Key="MenuRateApp">Évaluer l'application</sys:String>
+    <sys:String x:Key="RateApp">⭐ Évaluer sur le Microsoft Store</sys:String>
+    <sys:String x:Key="RateAppTitle">Évaluer BFR</sys:String>
+    <sys:String x:Key="RateAppPrompt">Appréciez-vous BFR ? Prenez un instant pour nous évaluer sur le Microsoft Store !</sys:String>
 </ResourceDictionary>

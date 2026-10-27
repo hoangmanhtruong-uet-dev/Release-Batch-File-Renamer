@@ -143,6 +143,8 @@
     <sys:String x:Key="RuleToggleA11y">Enable or disable rule</sys:String>
     <sys:String x:Key="RuleDelete">Delete rule</sys:String>
     <sys:String x:Key="RuleEditHint">Open rule options</sys:String>
+    <sys:String x:Key="RuleCollapse">Collapse options</sys:String>
+    <sys:String x:Key="RuleExpand">Expand options</sys:String>
     <sys:String x:Key="RuleMenuSave">Save as new preset</sys:String>
     <sys:String x:Key="RuleMenuImport">Import preset</sys:String>
     <sys:String x:Key="RuleMenuExport">Export preset</sys:String>
@@ -401,4 +403,15 @@
     <sys:String x:Key="WatchOptionsTitle">Watch settings</sys:String>
     <sys:String x:Key="WatchLogTitle">Recent events</sys:String>
     <sys:String x:Key="UpdateDownload">Download the new version</sys:String>
+    <sys:String x:Key="ColSelectTooltip">Select or deselect all</sys:String>
+    <sys:String x:Key="CtxOpenFile">Open file</sys:String>
+    <sys:String x:Key="CtxOpenFolder">Open folder in Explorer</sys:String>
+    <sys:String x:Key="CtxCopyOldName">Copy original name</sys:String>
+    <sys:String x:Key="CtxCopyNewName">Copy new name</sys:String>
+    <sys:String x:Key="CtxToggleSelect">Toggle selection</sys:String>
+    <sys:String x:Key="CtxRemoveFromList">Remove from list</sys:String>
+    <sys:String x:Key="MenuRateApp">Rate this app</sys:String>
+    <sys:String x:Key="RateApp">⭐ Rate on Microsoft Store</sys:String>
+    <sys:String x:Key="RateAppTitle">Rate BFR</sys:String>
+    <sys:String x:Key="RateAppPrompt">Are you enjoying BFR? Please take a moment to rate us on the Microsoft Store to support future updates!</sys:String>
 </ResourceDictionary>

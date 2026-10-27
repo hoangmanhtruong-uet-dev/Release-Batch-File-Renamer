@@ -1,0 +1,15 @@
+<Project>
+  <Target Name="AutoSignOutput" AfterTargets="AfterBuild" Condition="Exists('$(MSBuildThisFileDirectory)build\certs\bfr-dev.pfx') and '$(OS)' == 'Windows_NT'">
+    <PropertyGroup>
+      <SignToolExe>C:\Users\ADMIN\.nuget\packages\microsoft.windows.sdk.buildtools\10.0.22621.3233\bin\10.0.22621.0\x64\signtool.exe</SignToolExe>
+      <CertPath>$(MSBuildThisFileDirectory)build\certs\bfr-dev.pfx</CertPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <FilesToSign Include="$(TargetDir)*.dll" />
+      <FilesToSign Include="$(TargetDir)*.exe" />
+    </ItemGroup>
+    <Exec Command="&quot;$(SignToolExe)&quot; sign /f &quot;$(CertPath)&quot; /p &quot;bfr-dev&quot; /fd SHA256 &quot;%(FilesToSign.Identity)&quot;"
+          Condition="Exists('$(SignToolExe)')"
+          ContinueOnError="true" />
+  </Target>
+</Project>

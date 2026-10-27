@@ -267,6 +267,51 @@ public class ViewModelTests : IDisposable
         Assert.Equal("Trim", vm.Rules[1].Type);
     }
 
+    [Fact]
+    public void AreAllRowsSelected_TriState_ReflectsRowSelection()
+    {
+        var vm = CreateViewModel();
+        Assert.False(vm.AreAllRowsSelected); // Empty rows
+
+        var item1 = Item("File1.txt", 100);
+        var item2 = Item("File2.txt", 200);
+
+        var row1 = new PreviewRowViewModel(item1, "File1.txt", "File1.txt", PreviewStatus.Ok, null, isSelected: true);
+        var row2 = new PreviewRowViewModel(item2, "File2.txt", "File2.txt", PreviewStatus.Ok, null, isSelected: true);
+
+        vm.Rows.Add(row1);
+        vm.Rows.Add(row2);
+
+        Assert.True(vm.AreAllRowsSelected);
+
+        row1.IsSelected = false;
+        Assert.Null(vm.AreAllRowsSelected);
+
+        row2.IsSelected = false;
+        Assert.False(vm.AreAllRowsSelected);
+
+        vm.AreAllRowsSelected = true;
+        Assert.True(row1.IsSelected);
+        Assert.True(row2.IsSelected);
+        Assert.True(vm.AreAllRowsSelected);
+    }
+
+    [Fact]
+    public void RemoveRow_RemovesItemAndUpdatesCounts()
+    {
+        var vm = CreateViewModel();
+        var item1 = Item("File1.txt", 100);
+        var row1 = new PreviewRowViewModel(item1, "File1.txt", "File1.txt", PreviewStatus.Ok, null, isSelected: true);
+
+        vm.Rows.Add(row1);
+        vm.FilteredRows.Add(row1);
+
+        Assert.Single(vm.Rows);
+        vm.RemoveRow(row1);
+        Assert.Empty(vm.Rows);
+        Assert.Empty(vm.FilteredRows);
+    }
+
     private static FileItem Item(string name, long size, int loadOrder = 0) => new(
         FullPath: Path.Combine("C:\\data", name),
         Directory: "C:\\data",

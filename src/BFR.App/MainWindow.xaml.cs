@@ -60,10 +60,12 @@ public partial class MainWindow : Window
         _collectorTimer.Tick += (_, _) => OnCollectorTimeout();
 
         KeyDown += MainWindow_KeyDown;
+        StateChanged += (_, _) => UpdateMaximizeButton();
         Loaded += (_, _) =>
         {
             ThemeManager.RefreshBackdrop(this);
             UpdateLicenseState();
+            UpdateMaximizeButton();
         };
 
         PresetCombo.ItemsSource = _vm.Presets;
@@ -218,6 +220,7 @@ public partial class MainWindow : Window
         menu.Items.Add(new Separator());
         menu.Items.Add(MenuItem(Loc.T("MenuImportExportPreset"), ImportExportPreset_Click));
         menu.Items.Add(MenuItem(Loc.T("MenuCheckUpdate"), CheckUpdate_Click));
+        menu.Items.Add(MenuItem(Loc.T("MenuRateApp"), RateApp_Click));
 
         menu.PlacementTarget = (FrameworkElement)sender;
         menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
@@ -275,6 +278,64 @@ public partial class MainWindow : Window
     private void RuleDelete_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement { Tag: RuleCardViewModel card }) _vm.RemoveRule(card);
+    }
+
+    private void RuleMoreMenu_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: RuleCardViewModel card } btn) return;
+
+        var menu = new ContextMenu { Style = (Style)FindResource("AppContextMenuStyle") };
+
+        var expandItem = new MenuItem
+        {
+            Header = card.IsExpanded ? Loc.T("RuleCollapse") : Loc.T("RuleEditHint"),
+            Style = (Style)FindResource("AppMenuItemStyle")
+        };
+        expandItem.Click += (_, _) => card.IsExpanded = !card.IsExpanded;
+        menu.Items.Add(expandItem);
+
+        var upItem = new MenuItem
+        {
+            Header = Loc.T("RuleMoveUp"),
+            Style = (Style)FindResource("AppMenuItemStyle"),
+            IsEnabled = card.MoveUpCommand.CanExecute(null)
+        };
+        upItem.Click += (_, _) => card.MoveUpCommand.Execute(null);
+        menu.Items.Add(upItem);
+
+        var downItem = new MenuItem
+        {
+            Header = Loc.T("RuleMoveDown"),
+            Style = (Style)FindResource("AppMenuItemStyle"),
+            IsEnabled = card.MoveDownCommand.CanExecute(null)
+        };
+        downItem.Click += (_, _) => card.MoveDownCommand.Execute(null);
+        menu.Items.Add(downItem);
+
+        if (card.CanOpenRegexTester)
+        {
+            var regexItem = new MenuItem
+            {
+                Header = Loc.T("RegexTesterTitle"),
+                Style = (Style)FindResource("AppMenuItemStyle")
+            };
+            regexItem.Click += (_, _) => OpenRegexTesterFor(card);
+            menu.Items.Add(regexItem);
+        }
+
+        menu.Items.Add(new Separator());
+
+        var deleteItem = new MenuItem
+        {
+            Header = Loc.T("RuleDelete"),
+            Style = (Style)FindResource("AppMenuItemStyle")
+        };
+        deleteItem.Click += (_, _) => _vm.RemoveRule(card);
+        menu.Items.Add(deleteItem);
+
+        menu.PlacementTarget = btn;
+        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        menu.IsOpen = true;
     }
 
     // ---------------------------------------------------------------- Kéo-thả đổi thứ tự quy tắc
@@ -453,6 +514,7 @@ public partial class MainWindow : Window
         if (confirm.ShowDialog() != true) return;
 
         await _vm.ApplyAsync();
+        CheckAndPromptStoreRating();
     }
 
     private async void Undo_Click(object sender, RoutedEventArgs e)
@@ -815,6 +877,119 @@ public partial class MainWindow : Window
         search?.Focus();
     }
 
+    private async void RateApp_Click(object sender, RoutedEventArgs e)
+    {
+        var hwnd = new WindowInteropHelper(this).Handle;
+        await BFR.Store.StoreRatingService.RequestRateAndReviewAsync(hwnd);
+    }
+
+    private async void CheckAndPromptStoreRating()
+    {
+        var settings = SettingsStore.Load();
+        settings.SuccessfulRenameCount++;
+        SettingsStore.Save(settings);
+
+        if (!settings.HasPromptedRating && settings.SuccessfulRenameCount >= 2)
+        {
+            settings.HasPromptedRating = true;
+            SettingsStore.Save(settings);
+
+            var answer = MessageBox.Show(
+                this,
+                Loc.T("RateAppPrompt"),
+                Loc.T("RateAppTitle"),
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Information);
+
+            if (answer == MessageBoxResult.Yes)
+            {
+                var hwnd = new WindowInteropHelper(this).Handle;
+                await BFR.Store.StoreRatingService.RequestRateAndReviewAsync(hwnd);
+            }
+        }
+    }
+
+    // ----------------------------------------------------------------- Preview Context Menu
+
+    private PreviewRowViewModel? GetContextMenuRow(object sender)
+    {
+        if (sender is MenuItem menuItem && menuItem.Parent is ContextMenu contextMenu)
+        {
+            if (contextMenu.PlacementTarget is DataGridRow row && row.DataContext is PreviewRowViewModel vm)
+            {
+                return vm;
+            }
+        }
+        return PreviewGrid.SelectedItem as PreviewRowViewModel;
+    }
+
+    private void ContextMenu_OpenFile_Click(object sender, RoutedEventArgs e)
+    {
+        if (GetContextMenuRow(sender) is not { } row) return;
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = row.File.FullPath,
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, Loc.T("WindowTitle"), MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void ContextMenu_OpenFolder_Click(object sender, RoutedEventArgs e)
+    {
+        if (GetContextMenuRow(sender) is not { } row) return;
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = $"/select,\"{row.File.FullPath}\"",
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, ex.Message, Loc.T("WindowTitle"), MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void ContextMenu_CopyOldName_Click(object sender, RoutedEventArgs e)
+    {
+        if (GetContextMenuRow(sender) is { } row)
+        {
+            Clipboard.SetText(row.OldName);
+        }
+    }
+
+    private void ContextMenu_CopyNewName_Click(object sender, RoutedEventArgs e)
+    {
+        if (GetContextMenuRow(sender) is { } row)
+        {
+            Clipboard.SetText(row.NewName);
+        }
+    }
+
+    private void ContextMenu_ToggleSelect_Click(object sender, RoutedEventArgs e)
+    {
+        if (GetContextMenuRow(sender) is { } row)
+        {
+            row.IsSelected = !row.IsSelected;
+        }
+    }
+
+    private void ContextMenu_RemoveFromList_Click(object sender, RoutedEventArgs e)
+    {
+        if (GetContextMenuRow(sender) is { } row)
+        {
+            _vm.RemoveRow(row);
+        }
+    }
+
     private static T? FindVisualChild<T>(DependencyObject parent, string name) where T : FrameworkElement
     {
         if (parent is T typed && typed.Name == name) return typed;
@@ -827,5 +1002,23 @@ public partial class MainWindow : Window
         }
 
         return null;
+    }
+
+    private void TitleBar_Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+
+    private void TitleBar_Maximize_Click(object sender, RoutedEventArgs e)
+    {
+        WindowState = (WindowState == WindowState.Maximized) ? WindowState.Normal : WindowState.Maximized;
+        UpdateMaximizeButton();
+    }
+
+    private void TitleBar_Close_Click(object sender, RoutedEventArgs e) => Close();
+
+    private void UpdateMaximizeButton()
+    {
+        if (MaximizeButtonGlyph != null)
+        {
+            MaximizeButtonGlyph.Text = (WindowState == WindowState.Maximized) ? "\uE923" : "\uE922";
+        }
     }
 }

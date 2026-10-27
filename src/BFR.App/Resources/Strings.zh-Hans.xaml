@@ -143,6 +143,8 @@
     <sys:String x:Key="RuleToggleA11y">启用或停用规则</sys:String>
     <sys:String x:Key="RuleDelete">删除规则</sys:String>
     <sys:String x:Key="RuleEditHint">打开规则选项</sys:String>
+    <sys:String x:Key="RuleCollapse">折叠选项</sys:String>
+    <sys:String x:Key="RuleExpand">展开选项</sys:String>
     <sys:String x:Key="RuleMenuSave">另存为新预设</sys:String>
     <sys:String x:Key="RuleMenuImport">导入预设</sys:String>
     <sys:String x:Key="RuleMenuExport">导出预设</sys:String>
@@ -401,4 +403,15 @@
     <sys:String x:Key="WatchOptionsTitle">监视设置</sys:String>
     <sys:String x:Key="WatchLogTitle">最近事件</sys:String>
     <sys:String x:Key="UpdateDownload">下载新版本</sys:String>
+    <sys:String x:Key="ColSelectTooltip">全选或取消全选</sys:String>
+    <sys:String x:Key="CtxOpenFile">打开文件</sys:String>
+    <sys:String x:Key="CtxOpenFolder">在文件资源管理器中打开文件夹</sys:String>
+    <sys:String x:Key="CtxCopyOldName">复制原文件名</sys:String>
+    <sys:String x:Key="CtxCopyNewName">复制新文件名</sys:String>
+    <sys:String x:Key="CtxToggleSelect">切换选中状态</sys:String>
+    <sys:String x:Key="CtxRemoveFromList">从列表中移除</sys:String>
+    <sys:String x:Key="MenuRateApp">评价此应用</sys:String>
+    <sys:String x:Key="RateApp">⭐ 在 Microsoft Store 评价应用</sys:String>
+    <sys:String x:Key="RateAppTitle">评价 BFR</sys:String>
+    <sys:String x:Key="RateAppPrompt">您喜欢使用 BFR 吗？请花一点时间在 Microsoft Store 给我们评价以支持后续开发！</sys:String>
 </ResourceDictionary>
