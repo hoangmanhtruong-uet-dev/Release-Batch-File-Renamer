@@ -36,7 +36,7 @@ Nhánh `feat/shelf` đã được push lên `origin`. Trạng thái theo giai đ
 | 0. Ổn định nhánh | Gần xong | 0.1 ✅ (162 + 74 + 7 test, PerfGate đạt mọi ngưỡng) · 0.2 nhánh đã push, **chờ Dev mở PR** · 0.3 **chờ Dev** · 0.4 ✅ |
 | 1. Sửa lỗi tồn đọng | ✅ Xong | 10/10 mục (mục 9: đã xoá `RuleEditorWindow` vì không còn nơi nào mở) |
 | 2. Hoàn thiện tính năng | ✅ Xong phần code | 2.1–2.5 ✅. 2.1 mới kiểm chứng ở bản portable; `StartupTask` của MSIX **chưa kiểm chứng** (cần gói đã ký) |
-| 3. Kiểm thử phát hành và chuẩn bị Store | Đang làm | Xong: privacy policy, release notes, Store listing, version 1.3.0, dựng được gói MSIX chưa ký. Chưa: WACK, nâng cấp từ 1.2.2, Windows 10, DPI, ảnh Store mới, đăng privacy policy |
+| 3. Kiểm thử phát hành và chuẩn bị Store | Đang làm | Xong: privacy policy, release notes, Store listing, version 1.3.0 (có test canh lệch), dựng được gói MSIX chưa ký (`makeappx` chấp nhận manifest, gồm `StartupTask`), bản publish self-contained chạy được, **hồi quy GUI** (xem trước → hộp thoại xác nhận → áp dụng → hoàn tác trên đĩa) và **hồi quy CLI** (dry-run, đổi tên, hoàn tác) đều đúng. Chưa (cần môi trường/thiết bị khác): WACK, nâng cấp từ 1.2.2, Windows 10, DPI 125%/150% và đa màn hình, ký gói, ảnh Store mới, đăng privacy policy |
 | 4. Nộp Store | Chưa | Chờ Giai đoạn 3 |
 
 **Link tạo PR:** https://github.com/hoangmanhtruong-uet-dev/Release-Batch-File-Renamer/pull/new/feat/shelf (CI chỉ chạy khi mở PR vào `main`).
