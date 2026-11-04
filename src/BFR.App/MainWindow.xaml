@@ -700,11 +700,11 @@
                 <!-- Nút Hoàn tác & Áp dụng -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <ui:Button Appearance="Secondary" Content="{DynamicResource Undo}" Click="Undo_Click"
-                            Command="{Binding UndoCommand}" Margin="0,0,8,0" Padding="14,7"
+                            IsEnabled="{Binding CanUndo}" Margin="0,0,8,0" Padding="14,7"
                             AutomationProperties.Name="Undo last rename" />
 
                     <ui:Button x:Name="ApplyButton" Appearance="Primary" Click="Apply_Click"
-                            Command="{Binding ApplyCommand}" MinWidth="200" Height="36"
+                            IsEnabled="{Binding CanApply}" MinWidth="200" Height="36"
                             AutomationProperties.Name="Apply renaming">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" FontSize="13"
