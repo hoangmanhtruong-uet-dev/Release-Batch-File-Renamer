@@ -131,12 +131,7 @@ public partial class MainWindow : FluentWindow
     /// <summary>Bấm badge cấp: nếu đã là Pro thì mở màn hình thông tin license.</summary>
     private void TierBadge_Click(object sender, RoutedEventArgs e)
     {
-        if (_license.Status.IsPro && !_license.Status.IsTrial)
-        {
-            new LicenseInfoWindow(_license.License, _license.Status) { Owner = this }.ShowDialog();
-            return;
-        }
-
+        // Đã là Pro: hộp thoại hiện thông tin license; Free/dùng thử: hộp thoại nâng cấp.
         ShowUpgradeDialog(contextFeature: null);
     }
 
@@ -635,8 +630,12 @@ public partial class MainWindow : FluentWindow
         var summary = _vm.BuildApplySummary();
         if (summary.FileCount == 0) return;
 
-        var confirm = new ApplyConfirmWindow(summary);
-        if (confirm.ShowDialog() != true) return;
+        var confirmed = await ShowDialogAsync(
+            ApplyConfirmContent.Title(summary),
+            ApplyConfirmContent.Build(summary),
+            primaryText: Loc.T("ConfirmApplyButton"),
+            closeText: Loc.T("ConfirmCancel"));
+        if (!confirmed) return;
 
         await _vm.ApplyAsync();
         CheckAndPromptStoreRating();
@@ -730,6 +729,31 @@ public partial class MainWindow : FluentWindow
         }
 
         OpenRegexTesterFor(card);
+    }
+
+    // ----------------------------------------------------------------- Hộp thoại nổi (ContentDialog)
+
+    /// <summary>
+    /// Hiện hộp thoại nổi ngay trong cửa sổ (không mở cửa sổ mới). Trả về true nếu người dùng chọn nút chính.
+    /// Cửa sổ chính được đưa lên trước nếu đang ẩn trong khay.
+    /// </summary>
+    private async System.Threading.Tasks.Task<bool> ShowDialogAsync(
+        string title, object content, string primaryText, string closeText, bool showFooter = true)
+    {
+        ActivateAndForeground();
+
+        var dialog = new Wpf.Ui.Controls.ContentDialog(DialogHost)
+        {
+            Title = title,
+            Content = content,
+            PrimaryButtonText = primaryText,
+            CloseButtonText = closeText,
+            DefaultButton = Wpf.Ui.Controls.ContentDialogButton.Primary,
+            IsFooterVisible = showFooter
+        };
+
+        var result = await dialog.ShowAsync();
+        return result == Wpf.Ui.Controls.ContentDialogResult.Primary;
     }
 
     // ----------------------------------------------------------------- Điều hướng (v1.4)
@@ -940,21 +964,25 @@ public partial class MainWindow : FluentWindow
     /// </summary>
     private void Upgrade_Click(object sender, RoutedEventArgs e)
     {
-        if (_license.Status.IsPro && !_license.Status.IsTrial)
-        {
-            new LicenseInfoWindow(_license.License, _license.Status) { Owner = this }.ShowDialog();
-            return;
-        }
-
         ShowUpgradeDialog(contextFeature: null);
     }
 
     /// <summary>Mở hộp thoại nâng cấp, kèm dòng bối cảnh nêu tính năng đang cần Pro.</summary>
     private void ShowUpgradeDialog(ProFeature? contextFeature)
     {
+        _ = ShowUpgradeDialogAsync(contextFeature);
+    }
+
+    /// <summary>
+    /// Hộp thoại nâng cấp Pro hiện ngay trong cửa sổ (ContentDialog). Nếu đã là Pro (không phải dùng thử)
+    /// thì hiện thông tin license thay vì hộp nâng cấp.
+    /// </summary>
+    private async System.Threading.Tasks.Task ShowUpgradeDialogAsync(ProFeature? contextFeature)
+    {
         if (_license.Status.IsPro && !_license.Status.IsTrial)
         {
-            new LicenseInfoWindow(_license.License, _license.Status) { Owner = this }.ShowDialog();
+            await ShowDialogAsync(Loc.T("LicenseInfoTitle"), LicenseInfoContent.Build(_license.License, _license.Status),
+                primaryText: string.Empty, closeText: Loc.T("SettingsClose"));
             return;
         }
 
@@ -966,8 +994,16 @@ public partial class MainWindow : FluentWindow
             settings.ProPriceText,
             new LocStringProvider());
 
-        var window = new UpgradeWindow(vm) { Owner = this };
-        window.ShowDialog();
+        var view = new UpgradeView(vm);
+        ActivateAndForeground();
+        var dialog = new Wpf.Ui.Controls.ContentDialog(DialogHost)
+        {
+            Content = view,
+            IsFooterVisible = false
+        };
+        view.CloseRequested += (_, _) => dialog.Hide();
+
+        await dialog.ShowAsync();
 
         UpdateLicenseState();
         _ = _vm.RebuildAsync();
