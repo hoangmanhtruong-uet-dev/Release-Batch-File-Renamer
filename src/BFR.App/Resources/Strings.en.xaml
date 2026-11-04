@@ -428,4 +428,9 @@
     <sys:String x:Key="SettingsShake">Shake the mouse while dragging files to open Shelf</sys:String>
     <sys:String x:Key="SettingsShakeHint">Watches the mouse system-wide while enabled. Handled locally; nothing is recorded or sent.</sys:String>
     <sys:String x:Key="SettingsRunInBackground">Keep running in the system tray when the window is closed</sys:String>
+    <sys:String x:Key="SettingsStartWithWindows">Start with Windows (in the tray)</sys:String>
+    <sys:String x:Key="SettingsStartupBlocked">Windows is blocking this startup entry. Turn it back on in Settings > Apps > Startup.</sys:String>
+    <sys:String x:Key="SettingsOpenStartupApps">Open Startup settings</sys:String>
+    <sys:String x:Key="FeatureUnlimitedShelf">Unlimited files in Shelf</sys:String>
+    <sys:String x:Key="FeatureLimitShelf">Up to {0} files</sys:String>
 </ResourceDictionary>

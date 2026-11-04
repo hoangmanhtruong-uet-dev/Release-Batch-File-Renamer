@@ -38,13 +38,35 @@ public partial class ShelfWindow : Wpf.Ui.Controls.FluentWindow
         HintText.Text = Loc.T("ShelfHint");
 
         _model.Items.CollectionChanged += (_, _) => Refresh();
+        Closed += (_, _) => _autoClose?.Stop();
         Refresh();
+    }
+
+    private System.Windows.Threading.DispatcherTimer? _autoClose;
+
+    /// <summary>
+    /// Tự đóng nếu sau <paramref name="delay"/> mà khay vẫn trống, chuột không ở trên khay và
+    /// người dùng không còn giữ nút trái (đang kéo). Dùng cho Shelf mở bằng lắc chuột.
+    /// </summary>
+    public void AutoCloseWhenUnused(TimeSpan delay)
+    {
+        _autoClose?.Stop();
+        _autoClose = new System.Windows.Threading.DispatcherTimer { Interval = delay };
+        _autoClose.Tick += (_, _) =>
+        {
+            if (!_model.IsEmpty) { _autoClose?.Stop(); return; }          // đã có tệp: giữ lại
+            if (IsMouseOver || BFR.App.Infrastructure.MouseHook.IsLeftButtonDown) return;   // chờ tiếp
+            _autoClose?.Stop();
+            Close();
+        };
+        _autoClose.Start();
     }
 
     /// <summary>Thêm đường dẫn từ bên ngoài (ví dụ lệnh trong cửa sổ chính).</summary>
     public void AddPaths(IEnumerable<string> paths)
     {
         var result = _model.Add(paths);
+        if (result.Added > 0) _autoClose?.Stop();
         if (result.HitLimit) _onLimitReached(ProFeature.UnlimitedShelf);
     }
 

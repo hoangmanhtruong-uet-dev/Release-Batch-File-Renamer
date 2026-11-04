@@ -428,4 +428,9 @@
     <sys:String x:Key="SettingsShake">Lắc chuột khi đang kéo tệp để mở Shelf</sys:String>
     <sys:String x:Key="SettingsShakeHint">Cần theo dõi chuột toàn hệ thống khi bật. Chỉ xử lý trên máy, không ghi lại hay gửi đi.</sys:String>
     <sys:String x:Key="SettingsRunInBackground">Chạy nền ở khay hệ thống khi đóng cửa sổ</sys:String>
+    <sys:String x:Key="SettingsStartWithWindows">Khởi động cùng Windows (chạy nền ở khay)</sys:String>
+    <sys:String x:Key="SettingsStartupBlocked">Windows đang chặn mục khởi động này. Bật lại trong Cài đặt > Ứng dụng > Khởi động.</sys:String>
+    <sys:String x:Key="SettingsOpenStartupApps">Mở cài đặt Khởi động</sys:String>
+    <sys:String x:Key="FeatureUnlimitedShelf">Shelf không giới hạn số tệp</sys:String>
+    <sys:String x:Key="FeatureLimitShelf">Tối đa {0} tệp</sys:String>
 </ResourceDictionary>

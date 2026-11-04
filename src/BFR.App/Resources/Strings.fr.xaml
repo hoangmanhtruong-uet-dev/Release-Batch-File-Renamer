@@ -428,4 +428,9 @@
     <sys:String x:Key="SettingsShake">Secouer la souris en faisant glisser des fichiers pour ouvrir le Shelf</sys:String>
     <sys:String x:Key="SettingsShakeHint">Surveille la souris sur tout le système lorsque l'option est activée. Traitement local ; rien n'est enregistré ni envoyé.</sys:String>
     <sys:String x:Key="SettingsRunInBackground">Continuer en arrière-plan dans la zone de notification à la fermeture de la fenêtre</sys:String>
+    <sys:String x:Key="SettingsStartWithWindows">Démarrer avec Windows (dans la zone de notification)</sys:String>
+    <sys:String x:Key="SettingsStartupBlocked">Windows bloque cette entrée de démarrage. Réactivez-la dans Paramètres > Applications > Démarrage.</sys:String>
+    <sys:String x:Key="SettingsOpenStartupApps">Ouvrir les paramètres de démarrage</sys:String>
+    <sys:String x:Key="FeatureUnlimitedShelf">Nombre de fichiers illimité dans le Shelf</sys:String>
+    <sys:String x:Key="FeatureLimitShelf">{0} fichiers maximum</sys:String>
 </ResourceDictionary>

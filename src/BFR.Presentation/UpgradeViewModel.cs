@@ -260,6 +260,7 @@ public sealed class UpgradeViewModel : ObservableObject
         ProFeature.ReportExport => "FeatureReportExport",
         ProFeature.CommandLine => "FeatureCommandLine",
         ProFeature.RomanNumbering => "FeatureUnlimitedRules",
+        ProFeature.UnlimitedShelf => "FeatureUnlimitedShelf",
         _ => "FeatureUnlimitedRules"
     };
 
@@ -311,6 +312,12 @@ public sealed class UpgradeViewModel : ObservableObject
                 s.T("FeatureNotIncluded"),
                 s.T("FeatureIncluded"),
                 free.AllowCommandLine,
+                true),
+            new(
+                s.T("FeatureUnlimitedShelf"),
+                s.F("FeatureLimitShelf", free.MaxShelfItems),
+                s.T("FeatureUnlimited"),
+                free.MaxShelfItems == int.MaxValue,
                 true)
         };
     }

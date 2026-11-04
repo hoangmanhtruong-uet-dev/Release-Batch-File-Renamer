@@ -103,6 +103,64 @@ public class SettingsWindow : Ui.FluentWindow
         bg.Margin = new Thickness(0, 12, 0, 0);
         shelf.Children.Add(bg);
 
+        // Khởi động cùng Windows: chỉ có nghĩa khi bật chạy nền (ứng dụng khởi động ẩn trong khay).
+        Ui.ToggleSwitch? startup = null;
+        var startupHint = Caption(Loc.T("SettingsStartupBlocked"));
+        startupHint.Visibility = Visibility.Collapsed;
+        var openStartupApps = new Ui.Button
+        {
+            Content = Loc.T("SettingsOpenStartupApps"),
+            Appearance = Ui.ControlAppearance.Secondary,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(0, 4, 0, 0),
+            Visibility = Visibility.Collapsed
+        };
+        openStartupApps.Click += (_, _) =>
+        {
+            try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("ms-settings:startupapps") { UseShellExecute = true }); }
+            catch { /* không mở được trang cài đặt: bỏ qua */ }
+        };
+
+        var suppress = false;   // đặt IsChecked bằng code không được kích hoạt lại logic bật/tắt
+        startup = Toggle(Loc.T("SettingsStartWithWindows"), false, _ => { });
+        startup.Margin = new Thickness(0, 12, 0, 0);
+        startup.Checked += async (_, _) =>
+        {
+            if (suppress) return;
+            // Khởi động ẩn chỉ hợp lý khi có biểu tượng khay: tự bật chạy nền.
+            if (bg.IsChecked != true) bg.IsChecked = true;
+            var state = await AutoStart.SetEnabledAsync(true);
+            if (state != AutoStartState.Enabled)
+            {
+                suppress = true; startup.IsChecked = false; suppress = false;
+                var blocked = state is AutoStartState.DisabledByUser or AutoStartState.DisabledByPolicy;
+                startupHint.Visibility = openStartupApps.Visibility = blocked ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                startupHint.Visibility = openStartupApps.Visibility = Visibility.Collapsed;
+            }
+        };
+        startup.Unchecked += async (_, _) =>
+        {
+            if (suppress) return;
+            await AutoStart.SetEnabledAsync(false);
+        };
+        // Tắt chạy nền thì cũng tắt khởi động cùng Windows.
+        bg.Unchecked += (_, _) => { if (startup.IsChecked == true) startup.IsChecked = false; };
+        shelf.Children.Add(startup);
+        shelf.Children.Add(startupHint);
+        shelf.Children.Add(openStartupApps);
+        Loaded += async (_, _) =>
+        {
+            var current = await AutoStart.GetStateAsync();
+            suppress = true; startup.IsChecked = current == AutoStartState.Enabled; suppress = false;
+            if (current is AutoStartState.DisabledByUser or AutoStartState.DisabledByPolicy)
+            {
+                startupHint.Visibility = openStartupApps.Visibility = Visibility.Visible;
+            }
+        };
+
         // ---- Cập nhật ----
         var updates = Card(content, Loc.T("SettingsUpdates"));
         updates.Children.Add(Toggle(Loc.T("SettingsCheckUpdates"), _settings.CheckForUpdates,

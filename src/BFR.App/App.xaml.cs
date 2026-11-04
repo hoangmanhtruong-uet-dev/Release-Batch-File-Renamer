@@ -144,7 +144,7 @@ public partial class App : Application
         _server.Start();
 
         // --background: khởi động thẳng vào khay (chỉ khi đã bật chạy nền), không hiện cửa sổ.
-        var startHidden = StartHidden && settings.RunInBackground;
+        var startHidden = (StartHidden || AutoStart.LaunchedByStartup()) && settings.RunInBackground;
         if (startHidden)
         {
             // Cần handle để cửa sổ chính nhận IPC và hook chuột dù chưa từng hiện.

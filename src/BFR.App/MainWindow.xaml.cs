@@ -221,7 +221,7 @@ public partial class MainWindow : FluentWindow
     /// <summary>Mở Shelf ngay tại con trỏ (toạ độ vật lý) để thả tệp đang kéo vào.</summary>
     private void OpenShelfAt(int screenX, int screenY)
     {
-        OpenShelf(activate: false);
+        var created = OpenShelf(activate: false);
         if (_shelf is null) return;
 
         var dpi = VisualTreeHelper.GetDpi(this);
@@ -231,14 +231,17 @@ public partial class MainWindow : FluentWindow
         var maxTop = SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - _shelf.Height;
         _shelf.Left = Math.Clamp(vx - _shelf.Width / 2, SystemParameters.VirtualScreenLeft, Math.Max(SystemParameters.VirtualScreenLeft, maxLeft));
         _shelf.Top = Math.Clamp(vy - 80, SystemParameters.VirtualScreenTop, Math.Max(SystemParameters.VirtualScreenTop, maxTop));
+        // Mở bằng lắc mà không thả gì thì tự đóng, tránh để lại cửa sổ thừa.
+        if (created) _shelf.AutoCloseWhenUnused(TimeSpan.FromSeconds(6));
     }
 
     private void Shelf_Click(object sender, RoutedEventArgs e) => OpenShelf();
 
     /// <summary>Mở (hoặc đưa lên trước) khay tệp gom từ nhiều thư mục.</summary>
-    public void OpenShelf(IEnumerable<string>? paths = null, bool activate = true)
+    public bool OpenShelf(IEnumerable<string>? paths = null, bool activate = true)
     {
-        if (_shelf is null)
+        var created = _shelf is null;
+        if (created)
         {
             _shelf = new ShelfWindow(
                 _license.License,
@@ -257,10 +260,11 @@ public partial class MainWindow : FluentWindow
         }
         else
         {
-            _shelf.Activate();
+            if (activate) _shelf.Activate();
         }
 
         if (paths is not null) _shelf.AddPaths(paths);
+        return created;
     }
 
     private void SortCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
