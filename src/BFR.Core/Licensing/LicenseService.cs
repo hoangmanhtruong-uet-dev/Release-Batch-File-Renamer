@@ -194,6 +194,7 @@ public sealed class LicenseService
             ProFeature.ReportExport => limits.AllowReportExport,
             ProFeature.CommandLine => limits.AllowCommandLine,
             ProFeature.RomanNumbering => limits.AllowRomanNumbering,
+            ProFeature.UnlimitedShelf => limits.MaxShelfItems == int.MaxValue,
             _ => true
         };
 
@@ -212,6 +213,9 @@ public sealed class LicenseService
 
     /// <summary>Số preset người dùng tối đa được lưu.</summary>
     public int MaxSavedPresets => Limits.MaxSavedPresets;
+
+    /// <summary>Số tệp tối đa trong Shelf (Free: 50, Pro: không giới hạn).</summary>
+    public int MaxShelfItems => Limits.MaxShelfItems;
 
     /// <summary>Số mục lịch sử còn giữ để hoàn tác.</summary>
     public int MaxUndoEntries => Limits.MaxUndoEntries;
@@ -305,6 +309,7 @@ public static class FeatureMessages
         ProFeature.ReportExport => "Xuất báo cáo CSV/JSON là tính năng Pro.",
         ProFeature.CommandLine => "Công cụ dòng lệnh bfr là tính năng Pro.",
         ProFeature.RomanNumbering => "Đánh số kiểu La Mã là tính năng Pro.",
+        ProFeature.UnlimitedShelf => "Bản Free giữ tối đa 50 tệp trong Shelf. Nâng cấp Pro để không giới hạn.",
         _ => "Tính năng này cần bản Pro."
     };
 }

@@ -7,7 +7,6 @@
         MinHeight="620" MinWidth="1020"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
-        Icon="Resources/app.ico"
         Background="{DynamicResource AppBackground}"
         FontFamily="{StaticResource AppFont}"
         FontSize="{StaticResource AppFontSizeBody}"
@@ -318,6 +317,15 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
                             <TextBlock Text="{DynamicResource AddFolderButton}" Margin="6,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Rectangle Style="{StaticResource VerticalDividerStyle}" />
+
+                    <Button x:Name="ShelfButton" Style="{StaticResource SecondaryButtonStyle}" Click="Shelf_Click" Margin="6,0,0,0" Padding="12,6">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8A1;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
+                            <TextBlock x:Name="ShelfButtonText" Margin="6,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 

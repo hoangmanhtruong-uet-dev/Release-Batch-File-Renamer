@@ -79,6 +79,8 @@ public partial class MainWindow : Window
             PresetCombo.SelectedIndex = 0;
         }
         SortCombo.SelectedIndex = 0;
+        ShelfButtonText.Text = Loc.L("Khay tệp", "Shelf");
+        ShelfButton.ToolTip = Loc.L("Khay tệp (Ctrl+Shift+S)", "Shelf (Ctrl+Shift+S)");
 
         _vm.ProLimitReached += (_, feature) => ShowUpgradeDialog(feature);
 
@@ -181,6 +183,35 @@ public partial class MainWindow : Window
     }
 
     private void ClearList_Click(object sender, RoutedEventArgs e) => _vm.ClearList();
+
+    private ShelfWindow? _shelf;
+
+    private void Shelf_Click(object sender, RoutedEventArgs e) => OpenShelf();
+
+    /// <summary>Mở (hoặc đưa lên trước) khay tệp gom từ nhiều thư mục.</summary>
+    public void OpenShelf(IEnumerable<string>? paths = null)
+    {
+        if (_shelf is null)
+        {
+            _shelf = new ShelfWindow(
+                _license.License,
+                batch => EnqueuePaths(batch),
+                feature => ShowUpgradeDialog(feature))
+            {
+                Owner = this
+            };
+            _shelf.Left = Math.Max(0, Left + Width - _shelf.Width - 24);
+            _shelf.Top = Math.Max(0, Top + 96);
+            _shelf.Closed += (_, _) => _shelf = null;
+            _shelf.Show();
+        }
+        else
+        {
+            _shelf.Activate();
+        }
+
+        if (paths is not null) _shelf.AddPaths(paths);
+    }
 
     private void SortCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -553,6 +584,7 @@ public partial class MainWindow : Window
 
         registry.Register(Loc.T("CommandAddFiles"), files, () => AddFiles_Click(this, new RoutedEventArgs()), "Ctrl+O");
         registry.Register(Loc.T("CommandAddFolder"), files, () => AddFolder_Click(this, new RoutedEventArgs()), "Ctrl+Shift+O");
+        registry.Register(Loc.L("Mở khay tệp (Shelf)", "Open Shelf"), files, () => OpenShelf(), "Ctrl+Shift+S");
         registry.Register(Loc.T("CommandClearList"), files, () => ClearList_Click(this, new RoutedEventArgs()));
         registry.Register(Loc.T("CommandApply"), files, () => Apply_Click(this, new RoutedEventArgs()), "Ctrl+Enter");
         registry.Register(Loc.T("CommandUndo"), files, () => Undo_Click(this, new RoutedEventArgs()), "Ctrl+Z");
@@ -832,6 +864,13 @@ public partial class MainWindow : Window
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {
+        if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.S)
+        {
+            OpenShelf();
+            e.Handled = true;
+            return;
+        }
+
         if (Keyboard.Modifiers == ModifierKeys.Control)
         {
             switch (e.Key)
