@@ -18,6 +18,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using FluentWindow = Wpf.Ui.Controls.FluentWindow;
 
 /// <summary>
 /// Cửa sổ chính (bố cục v2.0 theo docs/Plan/BFR_UIUX_REBUILD_PLAN.md):
@@ -26,7 +27,7 @@ using System.Windows.Threading;
 /// Code-behind chỉ làm việc nối view ↔ <see cref="MainViewModel"/>; toàn bộ logic đổi tên
 /// vẫn nằm trong BFR.Core nên kết quả test INV-1..INV-6 không đổi.
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : FluentWindow
 {
     [DllImport("user32.dll")]
     private static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -60,12 +61,10 @@ public partial class MainWindow : Window
         _collectorTimer.Tick += (_, _) => OnCollectorTimeout();
 
         KeyDown += MainWindow_KeyDown;
-        StateChanged += (_, _) => UpdateMaximizeButton();
         Loaded += (_, _) =>
         {
             ThemeManager.RefreshBackdrop(this);
             UpdateLicenseState();
-            UpdateMaximizeButton();
         };
 
         PresetCombo.ItemsSource = _vm.Presets;
@@ -1094,16 +1093,6 @@ public partial class MainWindow : Window
         return null;
     }
 
-    private void TitleBar_Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
-
-    private void TitleBar_Maximize_Click(object sender, RoutedEventArgs e)
-    {
-        WindowState = (WindowState == WindowState.Maximized) ? WindowState.Normal : WindowState.Maximized;
-        UpdateMaximizeButton();
-    }
-
-    private void TitleBar_Close_Click(object sender, RoutedEventArgs e) => Close();
-
     /// <summary>Chạy nền: đóng cửa sổ chỉ ẩn đi, trừ khi người dùng chọn Thoát ở khay.</summary>
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
@@ -1114,13 +1103,5 @@ public partial class MainWindow : Window
             return;
         }
         base.OnClosing(e);
-    }
-
-    private void UpdateMaximizeButton()
-    {
-        if (MaximizeButtonGlyph != null)
-        {
-            MaximizeButtonGlyph.Text = (WindowState == WindowState.Maximized) ? "\uE923" : "\uE922";
-        }
     }
 }

@@ -1,28 +1,20 @@
-<Window x:Class="BFR.App.MainWindow"
+<ui:FluentWindow x:Class="BFR.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:BFR.App"
         xmlns:conv="clr-namespace:BFR.App.Converters"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         Title="{DynamicResource WindowTitle}" Height="820" Width="1380"
         MinHeight="620" MinWidth="1020"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        Background="{DynamicResource AppBackground}"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
         FontFamily="{StaticResource AppFont}"
         FontSize="{StaticResource AppFontSizeBody}"
         TextOptions.TextFormattingMode="Ideal"
         UseLayoutRounding="True"
         AllowDrop="True" DragOver="Window_DragOver" Drop="Window_Drop"
         AutomationProperties.Name="Batch File Renamer Main Window">
-
-    <!-- Cấu hình thanh tiêu đề tràn viền Fluent Design (Windows 11) -->
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="42"
-                      CornerRadius="0"
-                      GlassFrameThickness="0"
-                      ResizeBorderThickness="6"
-                      UseAeroCaptionButtons="False" />
-    </WindowChrome.WindowChrome>
 
     <Window.Resources>
         <!-- Menu ngữ cảnh cho từng dòng trong bảng xem trước (v1.0.2) -->
@@ -216,84 +208,67 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="42" />  <!-- Row 0: Custom Window Chrome Titlebar -->
+            <RowDefinition Height="Auto" /> <!-- Row 0: TitleBar (WPF-UI) -->
             <RowDefinition Height="Auto" /> <!-- Row 1: CommandBar -->
             <RowDefinition Height="*" />    <!-- Row 2: Content (Rule Builder + Preview Grid) -->
             <RowDefinition Height="Auto" /> <!-- Row 3: Action Bar Footer -->
         </Grid.RowDefinitions>
 
-        <!-- ================= 0. Custom Fluent TitleBar ================= -->
-        <Grid Grid.Row="0" Background="{DynamicResource PanelBackground}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <!-- Logo, Tên App & Huy hiệu phiên bản -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
-                <Border Width="24" Height="24" CornerRadius="6" Background="{DynamicResource Accent}"
-                        VerticalAlignment="Center">
-                    <TextBlock Text="&#xE8C5;" FontFamily="{StaticResource IconFont}" FontSize="13"
-                               Foreground="{DynamicResource TextOnAccent}" HorizontalAlignment="Center"
+        <!-- ================= 0. TitleBar (WPF-UI) ================= -->
+        <ui:TitleBar Grid.Row="0" ShowMaximize="True" ShowMinimize="True"
+                     CloseWindowByDoubleClickOnIcon="False">
+            <ui:TitleBar.Header>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
+                    <!-- Logo & tên ứng dụng -->
+                    <Border Width="24" Height="24" CornerRadius="6" Background="{DynamicResource Accent}"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="&#xE8C5;" FontFamily="{StaticResource IconFont}" FontSize="13"
+                                   Foreground="{DynamicResource TextOnAccent}" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="{DynamicResource WindowTitle}" Margin="10,0,8,0" FontSize="13"
+                               FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}"
                                VerticalAlignment="Center" />
-                </Border>
-                <TextBlock Text="{DynamicResource WindowTitle}" Margin="10,0,8,0" FontSize="13"
-                           FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}"
-                           VerticalAlignment="Center" />
 
-                <!-- Badge cấp phép (Free / Pro) -->
-                <Button x:Name="TierBadge" Style="{StaticResource SubtleButtonStyle}"
-                        Click="TierBadge_Click" Padding="8,2" Height="22" Margin="4,0,0,0"
-                        Background="{DynamicResource AccentSoft}"
-                        BorderBrush="{DynamicResource AccentBorder}" BorderThickness="1"
-                        WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="License tier">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="Bd" Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
-                                    CornerRadius="11" Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Accent}" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                    <TextBlock x:Name="TierBadgeText" Text="Free" FontWeight="SemiBold" FontSize="10.5"
-                               Foreground="{DynamicResource Accent}" />
-                </Button>
+                    <!-- Badge cấp phép (Free / Pro) -->
+                    <Button x:Name="TierBadge" Style="{StaticResource SubtleButtonStyle}"
+                            Click="TierBadge_Click" Padding="8,2" Height="22" Margin="4,0,0,0"
+                            Background="{DynamicResource AccentSoft}"
+                            BorderBrush="{DynamicResource AccentBorder}" BorderThickness="1"
+                            AutomationProperties.Name="License tier">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                                        CornerRadius="11" Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <TextBlock x:Name="TierBadgeText" Text="Free" FontWeight="SemiBold" FontSize="10.5"
+                                   Foreground="{DynamicResource Accent}" />
+                    </Button>
 
-                <Button x:Name="UpgradeButton" Style="{StaticResource PrimaryButtonStyle}"
-                        Content="{DynamicResource Upgrade}" Click="Upgrade_Click"
-                        Padding="8,2" Height="22" FontSize="11" Margin="6,0,0,0"
-                        WindowChrome.IsHitTestVisibleInChrome="True"
-                        AutomationProperties.Name="Upgrade to Pro" />
-            </StackPanel>
-
-            <!-- Tiện ích & Nút điều khiển cửa sổ chuẩn Windows 11 -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Stretch">
+                    <Button x:Name="UpgradeButton" Style="{StaticResource PrimaryButtonStyle}"
+                            Content="{DynamicResource Upgrade}" Click="Upgrade_Click"
+                            Padding="8,2" Height="22" FontSize="11" Margin="6,0,0,0"
+                            AutomationProperties.Name="Upgrade to Pro" />
+                </StackPanel>
+            </ui:TitleBar.Header>
+            <ui:TitleBar.TrailingContent>
                 <Button x:Name="SettingsButton" Style="{StaticResource SubtleButtonStyle}"
                         Content="&#xE713;" FontFamily="{StaticResource IconFont}" FontSize="13"
-                        Click="Settings_Click" Width="36" Height="36" Padding="0" Margin="0,0,6,0"
-                        VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True"
+                        Click="Settings_Click" Width="36" Height="32" Padding="0" Margin="0,0,6,0"
+                        VerticalAlignment="Center"
                         ToolTip="{DynamicResource SettingsButton}"
                         AutomationProperties.Name="Open settings" />
-
-                <!-- Caption Buttons (Min, Max, Close) -->
-                <Button Style="{StaticResource CaptionButtonStyle}" Click="TitleBar_Minimize_Click"
-                        Content="&#xE921;" ToolTip="Minimize" />
-                <Button Style="{StaticResource CaptionButtonStyle}" Click="TitleBar_Maximize_Click"
-                        ToolTip="Maximize">
-                    <TextBlock x:Name="MaximizeButtonGlyph" Text="&#xE922;" FontFamily="{StaticResource IconFont}" FontSize="11" />
-                </Button>
-                <Button Style="{StaticResource CloseCaptionButtonStyle}" Click="TitleBar_Close_Click"
-                        Content="&#xE8BB;" ToolTip="Close" />
-            </StackPanel>
-        </Grid>
+            </ui:TitleBar.TrailingContent>
+        </ui:TitleBar>
 
         <!-- ================= 1. Thanh công cụ (CommandBar) ================= -->
         <Border Grid.Row="1" Background="{DynamicResource SurfaceBackground}"
@@ -750,4 +725,4 @@
             </Grid>
         </Border>
     </Grid>
-</Window>
+</ui:FluentWindow>
