@@ -8,12 +8,14 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Ui = Wpf.Ui.Controls;
 
 /// <summary>
-/// Trang Cài đặt (theo IA mục 4): ngôn ngữ, giao diện, cập nhật, giấy phép Pro, quyền riêng tư.
-/// Thay cho các nút rải rác trên thanh công cụ trước đây.
+/// Trang Cài đặt (theo IA mục 4): ngôn ngữ, giao diện, Shelf/chạy nền, cập nhật,
+/// giấy phép Pro, quyền riêng tư. Dựng bằng WPF-UI: FluentWindow + TitleBar,
+/// mỗi nhóm là một Card, tuỳ chọn bật/tắt dùng ToggleSwitch.
 /// </summary>
-public class SettingsWindow : Window
+public class SettingsWindow : Ui.FluentWindow
 {
     private readonly LicenseCoordinator _license;
     private readonly AppSettings _settings;
@@ -24,20 +26,30 @@ public class SettingsWindow : Window
         _settings = SettingsStore.Load();
 
         Title = Loc.T("SettingsTitle");
-        Width = 560;
-        Height = 520;
+        Width = 600;
+        Height = 660;
+        MinHeight = 420;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         ShowInTaskbar = false;
+        ExtendsContentIntoTitleBar = true;
+        WindowBackdropType = Ui.WindowBackdropType.Mica;
         AutomationProperties.SetName(this, "Settings window");
-        Background = (Brush)Application.Current.FindResource("SurfaceBackground");
 
-        var root = new DockPanel { Margin = new Thickness(20) };
+        var root = new Grid();
+        root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-        var content = new StackPanel();
+        var titleBar = new Ui.TitleBar { Title = Title, ShowMinimize = false, ShowMaximize = false };
+        Grid.SetRow(titleBar, 0);
+        root.Children.Add(titleBar);
 
-        // ---- Ngôn ngữ ----
-        content.Children.Add(Header(Loc.T("SettingsLanguage")));
-        var language = new ComboBox { Width = 240, Style = (Style)Application.Current.FindResource("AppComboBoxStyle") };
+        var content = new StackPanel { Margin = new Thickness(20, 4, 20, 8) };
+
+        // ---- Giao diện & ngôn ngữ ----
+        var look = Card(content, Loc.T("SettingsLanguage") + " · " + Loc.T("SettingsTheme"));
+
+        var language = new ComboBox { MinWidth = 240, HorizontalAlignment = HorizontalAlignment.Left };
         AutomationProperties.SetName(language, "Language selector");
         foreach (var code in new[] { "vi", "en", "fr", "zh-Hans" })
         {
@@ -51,14 +63,12 @@ public class SettingsWindow : Window
                 Loc.Apply(code);
                 _settings.Language = code;
                 SettingsStore.Save(_settings);
-                UpdateColumnHeaders();
             }
         };
-        content.Children.Add(language);
+        look.Children.Add(Caption(Loc.T("SettingsLanguage")));
+        look.Children.Add(language);
 
-        // ---- Giao diện ----
-        content.Children.Add(Header(Loc.T("SettingsTheme")));
-        var theme = new ComboBox { Width = 240, Style = (Style)Application.Current.FindResource("AppComboBoxStyle") };
+        var theme = new ComboBox { MinWidth = 240, HorizontalAlignment = HorizontalAlignment.Left };
         AutomationProperties.SetName(theme, "Theme selector");
         theme.Items.Add(new ComboBoxItem { Content = Loc.T("ThemeSystem"), Tag = "System" });
         theme.Items.Add(new ComboBoxItem { Content = Loc.T("ThemeLight"), Tag = "Light" });
@@ -74,79 +84,59 @@ public class SettingsWindow : Window
                 ThemeManager.Apply(value);
             }
         };
-        content.Children.Add(theme);
+        var themeCaption = Caption(Loc.T("SettingsTheme"));
+        themeCaption.Margin = new Thickness(0, 12, 0, 4);
+        look.Children.Add(themeCaption);
+        look.Children.Add(theme);
 
-        // ---- Shelf ----
-        content.Children.Add(Header("SHELF"));
-        var shake = new CheckBox
-        {
-            Content = Loc.L("Lắc chuột khi đang kéo tệp để mở Shelf", "Shake the mouse while dragging files to open Shelf"),
-            IsChecked = _settings.ShakeToOpenShelf,
-            Style = (Style)Application.Current.FindResource("AppCheckBoxStyle"),
-            Margin = new Thickness(0, 0, 0, 4)
-        };
-        shake.Checked += (_, _) => { _settings.ShakeToOpenShelf = true; SettingsStore.Save(_settings); };
-        shake.Unchecked += (_, _) => { _settings.ShakeToOpenShelf = false; SettingsStore.Save(_settings); };
-        content.Children.Add(shake);
-        content.Children.Add(Caption(Loc.L(
+        // ---- Shelf & chạy nền ----
+        var shelf = Card(content, "SHELF");
+        shelf.Children.Add(Toggle(
+            Loc.L("Lắc chuột khi đang kéo tệp để mở Shelf", "Shake the mouse while dragging files to open Shelf"),
+            _settings.ShakeToOpenShelf,
+            on => _settings.ShakeToOpenShelf = on));
+        shelf.Children.Add(Caption(Loc.L(
             "Cần theo dõi chuột toàn hệ thống khi bật. Chỉ xử lý trên máy, không ghi lại hay gửi đi.",
             "Watches the mouse system-wide while enabled. Handled locally; nothing is recorded or sent.")));
-
-        var background = new CheckBox
-        {
-            Content = Loc.L("Chạy nền ở khay hệ thống khi đóng cửa sổ", "Keep running in the system tray when the window is closed"),
-            IsChecked = _settings.RunInBackground,
-            Style = (Style)Application.Current.FindResource("AppCheckBoxStyle"),
-            Margin = new Thickness(0, 8, 0, 8)
-        };
-        background.Checked += (_, _) => { _settings.RunInBackground = true; SettingsStore.Save(_settings); };
-        background.Unchecked += (_, _) => { _settings.RunInBackground = false; SettingsStore.Save(_settings); };
-        content.Children.Add(background);
+        var bg = Toggle(
+            Loc.L("Chạy nền ở khay hệ thống khi đóng cửa sổ", "Keep running in the system tray when the window is closed"),
+            _settings.RunInBackground,
+            on => _settings.RunInBackground = on);
+        bg.Margin = new Thickness(0, 12, 0, 0);
+        shelf.Children.Add(bg);
 
         // ---- Cập nhật ----
-        content.Children.Add(Header(Loc.T("SettingsUpdates")));
-        var checkUpdates = new CheckBox
-        {
-            Content = Loc.T("SettingsCheckUpdates"),
-            IsChecked = _settings.CheckForUpdates,
-            Style = (Style)Application.Current.FindResource("AppCheckBoxStyle"),
-            Margin = new Thickness(0, 0, 0, 8)
-        };
-        checkUpdates.Checked += (_, _) => { _settings.CheckForUpdates = true; SettingsStore.Save(_settings); };
-        checkUpdates.Unchecked += (_, _) => { _settings.CheckForUpdates = false; SettingsStore.Save(_settings); };
-        content.Children.Add(checkUpdates);
+        var updates = Card(content, Loc.T("SettingsUpdates"));
+        updates.Children.Add(Toggle(Loc.T("SettingsCheckUpdates"), _settings.CheckForUpdates,
+            on => _settings.CheckForUpdates = on));
 
-        content.Children.Add(Caption(Loc.T("SettingsUpdateUrl")));
-        var url = new TextBox
-        {
-            Text = _settings.UpdateFeedUrl,
-            Style = (Style)Application.Current.FindResource("AppTextBoxStyle")
-        };
+        var urlCaption = Caption(Loc.T("SettingsUpdateUrl"));
+        urlCaption.Margin = new Thickness(0, 12, 0, 4);
+        updates.Children.Add(urlCaption);
+        var url = new TextBox { Text = _settings.UpdateFeedUrl };
         AutomationProperties.SetName(url, "Update feed url");
         url.TextChanged += (_, _) => { _settings.UpdateFeedUrl = url.Text; SettingsStore.Save(_settings); };
-        content.Children.Add(url);
+        updates.Children.Add(url);
 
-        // Nút kiểm tra ngay + kết quả hiển thị tại chỗ
-        var checkNow = new Button
+        var checkNow = new Ui.Button
         {
             Content = Loc.T("SettingsCheckUpdateNow"),
-            Style = (Style)Application.Current.FindResource("SecondaryButtonStyle"),
-            Padding = new Thickness(14, 6, 14, 6),
+            Appearance = Ui.ControlAppearance.Secondary,
             HorizontalAlignment = HorizontalAlignment.Left,
-            Margin = new Thickness(0, 4, 0, 0)
+            Margin = new Thickness(0, 10, 0, 0)
         };
         AutomationProperties.SetName(checkNow, "Check for updates now");
-        content.Children.Add(checkNow);
+        updates.Children.Add(checkNow);
 
         var updateStatus = new TextBlock
         {
             Text = string.Empty,
             Foreground = (Brush)Application.Current.FindResource("TextSecondary"),
             TextWrapping = TextWrapping.Wrap,
-            Margin = new Thickness(0, 6, 0, 8)
+            Margin = new Thickness(0, 8, 0, 0)
         };
         AutomationProperties.SetName(updateStatus, "Update check result");
-        content.Children.Add(updateStatus);
+        updates.Children.Add(updateStatus);
 
         checkNow.Click += async (_, _) =>
         {
@@ -162,13 +152,12 @@ public class SettingsWindow : Window
                 if (result.Status == UpdateCheckStatus.UpdateAvailable
                     && !string.IsNullOrWhiteSpace(result.ReleaseUrl))
                 {
-                    var open = new Button
+                    var open = new Ui.Button
                     {
                         Content = Loc.T("UpdateDownload"),
-                        Style = (Style)Application.Current.FindResource("PrimaryButtonStyle"),
-                        Padding = new Thickness(14, 6, 14, 6),
+                        Appearance = Ui.ControlAppearance.Primary,
                         HorizontalAlignment = HorizontalAlignment.Left,
-                        Margin = new Thickness(0, 4, 0, 0)
+                        Margin = new Thickness(0, 8, 0, 0)
                     };
                     open.Click += (_, _) =>
                     {
@@ -185,7 +174,7 @@ public class SettingsWindow : Window
                             // Bỏ qua nếu không mở được trình duyệt.
                         }
                     };
-                    content.Children.Insert(content.Children.Count - 1, open);
+                    updates.Children.Add(open);
                 }
             }
             finally
@@ -196,7 +185,7 @@ public class SettingsWindow : Window
         };
 
         // ---- Giấy phép ----
-        content.Children.Add(Header(Loc.T("SettingsLicense")));
+        var licenseCard = Card(content, Loc.T("SettingsLicense"));
         var status = _license.Status;
         var licenseText = status.IsTrial
             ? Loc.F("SettingsLicenseTrial", (int)Math.Ceiling((_license.License.TrialRemaining() ?? TimeSpan.Zero).TotalDays))
@@ -204,41 +193,35 @@ public class SettingsWindow : Window
                 ? Loc.T("SettingsLicensePro")
                 : Loc.T("SettingsLicenseFree");
 
-        content.Children.Add(new TextBlock
+        licenseCard.Children.Add(new TextBlock
         {
             Text = licenseText,
             Foreground = (Brush)Application.Current.FindResource("TextSecondary"),
-            TextWrapping = TextWrapping.Wrap,
-            Margin = new Thickness(0, 0, 0, 8)
+            TextWrapping = TextWrapping.Wrap
         });
 
         if (!status.IsPro)
         {
-            var upgrade = new Button
+            var upgrade = new Ui.Button
             {
                 Content = Loc.T("Upgrade"),
-                Padding = new Thickness(16, 6, 16, 6),
+                Appearance = Ui.ControlAppearance.Primary,
                 HorizontalAlignment = HorizontalAlignment.Left,
-                Background = (Brush)Application.Current.FindResource("Accent"),
-                Foreground = (Brush)Application.Current.FindResource("TextOnAccent"),
-                BorderThickness = new Thickness(0)
+                Margin = new Thickness(0, 10, 0, 0)
             };
             upgrade.Click += (_, _) => { Close(); };
-            content.Children.Add(upgrade);
+            licenseCard.Children.Add(upgrade);
         }
 
-        // ---- Quyền riêng tư ----
-        content.Children.Add(Header(Loc.T("SettingsPrivacy")));
-        content.Children.Add(Caption(Loc.T("SettingsPrivacyHint")));
+        // ---- Quyền riêng tư & giới thiệu ----
+        var about = Card(content, Loc.T("SettingsPrivacy") + " · " + Loc.T("SettingsAbout"));
+        about.Children.Add(Caption(Loc.T("SettingsPrivacyHint")));
+        about.Children.Add(Caption(Loc.F("SettingsVersion", "1.2.2")));
 
-        content.Children.Add(Header(Loc.T("SettingsAbout")));
-        content.Children.Add(Caption(Loc.F("SettingsVersion", "1.2.2")));
-
-        var rateButton = new Button
+        var rateButton = new Ui.Button
         {
             Content = Loc.T("RateApp"),
-            Style = (Style)Application.Current.FindResource("SecondaryButtonStyle"),
-            Padding = new Thickness(14, 6, 14, 6),
+            Appearance = Ui.ControlAppearance.Secondary,
             HorizontalAlignment = HorizontalAlignment.Left,
             Margin = new Thickness(0, 8, 0, 0)
         };
@@ -248,31 +231,58 @@ public class SettingsWindow : Window
             var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
             await BFR.Store.StoreRatingService.RequestRateAndReviewAsync(hwnd);
         };
-        content.Children.Add(rateButton);
+        about.Children.Add(rateButton);
 
-        var close = new Button
+        var scroll = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = content };
+        Grid.SetRow(scroll, 1);
+        root.Children.Add(scroll);
+
+        var close = new Ui.Button
         {
             Content = Loc.T("SettingsClose"),
-            Padding = new Thickness(18, 6, 18, 6),
             HorizontalAlignment = HorizontalAlignment.Right,
             IsCancel = true,
-            Margin = new Thickness(0, 16, 0, 0)
+            Margin = new Thickness(20, 8, 20, 16),
+            MinWidth = 96
         };
         close.Click += (_, _) => Close();
         AutomationProperties.SetName(close, "Close settings");
-        DockPanel.SetDock(close, Dock.Bottom);
+        Grid.SetRow(close, 2);
         root.Children.Add(close);
-
-        var scroll = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-        scroll.Content = content;
-        root.Children.Add(scroll);
 
         Content = root;
     }
 
-    private static void UpdateColumnHeaders()
+    /// <summary>Thêm một Card có tiêu đề vào <paramref name="parent"/> và trả về StackPanel bên trong.</summary>
+    private static StackPanel Card(StackPanel parent, string title)
     {
-        // Cột bảng dùng DynamicResource nên tự cập nhật; hàm này chỉ để mở rộng về sau.
+        var inner = new StackPanel();
+        inner.Children.Add(new TextBlock
+        {
+            Text = title,
+            Style = (Style)Application.Current.FindResource("PanelHeaderTextStyle"),
+            Margin = new Thickness(0, 0, 0, 8)
+        });
+
+        parent.Children.Add(new Ui.Card
+        {
+            Content = inner,
+            Margin = new Thickness(0, 0, 0, 12),
+            Padding = new Thickness(16),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch
+        });
+        return inner;
+    }
+
+    /// <summary>Công tắc bật/tắt: lưu ngay vào cài đặt khi đổi.</summary>
+    private Ui.ToggleSwitch Toggle(string text, bool isOn, Action<bool> set)
+    {
+        var toggle = new Ui.ToggleSwitch { Content = text, IsChecked = isOn };
+        AutomationProperties.SetName(toggle, text);
+        toggle.Checked += (_, _) => { set(true); SettingsStore.Save(_settings); };
+        toggle.Unchecked += (_, _) => { set(false); SettingsStore.Save(_settings); };
+        return toggle;
     }
 
     private static void SelectByTag(ComboBox combo, string? tag)
@@ -295,13 +305,6 @@ public class SettingsWindow : Window
         "fr" => "Français",
         "zh-Hans" => "简体中文",
         _ => "Tiếng Việt"
-    };
-
-    private static TextBlock Header(string text) => new()
-    {
-        Text = text,
-        Style = (Style)Application.Current.FindResource("PanelHeaderTextStyle"),
-        Margin = new Thickness(0, 14, 0, 6)
     };
 
     private static TextBlock Caption(string text) => new()
