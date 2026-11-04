@@ -33,21 +33,23 @@ Nhánh `feat/shelf` đã được push lên `origin`. Trạng thái theo giai đ
 
 | Giai đoạn | Trạng thái | Ghi chú |
 |---|---|---|
-| 0. Ổn định nhánh | Gần xong | 0.1 ✅ (162 + 74 + 7 test, PerfGate đạt mọi ngưỡng) · 0.2 nhánh đã push, **chờ Dev mở PR** · 0.3 **chờ Dev** · 0.4 ✅ |
+| 0. Ổn định nhánh | Gần xong | 0.1 ✅ (162 + 74 + 7 test, PerfGate đạt mọi ngưỡng) · 0.2 ✅ PR đã mở, **CI xanh** (run `9578106`) · 0.3 **chờ Dev** · 0.4 ✅ |
 | 1. Sửa lỗi tồn đọng | ✅ Xong | 10/10 mục (mục 9: đã xoá `RuleEditorWindow` vì không còn nơi nào mở) |
-| 2. Hoàn thiện tính năng | ✅ Xong phần code | 2.1–2.5 ✅. 2.1 mới kiểm chứng ở bản portable; `StartupTask` của MSIX **chưa kiểm chứng** (cần gói đã ký) |
-| 3. Kiểm thử phát hành và chuẩn bị Store | Đang làm | Xong: privacy policy, release notes, Store listing, version 1.3.0 (có test canh lệch), dựng được gói MSIX chưa ký (`makeappx` chấp nhận manifest, gồm `StartupTask`), bản publish self-contained chạy được, **hồi quy GUI** (xem trước → hộp thoại xác nhận → áp dụng → hoàn tác trên đĩa) và **hồi quy CLI** (dry-run, đổi tên, hoàn tác) đều đúng. Chưa (cần môi trường/thiết bị khác): WACK, nâng cấp từ 1.2.2, Windows 10, DPI 125%/150% và đa màn hình, ký gói, ảnh Store mới, đăng privacy policy |
+| 2. Hoàn thiện tính năng | ✅ Xong | 2.1–2.5 ✅. 2.1 đã kiểm chứng ở bản portable (khoá `Run`) **và trong gói MSIX thật** (`StartupTask` State 0 ↔ 2). Còn chưa kiểm chứng: Windows tự khởi động app qua `StartupTask` lúc đăng nhập (cần đăng xuất/đăng nhập lại) |
+| 3. Kiểm thử phát hành và chuẩn bị Store | Đang làm | Xong: privacy policy, release notes, Store listing, version 1.3.0 (có test canh lệch), dựng được gói MSIX chưa ký (`makeappx` chấp nhận manifest, gồm `StartupTask`), bản publish self-contained chạy được, **hồi quy GUI** (xem trước → hộp thoại xác nhận → áp dụng → hoàn tác trên đĩa) và **hồi quy CLI** (dry-run, đổi tên, hoàn tác) đều đúng. **WACK: PASS** (23/24 bài; bài duy nhất báo FAIL là "Blocked executables", loại `OPTIONAL`, liệt kê DLL runtime/WPF có API khởi chạy tiến trình). **Kiểm thử trong gói MSIX thật (ký test)**: cài được, app chạy, `StartupTask` bật/tắt đúng, đóng cửa sổ thì ẩn vào khay và icon khay được đăng ký, lắc khi kéo tệp từ Explorer mở Shelf lúc cửa sổ chính đang ẩn, alias `bfr` chạy (exit 0), đủ 4 phần mở rộng (`comServer`, `fileExplorerContextMenus`, `startupTask`, `appExecutionAlias`). Chưa (cần môi trường/thiết bị khác): nâng cấp từ 1.2.2, Windows 10, DPI 125%/150% và đa màn hình, ảnh Store mới, đăng privacy policy |
 | 4. Nộp Store | Chưa | Chờ Giai đoạn 3 |
 
-**Link tạo PR:** https://github.com/hoangmanhtruong-uet-dev/Release-Batch-File-Renamer/pull/new/feat/shelf (CI chỉ chạy khi mở PR vào `main`).
+**PR:** nhánh `feat/shelf` → `main`, CI xanh. `main` đã đỏ từ trước ở bước COM smoke test (`dotnet run --no-build` tìm sai thư mục đầu ra); đã sửa trong `ci.yml` (commit `9578106`).
 
 **Việc cần Dev làm tay (Claude không làm được):**
 - 0.3: kéo tệp thật từ Explorer rồi lắc; chuột phải vào icon khay; thả tệp vào Shelf rồi bấm "Đổi tên…".
-- Mở PR, xem CI xanh.
-- Máy dev hiện **không có Windows SDK** (không có `signtool`, WACK): cần cài Windows SDK, ký gói bằng chứng chỉ thật, chạy WACK, cài thử gói đã ký trên Windows 10 và Windows 11 sạch (kiểm tra `StartupTask`, hook chuột, icon khay, menu Explorer).
+- Ký gói bằng **chứng chỉ thật** hoặc để Store ký lại khi nộp. Gói test đã ký bằng chứng chỉ tự ký (hết hạn 30 ngày, đã gỡ khỏi máy) **không được đem nộp hay phát hành**.
+- Cài thử gói trên Windows 10 và Windows 11 sạch, và thử nâng cấp đè lên bản 1.2.2 từ Store (giữ settings, preset, lịch sử, giấy phép Pro).
+- Đăng xuất rồi đăng nhập lại với "Khởi động cùng Windows" đang bật để xem BFR tự vào khay.
 - Đăng `docs/privacy.html` lên URL công khai (GitHub Pages); chụp lại ảnh Store với giao diện mới; nộp Partner Center.
 
 **Ghi chú đã xử lý trong lúc làm:**
+- Cài thử gói MSIX thật cần chứng chỉ có subject trùng `Publisher` của Store (`CN=F6CFEAEE-…`) và đặt trong `LocalMachine\TrustedPeople` (cần admin). Đã dùng một chứng chỉ test riêng (lưu ngoài repo) rồi gỡ sạch sau khi test.
 - Hook chuột chuyển sang luồng riêng có message loop (không còn phụ thuộc luồng giao diện); bỏ qua lần kéo bắt đầu trong cửa sổ BFR; Shelf mở bằng lắc tự đóng sau 6 giây nếu không có tệp.
 - Số phiên bản hợp nhất: `BFR.Core.AppVersion.Current` + `Directory.Build.props`; `VersionConsistencyTests` báo lỗi nếu manifest, `build-msix.ps1` hoặc release notes lệch.
 - Store listing hiện chỉ có tiếng Việt và tiếng Anh vì manifest chỉ khai báo `vi-VN` và `en-US`; thêm listing tiếng Pháp/Trung cần khai báo thêm ngôn ngữ trong gói.
