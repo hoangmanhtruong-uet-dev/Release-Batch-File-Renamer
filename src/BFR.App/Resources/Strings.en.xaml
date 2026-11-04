@@ -433,4 +433,23 @@
     <sys:String x:Key="SettingsOpenStartupApps">Open Startup settings</sys:String>
     <sys:String x:Key="FeatureUnlimitedShelf">Unlimited files in Shelf</sys:String>
     <sys:String x:Key="FeatureLimitShelf">Up to {0} files</sys:String>
+    <sys:String x:Key="RuleTypeListMap">Rename from list</sys:String>
+    <sys:String x:Key="RuleTypeReplaceDict">Replace dictionary</sys:String>
+    <sys:String x:Key="ParamListMode">Mode</sys:String>
+    <sys:String x:Key="ParamListMatchBy">Match by</sys:String>
+    <sys:String x:Key="ParamListMapping">List (paste from Excel: old ⇥ new)</sys:String>
+    <sys:String x:Key="ParamReplaceDictPairs">Find ⇥ replace pairs (one per line)</sys:String>
+    <sys:String x:Key="RuleSummaryListMap">{0} rows · {1}</sys:String>
+    <sys:String x:Key="RuleSummaryReplaceDict">{0} replacement pairs</sys:String>
+    <sys:String x:Key="OptionListMap">By old name</sys:String>
+    <sys:String x:Key="OptionListByOrder">By order</sys:String>
+    <sys:String x:Key="OptionFileName">File name + extension</sys:String>
+    <sys:String x:Key="ListImportButton">Import from CSV file…</sys:String>
+    <sys:String x:Key="ListImportFilter">List files (*.csv;*.txt;*.tsv)|*.csv;*.txt;*.tsv|All files (*.*)|*.*</sys:String>
+    <sys:String x:Key="FeatureUnlimitedListRows">Unlimited rows in rename lists</sys:String>
+    <sys:String x:Key="FeatureListCsvImport">Import lists from CSV files</sys:String>
+    <sys:String x:Key="ConflictBannerText">{0} files have conflicting names.</sys:String>
+    <sys:String x:Key="ConflictAutoFix">Fix conflicts automatically</sys:String>
+    <sys:String x:Key="ConflictAutoResolvedText">Added (2), (3)… to {0} duplicate names.</sys:String>
+    <sys:String x:Key="ConflictAutoOff">Turn off</sys:String>
 </ResourceDictionary>

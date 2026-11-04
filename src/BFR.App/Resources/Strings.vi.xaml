@@ -433,4 +433,23 @@
     <sys:String x:Key="SettingsOpenStartupApps">Mở cài đặt Khởi động</sys:String>
     <sys:String x:Key="FeatureUnlimitedShelf">Shelf không giới hạn số tệp</sys:String>
     <sys:String x:Key="FeatureLimitShelf">Tối đa {0} tệp</sys:String>
+    <sys:String x:Key="RuleTypeListMap">Đổi tên theo danh sách</sys:String>
+    <sys:String x:Key="RuleTypeReplaceDict">Từ điển thay thế</sys:String>
+    <sys:String x:Key="ParamListMode">Chế độ</sys:String>
+    <sys:String x:Key="ParamListMatchBy">So khớp theo</sys:String>
+    <sys:String x:Key="ParamListMapping">Danh sách (dán từ Excel: tên cũ ⇥ tên mới)</sys:String>
+    <sys:String x:Key="ParamReplaceDictPairs">Cặp tìm ⇥ thay (mỗi dòng một cặp)</sys:String>
+    <sys:String x:Key="RuleSummaryListMap">{0} dòng · {1}</sys:String>
+    <sys:String x:Key="RuleSummaryReplaceDict">{0} cặp thay thế</sys:String>
+    <sys:String x:Key="OptionListMap">Theo tên cũ</sys:String>
+    <sys:String x:Key="OptionListByOrder">Theo thứ tự</sys:String>
+    <sys:String x:Key="OptionFileName">Tên kèm đuôi</sys:String>
+    <sys:String x:Key="ListImportButton">Nhập từ tệp CSV…</sys:String>
+    <sys:String x:Key="ListImportFilter">Tệp danh sách (*.csv;*.txt;*.tsv)|*.csv;*.txt;*.tsv|Mọi tệp (*.*)|*.*</sys:String>
+    <sys:String x:Key="FeatureUnlimitedListRows">Danh sách đổi tên không giới hạn dòng</sys:String>
+    <sys:String x:Key="FeatureListCsvImport">Nhập danh sách từ tệp CSV</sys:String>
+    <sys:String x:Key="ConflictBannerText">{0} tệp bị trùng tên.</sys:String>
+    <sys:String x:Key="ConflictAutoFix">Tự sửa trùng tên</sys:String>
+    <sys:String x:Key="ConflictAutoResolvedText">Đã tự thêm (2), (3)… cho {0} tệp trùng tên.</sys:String>
+    <sys:String x:Key="ConflictAutoOff">Tắt tự sửa</sys:String>
 </ResourceDictionary>

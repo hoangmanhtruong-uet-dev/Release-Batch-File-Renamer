@@ -433,4 +433,23 @@
     <sys:String x:Key="SettingsOpenStartupApps">Ouvrir les paramètres de démarrage</sys:String>
     <sys:String x:Key="FeatureUnlimitedShelf">Nombre de fichiers illimité dans le Shelf</sys:String>
     <sys:String x:Key="FeatureLimitShelf">{0} fichiers maximum</sys:String>
+    <sys:String x:Key="RuleTypeListMap">Renommer depuis une liste</sys:String>
+    <sys:String x:Key="RuleTypeReplaceDict">Dictionnaire de remplacement</sys:String>
+    <sys:String x:Key="ParamListMode">Mode</sys:String>
+    <sys:String x:Key="ParamListMatchBy">Correspondance par</sys:String>
+    <sys:String x:Key="ParamListMapping">Liste (coller depuis Excel : ancien ⇥ nouveau)</sys:String>
+    <sys:String x:Key="ParamReplaceDictPairs">Paires chercher ⇥ remplacer (une par ligne)</sys:String>
+    <sys:String x:Key="RuleSummaryListMap">{0} lignes · {1}</sys:String>
+    <sys:String x:Key="RuleSummaryReplaceDict">{0} paires de remplacement</sys:String>
+    <sys:String x:Key="OptionListMap">Par ancien nom</sys:String>
+    <sys:String x:Key="OptionListByOrder">Par ordre</sys:String>
+    <sys:String x:Key="OptionFileName">Nom + extension</sys:String>
+    <sys:String x:Key="ListImportButton">Importer un fichier CSV…</sys:String>
+    <sys:String x:Key="ListImportFilter">Fichiers de liste (*.csv;*.txt;*.tsv)|*.csv;*.txt;*.tsv|Tous les fichiers (*.*)|*.*</sys:String>
+    <sys:String x:Key="FeatureUnlimitedListRows">Nombre de lignes illimité dans les listes</sys:String>
+    <sys:String x:Key="FeatureListCsvImport">Importer des listes depuis des fichiers CSV</sys:String>
+    <sys:String x:Key="ConflictBannerText">{0} fichiers ont des noms en conflit.</sys:String>
+    <sys:String x:Key="ConflictAutoFix">Corriger automatiquement</sys:String>
+    <sys:String x:Key="ConflictAutoResolvedText">Ajout de (2), (3)… pour {0} noms en double.</sys:String>
+    <sys:String x:Key="ConflictAutoOff">Désactiver</sys:String>
 </ResourceDictionary>

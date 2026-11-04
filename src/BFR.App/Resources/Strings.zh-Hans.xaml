@@ -433,4 +433,23 @@
     <sys:String x:Key="SettingsOpenStartupApps">打开启动设置</sys:String>
     <sys:String x:Key="FeatureUnlimitedShelf">文件架不限文件数</sys:String>
     <sys:String x:Key="FeatureLimitShelf">最多 {0} 个文件</sys:String>
+    <sys:String x:Key="RuleTypeListMap">按列表重命名</sys:String>
+    <sys:String x:Key="RuleTypeReplaceDict">替换词典</sys:String>
+    <sys:String x:Key="ParamListMode">模式</sys:String>
+    <sys:String x:Key="ParamListMatchBy">匹配方式</sys:String>
+    <sys:String x:Key="ParamListMapping">列表（从 Excel 粘贴：旧名 ⇥ 新名）</sys:String>
+    <sys:String x:Key="ParamReplaceDictPairs">查找 ⇥ 替换对（每行一对）</sys:String>
+    <sys:String x:Key="RuleSummaryListMap">{0} 行 · {1}</sys:String>
+    <sys:String x:Key="RuleSummaryReplaceDict">{0} 个替换对</sys:String>
+    <sys:String x:Key="OptionListMap">按旧名</sys:String>
+    <sys:String x:Key="OptionListByOrder">按顺序</sys:String>
+    <sys:String x:Key="OptionFileName">文件名含扩展名</sys:String>
+    <sys:String x:Key="ListImportButton">从 CSV 文件导入…</sys:String>
+    <sys:String x:Key="ListImportFilter">列表文件 (*.csv;*.txt;*.tsv)|*.csv;*.txt;*.tsv|所有文件 (*.*)|*.*</sys:String>
+    <sys:String x:Key="FeatureUnlimitedListRows">重命名列表不限行数</sys:String>
+    <sys:String x:Key="FeatureListCsvImport">从 CSV 文件导入列表</sys:String>
+    <sys:String x:Key="ConflictBannerText">{0} 个文件名称冲突。</sys:String>
+    <sys:String x:Key="ConflictAutoFix">自动修复冲突</sys:String>
+    <sys:String x:Key="ConflictAutoResolvedText">已为 {0} 个重复名称添加 (2)、(3)…</sys:String>
+    <sys:String x:Key="ConflictAutoOff">关闭自动修复</sys:String>
 </ResourceDictionary>

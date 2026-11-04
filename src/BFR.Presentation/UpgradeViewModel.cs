@@ -261,6 +261,8 @@ public sealed class UpgradeViewModel : ObservableObject
         ProFeature.CommandLine => "FeatureCommandLine",
         ProFeature.RomanNumbering => "FeatureUnlimitedRules",
         ProFeature.UnlimitedShelf => "FeatureUnlimitedShelf",
+        ProFeature.UnlimitedListRows => "FeatureUnlimitedListRows",
+        ProFeature.ListCsvImport => "FeatureListCsvImport",
         _ => "FeatureUnlimitedRules"
     };
 
