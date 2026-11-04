@@ -15,7 +15,7 @@ using System.Windows.Automation;
 /// Cửa sổ Thư viện preset: lưu preset hiện tại vào thư viện cục bộ, áp dụng hoặc xoá.
 /// Bản Free lưu tối đa 3 preset; Pro lưu không giới hạn (PHẦN 3.6).
 /// </summary>
-public class PresetLibraryWindow : Ui.FluentWindow
+public class PresetsPage : PageBase
 {
     private readonly PresetStore _store;
     private readonly LicenseService _license;
@@ -25,27 +25,34 @@ public class PresetLibraryWindow : Ui.FluentWindow
     private readonly TextBlock _empty;
     private List<Preset> _all = new();
 
-    /// <summary>Preset được người dùng chọn để áp dụng (null nếu không chọn).</summary>
-    public Preset? SelectedPreset { get; private set; }
+    private readonly Func<Preset> _currentProvider;
 
-    public PresetLibraryWindow(PresetStore store, Preset current, LicenseService license)
+    /// <summary>Người dùng bấm "Áp dụng" trên một preset: cửa sổ chính nạp preset rồi quay về trang Đổi tên.</summary>
+    public event EventHandler<Preset>? PresetApplied;
+
+    /// <summary>Danh sách preset có thể đã đổi (lưu/xoá): cửa sổ chính nạp lại danh sách ở combobox.</summary>
+    public event EventHandler? Left;
+
+    public override void OnShown()
+    {
+        Refresh();
+        UpdateStatus();
+    }
+
+    public override void OnHidden() => Left?.Invoke(this, EventArgs.Empty);
+
+    public PresetsPage(PresetStore store, Func<Preset> currentProvider, LicenseService license)
     {
         _store = store;
+        _currentProvider = currentProvider;
         _license = license;
 
-        Title = Loc.T("LibraryTitle");
-        Width = 620;
-        Height = 500;
-        MinHeight = 380;
-        MinWidth = 480;
-        WindowStartupLocation = WindowStartupLocation.CenterOwner;
         AutomationProperties.SetName(this, "Preset library window");
 
-        DialogChrome.Apply(this);
         FontFamily = (System.Windows.Media.FontFamily)Application.Current.FindResource("AppFont");
         FontSize = (double)Application.Current.FindResource("AppFontSizeBody");
 
-        var root = new DockPanel { Margin = new Thickness(16) };
+        var root = new DockPanel { Margin = new Thickness(28, 20, 28, 16) };
 
         var buttons = new StackPanel
         {
@@ -56,7 +63,7 @@ public class PresetLibraryWindow : Ui.FluentWindow
         DockPanel.SetDock(buttons, Dock.Bottom);
 
         var saveButton = MakeButton(Loc.T("LibrarySave"), "SecondaryButtonStyle");
-        saveButton.Click += (_, _) => SaveCurrent(current);
+        saveButton.Click += (_, _) => SaveCurrent(_currentProvider());
         var applyButton = MakeButton(Loc.T("LibraryApply"), "PrimaryButtonStyle");
         applyButton.Click += (_, _) => ApplySelected();
         var shareButton = MakeButton(Loc.T("SharePreset"), "SecondaryButtonStyle");
@@ -65,16 +72,12 @@ public class PresetLibraryWindow : Ui.FluentWindow
         importButton.Click += (_, _) => ImportFromClipboard();
         var deleteButton = MakeButton(Loc.T("LibraryDelete"), "SecondaryButtonStyle");
         deleteButton.Click += (_, _) => DeleteSelected();
-        var closeButton = MakeButton(Loc.T("CloseDialog"), "SecondaryButtonStyle");
-        closeButton.IsCancel = true;
-        closeButton.Click += (_, _) => { DialogResult = false; Close(); };
 
         buttons.Children.Add(saveButton);
         buttons.Children.Add(applyButton);
         buttons.Children.Add(shareButton);
         buttons.Children.Add(importButton);
         buttons.Children.Add(deleteButton);
-        buttons.Children.Add(closeButton);
 
         // Ô tìm kiếm preset
         _search = new TextBox
@@ -138,7 +141,7 @@ public class PresetLibraryWindow : Ui.FluentWindow
         root.Children.Add(buttons);
         root.Children.Add(content);
 
-        Content = DialogChrome.Wrap(this, root);
+        Content = root;
 
         Refresh();
         UpdateStatus();
@@ -215,9 +218,7 @@ public class PresetLibraryWindow : Ui.FluentWindow
     {
         if (_list.SelectedItem is Preset preset)
         {
-            SelectedPreset = preset;
-            DialogResult = true;
-            Close();
+            PresetApplied?.Invoke(this, preset);
         }
     }
 

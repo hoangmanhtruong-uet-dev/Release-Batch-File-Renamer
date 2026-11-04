@@ -207,9 +207,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Row 0: TitleBar (WPF-UI) -->
-            <RowDefinition Height="Auto" /> <!-- Row 1: CommandBar -->
-            <RowDefinition Height="*" />    <!-- Row 2: Content (Rule Builder + Preview Grid) -->
-            <RowDefinition Height="Auto" /> <!-- Row 3: Action Bar Footer -->
+            <RowDefinition Height="*" />    <!-- Row 1: rail điều hướng + vùng trang -->
         </Grid.RowDefinitions>
 
         <!-- ================= 0. TitleBar (WPF-UI) ================= -->
@@ -260,18 +258,79 @@
                             AutomationProperties.Name="Upgrade to Pro" />
                 </StackPanel>
             </ui:TitleBar.Header>
-            <ui:TitleBar.TrailingContent>
-                <ui:Button x:Name="SettingsButton" Appearance="Transparent"
-                        Content="&#xE713;" FontFamily="{StaticResource IconFont}" FontSize="13"
-                        Click="Settings_Click" Width="36" Height="32" Padding="0" Margin="0,0,6,0"
-                        VerticalAlignment="Center"
-                        ToolTip="{DynamicResource SettingsButton}"
-                        AutomationProperties.Name="Open settings" />
-            </ui:TitleBar.TrailingContent>
         </ui:TitleBar>
 
+        <!-- ================= Thân: rail điều hướng + vùng trang ================= -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Rail điều hướng bên trái: mỗi chức năng là một trang -->
+            <Border x:Name="NavRail" Grid.Column="0" Width="80" Background="{DynamicResource PanelBackground}"
+                    BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,1,0">
+                <DockPanel Margin="0,8">
+                    <StackPanel DockPanel.Dock="Bottom">
+                        <RadioButton x:Name="NavSettings" Style="{StaticResource NavRailItemStyle}" GroupName="Nav" Tag="Settings"
+                                     Checked="Nav_Checked" ToolTip="{DynamicResource NavSettings}" AutomationProperties.Name="Nav settings">
+                            <StackPanel>
+                                <TextBlock Text="&#xE713;" FontFamily="{StaticResource IconFont}" FontSize="18" HorizontalAlignment="Center" />
+                                <TextBlock Text="{DynamicResource NavSettings}" FontSize="10.5" Margin="0,5,0,0" TextAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </RadioButton>
+                    </StackPanel>
+                    <StackPanel>
+                        <RadioButton x:Name="NavRename" Style="{StaticResource NavRailItemStyle}" GroupName="Nav" Tag="Rename" IsChecked="True"
+                                     Checked="Nav_Checked" ToolTip="{DynamicResource NavRename}" AutomationProperties.Name="Nav rename">
+                            <StackPanel>
+                                <TextBlock Text="&#xE70F;" FontFamily="{StaticResource IconFont}" FontSize="18" HorizontalAlignment="Center" />
+                                <TextBlock Text="{DynamicResource NavRename}" FontSize="10.5" Margin="0,5,0,0" TextAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton x:Name="NavShelf" Style="{StaticResource NavRailItemStyle}" GroupName="Nav" Tag="Shelf"
+                                     Checked="Nav_Checked" ToolTip="{DynamicResource NavShelf}" AutomationProperties.Name="Nav shelf">
+                            <StackPanel>
+                                <TextBlock Text="&#xE8A1;" FontFamily="{StaticResource IconFont}" FontSize="18" HorizontalAlignment="Center" />
+                                <TextBlock Text="{DynamicResource NavShelf}" FontSize="10.5" Margin="0,5,0,0" TextAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton x:Name="NavHistory" Style="{StaticResource NavRailItemStyle}" GroupName="Nav" Tag="History"
+                                     Checked="Nav_Checked" ToolTip="{DynamicResource NavHistory}" AutomationProperties.Name="Nav history">
+                            <StackPanel>
+                                <TextBlock Text="&#xE81C;" FontFamily="{StaticResource IconFont}" FontSize="18" HorizontalAlignment="Center" />
+                                <TextBlock Text="{DynamicResource NavHistory}" FontSize="10.5" Margin="0,5,0,0" TextAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton x:Name="NavPresets" Style="{StaticResource NavRailItemStyle}" GroupName="Nav" Tag="Presets"
+                                     Checked="Nav_Checked" ToolTip="{DynamicResource NavPresets}" AutomationProperties.Name="Nav presets">
+                            <StackPanel>
+                                <TextBlock Text="&#xE8F1;" FontFamily="{StaticResource IconFont}" FontSize="18" HorizontalAlignment="Center" />
+                                <TextBlock Text="{DynamicResource NavPresets}" FontSize="10.5" Margin="0,5,0,0" TextAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton x:Name="NavWatch" Style="{StaticResource NavRailItemStyle}" GroupName="Nav" Tag="Watch"
+                                     Checked="Nav_Checked" ToolTip="{DynamicResource NavWatch}" AutomationProperties.Name="Nav watch folder">
+                            <StackPanel>
+                                <TextBlock Text="&#xE7B3;" FontFamily="{StaticResource IconFont}" FontSize="18" HorizontalAlignment="Center" />
+                                <TextBlock Text="{DynamicResource NavWatch}" FontSize="10.5" Margin="0,5,0,0" TextAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </RadioButton>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Vùng trang: trang Đổi tên là phần nội dung cũ; các trang khác được tạo khi cần -->
+            <Grid x:Name="PageHost" Grid.Column="1">
+                <Grid x:Name="RenamePage">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" /> <!-- CommandBar -->
+                        <RowDefinition Height="*" />    <!-- Rule Builder + bảng xem trước -->
+                        <RowDefinition Height="Auto" /> <!-- Thanh hành động đáy -->
+                    </Grid.RowDefinitions>
+
         <!-- ================= 1. Thanh công cụ (CommandBar) ================= -->
-        <Border Grid.Row="1" Background="{DynamicResource SurfaceBackground}"
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBackground}"
                 BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,1" Padding="14,8">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -355,7 +414,7 @@
         </Border>
 
         <!-- ================= 2. Vùng làm việc chính ================= -->
-        <Grid Grid.Row="2" Margin="14,10,14,10">
+        <Grid Grid.Row="1" Margin="14,10,14,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="380" MinWidth="300" />
                 <ColumnDefinition Width="Auto" />
@@ -645,7 +704,7 @@
         </Grid>
 
         <!-- ================= 3. Thanh hành động đáy (Footer Action Bar) ================= -->
-        <Border Grid.Row="3" Background="{DynamicResource PanelBackground}"
+        <Border Grid.Row="2" Background="{DynamicResource PanelBackground}"
                 BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0" Padding="14,10">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -716,5 +775,11 @@
                 </StackPanel>
             </Grid>
         </Border>
+                </Grid>
+            </Grid>
+
+            <!-- Vùng hiển thị hộp thoại nổi (ContentDialog) phủ lên cả rail và trang -->
+            <ContentPresenter x:Name="DialogHost" Grid.ColumnSpan="2" />
+        </Grid>
     </Grid>
 </ui:FluentWindow>

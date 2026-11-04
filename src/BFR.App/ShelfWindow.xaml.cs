@@ -22,13 +22,13 @@ public partial class ShelfWindow : Wpf.Ui.Controls.FluentWindow
     private readonly Action<ProFeature> _onLimitReached;
 
     public ShelfWindow(
-        LicenseService license,
+        ShelfModel model,
         Action<IReadOnlyList<string>> sendToMain,
         Action<ProFeature> onLimitReached)
     {
         InitializeComponent();
 
-        _model = new ShelfModel(license);
+        _model = model;
         _sendToMain = sendToMain;
         _onLimitReached = onLimitReached;
 

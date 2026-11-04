@@ -18,7 +18,7 @@ using System.Windows.Automation;
 /// Cửa sổ Watch Folder (FR-D4, tính năng Pro của v1.2):
 /// theo dõi một thư mục và tự áp dụng preset cho tệp mới.
 /// </summary>
-public class WatchFolderWindow : Ui.FluentWindow
+public class WatchFolderPage : PageBase
 {
     private readonly PresetStore _presetStore;
     private readonly LicenseService _license;
@@ -41,7 +41,7 @@ public class WatchFolderWindow : Ui.FluentWindow
 
     private WatchFolderService? _service;
 
-    public WatchFolderWindow(PresetStore presetStore, LicenseService license)
+    public WatchFolderPage(PresetStore presetStore, LicenseService license)
     {
         _presetStore = presetStore;
         _license = license;
@@ -50,21 +50,14 @@ public class WatchFolderWindow : Ui.FluentWindow
         _journalDir = Path.Combine(appData, "journal");
         _logPath = Path.Combine(appData, "watch", "watch.log");
 
-        Title = Loc.T("WatchTitle");
-        Width = 800;
-        Height = 620;
-        MinHeight = 460;
-        MinWidth = 620;
-        WindowStartupLocation = WindowStartupLocation.CenterOwner;
         AutomationProperties.SetName(this, "Watch folder window");
 
-        DialogChrome.Apply(this);
         FontFamily = (System.Windows.Media.FontFamily)Application.Current.FindResource("AppFont");
         FontSize = (double)Application.Current.FindResource("AppFontSizeBody");
 
         ApplyStyles();
 
-        var root = new DockPanel { Margin = new Thickness(16) };
+        var root = new DockPanel { Margin = new Thickness(28, 20, 28, 16) };
 
         var buttons = new StackPanel
         {
@@ -72,12 +65,8 @@ public class WatchFolderWindow : Ui.FluentWindow
             HorizontalAlignment = HorizontalAlignment.Right,
             Margin = new Thickness(0, 12, 0, 0)
         };
-        var closeButton = MakeButton(Loc.T("CloseDialog"), "SecondaryButtonStyle");
-        closeButton.IsCancel = true;
-        closeButton.Click += (_, _) => { Stop(); DialogResult = false; Close(); };
         buttons.Children.Add(_startButton);
         buttons.Children.Add(_stopButton);
-        buttons.Children.Add(closeButton);
 
         var options = new StackPanel();
         options.Children.Add(Header(Loc.T("WatchOptionsTitle")));
@@ -122,7 +111,7 @@ public class WatchFolderWindow : Ui.FluentWindow
         root.Children.Add(buttons);
         root.Children.Add(body);
         DockPanel.SetDock(buttons, Dock.Bottom);
-        Content = DialogChrome.Wrap(this, root);
+        Content = root;
 
         RefreshPresets();
         _stopButton.IsEnabled = false;
@@ -298,9 +287,6 @@ public class WatchFolderWindow : Ui.FluentWindow
         });
     }
 
-    protected override void OnClosed(EventArgs e)
-    {
-        Stop();
-        base.OnClosed(e);
-    }
+    /// <summary>Dịch vụ theo dõi chạy nền ngay cả khi người dùng chuyển sang trang khác; chỉ dừng khi cửa sổ chính đóng.</summary>
+    public override void Shutdown() => Stop();
 }

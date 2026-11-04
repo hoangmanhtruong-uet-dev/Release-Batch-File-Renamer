@@ -11,40 +11,46 @@ using System.Windows.Media;
 using Ui = Wpf.Ui.Controls;
 
 /// <summary>
-/// Trang Cài đặt (theo IA mục 4): ngôn ngữ, giao diện, Shelf/chạy nền, cập nhật,
-/// giấy phép Pro, quyền riêng tư. Dựng bằng WPF-UI: FluentWindow + TitleBar,
-/// mỗi nhóm là một Card, tuỳ chọn bật/tắt dùng ToggleSwitch.
+/// Trang Cài đặt (v1.4: một trang trong khung điều hướng): ngôn ngữ, giao diện, Shelf/chạy nền,
+/// phím tắt, cập nhật, giấy phép Pro, quyền riêng tư. Mỗi nhóm là một Card của WPF-UI,
+/// tuỳ chọn bật/tắt dùng ToggleSwitch.
 /// </summary>
-public class SettingsWindow : Ui.FluentWindow
+public class SettingsPage : PageBase
 {
+    /// <summary>Người dùng bấm "Nâng cấp" trong nhóm giấy phép.</summary>
+    public event EventHandler? UpgradeRequested;
+
+    /// <summary>Trang bị rời đi: cửa sổ chính áp dụng các thay đổi (khay, hook, phím tắt...).</summary>
+    public event EventHandler? SettingsLeft;
+
+    public override void OnHidden() => SettingsLeft?.Invoke(this, EventArgs.Empty);
+
     private readonly LicenseCoordinator _license;
     private readonly AppSettings _settings;
 
-    public SettingsWindow(LicenseCoordinator license)
+    public SettingsPage(LicenseCoordinator license)
     {
         _license = license;
         _settings = SettingsStore.Load();
 
-        Title = Loc.T("SettingsTitle");
-        Width = 600;
-        Height = 660;
-        MinHeight = 420;
-        WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        ShowInTaskbar = false;
-        ExtendsContentIntoTitleBar = true;
-        WindowBackdropType = Ui.WindowBackdropType.Mica;
         AutomationProperties.SetName(this, "Settings window");
 
         var root = new Grid();
         root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-        var titleBar = new Ui.TitleBar { Title = Title, ShowMinimize = false, ShowMaximize = false };
-        Grid.SetRow(titleBar, 0);
-        root.Children.Add(titleBar);
+        var header = new TextBlock
+        {
+            Text = Loc.T("SettingsTitle"),
+            FontSize = (double)Application.Current.FindResource("AppFontSizeTitle"),
+            FontWeight = FontWeights.SemiBold,
+            Foreground = (Brush)Application.Current.FindResource("TextPrimary"),
+            Margin = new Thickness(28, 20, 28, 6)
+        };
+        Grid.SetRow(header, 0);
+        root.Children.Add(header);
 
-        var content = new StackPanel { Margin = new Thickness(20, 4, 20, 8) };
+        var content = new StackPanel { Margin = new Thickness(28, 4, 28, 16), MaxWidth = 760, HorizontalAlignment = HorizontalAlignment.Left };
 
         // ---- Giao diện & ngôn ngữ ----
         var look = Card(content, Loc.T("SettingsLanguage") + " · " + Loc.T("SettingsTheme"));
@@ -282,7 +288,7 @@ public class SettingsWindow : Ui.FluentWindow
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(0, 10, 0, 0)
             };
-            upgrade.Click += (_, _) => { Close(); };
+            upgrade.Click += (_, _) => UpgradeRequested?.Invoke(this, EventArgs.Empty);
             licenseCard.Children.Add(upgrade);
         }
 
@@ -301,7 +307,8 @@ public class SettingsWindow : Ui.FluentWindow
         AutomationProperties.SetName(rateButton, "Rate this app");
         rateButton.Click += async (_, _) =>
         {
-            var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            var owner = Window.GetWindow(this);
+            var hwnd = owner is null ? IntPtr.Zero : new System.Windows.Interop.WindowInteropHelper(owner).Handle;
             await BFR.Store.StoreRatingService.RequestRateAndReviewAsync(hwnd);
         };
         about.Children.Add(rateButton);
@@ -309,19 +316,6 @@ public class SettingsWindow : Ui.FluentWindow
         var scroll = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = content };
         Grid.SetRow(scroll, 1);
         root.Children.Add(scroll);
-
-        var close = new Ui.Button
-        {
-            Content = Loc.T("SettingsClose"),
-            HorizontalAlignment = HorizontalAlignment.Right,
-            IsCancel = true,
-            Margin = new Thickness(20, 8, 20, 16),
-            MinWidth = 96
-        };
-        close.Click += (_, _) => Close();
-        AutomationProperties.SetName(close, "Close settings");
-        Grid.SetRow(close, 2);
-        root.Children.Add(close);
 
         Content = root;
     }

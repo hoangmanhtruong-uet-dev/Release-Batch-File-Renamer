@@ -6,13 +6,20 @@ using System;
 using System.Linq;
 using System.Windows;
 
-public partial class HistoryWindow : Wpf.Ui.Controls.FluentWindow
+public partial class HistoryPage : PageBase
 {
+    /// <summary>Trang bị rời đi: cửa sổ chính tính lại xem trước (tên tệp có thể đã được hoàn tác).</summary>
+    public event EventHandler? Left;
+
+    public override void OnShown() => Refresh();
+
+    public override void OnHidden() => Left?.Invoke(this, EventArgs.Empty);
+
     private readonly HistoryStore _history;
     private readonly IFileSystem _fs;
     private readonly LicenseService _license;
 
-    public HistoryWindow(HistoryStore history, IFileSystem fs, LicenseService? license = null)
+    public HistoryPage(HistoryStore history, IFileSystem fs, LicenseService? license = null)
     {
         InitializeComponent();
         _history = history;

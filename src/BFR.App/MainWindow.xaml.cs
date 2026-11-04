@@ -56,6 +56,7 @@ public partial class MainWindow : FluentWindow
             new LicenseService(new LicenseStore(_fs), trialEnabled: false));
         _vm = new MainViewModel(_license, initialPayload, null, new LocStringProvider(), new WpfUiDispatcher());
         DataContext = _vm;
+        _shelfModel = new ShelfModel(_license.License);
 
         _collectorTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
         _collectorTimer.Tick += (_, _) => OnCollectorTimeout();
@@ -83,6 +84,7 @@ public partial class MainWindow : FluentWindow
         {
             _shakeHook?.Dispose();
             _hotkey?.Dispose();
+            foreach (var page in _pages.Values) page.Shutdown();
             _shakeHook = null;
             _shelf?.Close();
         };
@@ -174,6 +176,7 @@ public partial class MainWindow : FluentWindow
         }
 
         if (batch.Count == 0) return;
+        NavigateTo("Rename");
         _vm.AddPaths(batch);
     }
 
@@ -194,6 +197,10 @@ public partial class MainWindow : FluentWindow
     private void ClearList_Click(object sender, RoutedEventArgs e) => _vm.ClearList();
 
     private ShelfWindow? _shelf;
+    private ShelfModel _shelfModel = null!;
+    private readonly Dictionary<string, PageBase> _pages = new();
+    private string _currentPage = "Rename";
+    private bool _navigating;
     private MouseHook? _shakeHook;
     private GlobalHotkey? _hotkey;
 
@@ -277,7 +284,7 @@ public partial class MainWindow : FluentWindow
         if (created)
         {
             _shelf = new ShelfWindow(
-                _license.License,
+                _shelfModel,
                 batch => EnqueuePaths(batch),
                 feature => ShowUpgradeDialog(feature))
             {
@@ -725,45 +732,139 @@ public partial class MainWindow : FluentWindow
         OpenRegexTesterFor(card);
     }
 
+    // ----------------------------------------------------------------- Điều hướng (v1.4)
+
+    private void Nav_Checked(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton { Tag: string key }) ShowPage(key);
+    }
+
+    private RadioButton NavButton(string key) => key switch
+    {
+        "Shelf" => NavShelf,
+        "History" => NavHistory,
+        "Presets" => NavPresets,
+        "Watch" => NavWatch,
+        "Settings" => NavSettings,
+        _ => NavRename
+    };
+
+    /// <summary>Chuyển sang một trang và đồng bộ rail điều hướng.</summary>
+    public void NavigateTo(string key)
+    {
+        var button = NavButton(key);
+        if (button.IsChecked != true) button.IsChecked = true;   // kích hoạt Nav_Checked → ShowPage
+        else ShowPage(key);
+    }
+
+    private void ShowPage(string key)
+    {
+        if (_navigating) return;
+
+        // Watch Folder là tính năng Pro: Free thấy hộp thoại nâng cấp và ở lại trang hiện tại.
+        if (key == "Watch" && !EnsurePro(ProFeature.UnlimitedRecursion))
+        {
+            _navigating = true;
+            NavButton(_currentPage).IsChecked = true;
+            _navigating = false;
+            return;
+        }
+
+        if (key == _currentPage) return;
+
+        var leaving = _currentPage;
+        _currentPage = key;
+
+        if (leaving != "Rename" && _pages.TryGetValue(leaving, out var old))
+        {
+            old.Visibility = Visibility.Collapsed;
+            old.OnHidden();
+        }
+
+        RenamePage.Visibility = key == "Rename" ? Visibility.Visible : Visibility.Collapsed;
+        if (key == "Rename") return;
+
+        var page = GetPage(key);
+        page.Visibility = Visibility.Visible;
+        page.OnShown();
+    }
+
+    private PageBase GetPage(string key)
+    {
+        // Trang Cài đặt dựng từ cài đặt hiện tại nên tạo mới mỗi lần mở.
+        if (key == "Settings" && _pages.Remove(key, out var stale)) PageHost.Children.Remove(stale);
+        if (_pages.TryGetValue(key, out var existing)) return existing;
+
+        string AppData(string name) => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BatchFileRenamer", name);
+
+        PageBase page;
+        switch (key)
+        {
+            case "Shelf":
+                page = new ShelfPage(_shelfModel, batch => { NavigateTo("Rename"); EnqueuePaths(batch); }, feature => ShowUpgradeDialog(feature));
+                break;
+            case "History":
+                var history = new HistoryPage(new HistoryStore(_fs, AppData("history.json")), _fs, _license.License);
+                history.Left += (_, _) => _ = _vm.RebuildAsync();
+                page = history;
+                break;
+            case "Presets":
+                var presets = new PresetsPage(new PresetStore(_fs, AppData("presets")), () => _vm.SelectedPreset ?? new Preset(), _license.License);
+                presets.Left += (_, _) => _vm.RefreshPresets();
+                presets.PresetApplied += (_, preset) =>
+                {
+                    _vm.RefreshPresets();
+                    PresetCombo.SelectedItem = null;
+                    _vm.LoadPreset(preset);
+                    _ = _vm.RebuildAsync();
+                    NavigateTo("Rename");
+                };
+                page = presets;
+                break;
+            case "Watch":
+                page = new WatchFolderPage(new PresetStore(_fs, AppData("presets")), _license.License);
+                break;
+            default:
+                var settings = new SettingsPage(_license);
+                settings.UpgradeRequested += (_, _) => ShowUpgradeDialog(contextFeature: null);
+                settings.SettingsLeft += (_, _) => ApplySettingsChanges();
+                page = settings;
+                break;
+        }
+
+        page.CloseRequested += (_, _) => NavigateTo("Rename");
+        page.Visibility = Visibility.Collapsed;
+        PageHost.Children.Add(page);
+        _pages[key] = page;
+        return page;
+    }
+
+    /// <summary>Áp dụng ngay các thay đổi trong Cài đặt khi người dùng rời trang (khay, hook, phím tắt, giấy phép).</summary>
+    private void ApplySettingsChanges()
+    {
+        (Application.Current as App)?.ApplyBackgroundSetting();
+        ApplyShakeSetting();
+        ApplyHotkeySetting();
+        UpdateLicenseState();
+        _ = _vm.RebuildAsync();
+    }
+
     // ----------------------------------------------------------------- Màn phụ
 
     private void History_Click(object sender, RoutedEventArgs e)
     {
-        var store = new HistoryStore(_fs, Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "BatchFileRenamer", "history.json"));
-
-        new HistoryWindow(store, _fs, _license.License) { Owner = this }.ShowDialog();
-        _ = _vm.RebuildAsync();
+        NavigateTo("History");
     }
 
     private void PresetLibrary_Click(object sender, RoutedEventArgs e)
     {
-        var store = new PresetStore(_fs, Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "BatchFileRenamer", "presets"));
-
-        var window = new PresetLibraryWindow(store, _vm.SelectedPreset ?? new Preset(), _license.License) { Owner = this };
-        window.ShowDialog();
-        _vm.RefreshPresets();
-
-        if (window.SelectedPreset is not null)
-        {
-            PresetCombo.SelectedItem = null;
-            _vm.LoadPreset(window.SelectedPreset);
-            _ = _vm.RebuildAsync();
-        }
+        NavigateTo("Presets");
     }
 
     private void WatchFolder_Click(object sender, RoutedEventArgs e)
     {
-        if (!EnsurePro(ProFeature.UnlimitedRecursion)) return;
-
-        var store = new PresetStore(_fs, Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "BatchFileRenamer", "presets"));
-
-        new WatchFolderWindow(store, _license.License) { Owner = this }.ShowDialog();
+        NavigateTo("Watch");
     }
 
     private void ExportReport_Click(object sender, RoutedEventArgs e)
@@ -830,12 +931,7 @@ public partial class MainWindow : FluentWindow
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
-        new SettingsWindow(_license) { Owner = this }.ShowDialog();
-        (Application.Current as App)?.ApplyBackgroundSetting();
-        ApplyShakeSetting();
-        ApplyHotkeySetting();
-        UpdateLicenseState();
-        _ = _vm.RebuildAsync();
+        NavigateTo("Settings");
     }
 
     /// <summary>
@@ -949,7 +1045,11 @@ public partial class MainWindow : FluentWindow
 
     private void Window_Drop(object sender, DragEventArgs e)
     {
-        if (e.Data.GetData(DataFormats.FileDrop) is string[] paths) _vm.AddPaths(paths);
+        if (e.Data.GetData(DataFormats.FileDrop) is string[] paths)
+        {
+            NavigateTo("Rename");
+            _vm.AddPaths(paths);
+        }
     }
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
