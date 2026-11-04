@@ -13,7 +13,7 @@ using System.Windows.Input;
 /// Khay nổi: thả tệp từ nhiều thư mục vào đây rồi đổi tên cùng lúc.
 /// Logic nằm trong <see cref="ShelfModel"/>; cửa sổ chỉ nối view với model.
 /// </summary>
-public partial class ShelfWindow : Window
+public partial class ShelfWindow : Wpf.Ui.Controls.FluentWindow
 {
     private sealed record ShelfRow(string Name, string FullPath);
 

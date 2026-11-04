@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Windows;
 
-public partial class HistoryWindow : Window
+public partial class HistoryWindow : Wpf.Ui.Controls.FluentWindow
 {
     private readonly HistoryStore _history;
     private readonly IFileSystem _fs;

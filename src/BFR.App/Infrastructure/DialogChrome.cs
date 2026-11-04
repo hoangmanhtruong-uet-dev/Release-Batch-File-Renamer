@@ -16,6 +16,14 @@ public static class DialogChrome
         window.WindowBackdropType = Ui.WindowBackdropType.Mica;
     }
 
+    /// <summary>Ánh xạ tên style cũ của BFR sang kiểu nút của WPF-UI.</summary>
+    public static Ui.ControlAppearance AppearanceFor(string styleKey) => styleKey switch
+    {
+        var k when k.StartsWith("Primary") => Ui.ControlAppearance.Primary,
+        var k when k.StartsWith("Subtle") => Ui.ControlAppearance.Transparent,
+        _ => Ui.ControlAppearance.Secondary
+    };
+
     /// <summary>Đặt <paramref name="body"/> dưới một TitleBar (chỉ có nút đóng).</summary>
     public static Grid Wrap(Ui.FluentWindow window, UIElement body)
     {

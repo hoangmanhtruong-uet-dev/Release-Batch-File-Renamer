@@ -8,7 +8,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 
-public partial class RuleEditorWindow : Window
+public partial class RuleEditorWindow : Wpf.Ui.Controls.FluentWindow
 {
     private readonly Preset _preset;
     private readonly List<RuleDefinition> _rules;
