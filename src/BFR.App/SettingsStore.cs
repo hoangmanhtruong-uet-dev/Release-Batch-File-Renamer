@@ -24,6 +24,12 @@ public sealed class AppSettings
     /// <summary>Preset dùng cho Watch Folder.</summary>
     public string? WatchPreset { get; set; }
 
+    /// <summary>
+    /// Lắc chuột khi đang kéo tệp để mở Shelf (dùng hook chuột toàn cục).
+    /// Mặc định TẮT theo nguyên tắc opt-in.
+    /// </summary>
+    public bool ShakeToOpenShelf { get; set; } = false;
+
     /// <summary>Giao diện: "System", "Light" hoặc "Dark".</summary>
     public string Theme { get; set; } = "System";
 

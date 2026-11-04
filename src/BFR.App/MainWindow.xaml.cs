@@ -79,6 +79,13 @@ public partial class MainWindow : Window
             PresetCombo.SelectedIndex = 0;
         }
         SortCombo.SelectedIndex = 0;
+        Loaded += (_, _) => ApplyShakeSetting();
+        Closed += (_, _) =>
+        {
+            _shakeHook?.Dispose();
+            _shakeHook = null;
+            _shelf?.Close();
+        };
         ShelfButtonText.Text = Loc.L("Khay tệp", "Shelf");
         ShelfButton.ToolTip = Loc.L("Khay tệp (Ctrl+Shift+S)", "Shelf (Ctrl+Shift+S)");
 
@@ -185,11 +192,50 @@ public partial class MainWindow : Window
     private void ClearList_Click(object sender, RoutedEventArgs e) => _vm.ClearList();
 
     private ShelfWindow? _shelf;
+    private MouseHook? _shakeHook;
+
+    /// <summary>Bật/tắt hook lắc chuột theo cài đặt hiện tại.</summary>
+    private void ApplyShakeSetting()
+    {
+        var enabled = SettingsStore.Load().ShakeToOpenShelf;
+        if (enabled && _shakeHook is null)
+        {
+            try
+            {
+                _shakeHook = new MouseHook(new ShakeDetector());
+                _shakeHook.Shaken += (x, y) => Dispatcher.BeginInvoke(() => OpenShelfAt(x, y));
+            }
+            catch
+            {
+                _shakeHook = null;   // không cài được hook: bỏ qua, không làm hỏng ứng dụng
+            }
+        }
+        else if (!enabled && _shakeHook is not null)
+        {
+            _shakeHook.Dispose();
+            _shakeHook = null;
+        }
+    }
+
+    /// <summary>Mở Shelf ngay tại con trỏ (toạ độ vật lý) để thả tệp đang kéo vào.</summary>
+    private void OpenShelfAt(int screenX, int screenY)
+    {
+        OpenShelf(activate: false);
+        if (_shelf is null) return;
+
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var vx = screenX / dpi.DpiScaleX;
+        var vy = screenY / dpi.DpiScaleY;
+        var maxLeft = SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - _shelf.Width;
+        var maxTop = SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - _shelf.Height;
+        _shelf.Left = Math.Clamp(vx - _shelf.Width / 2, SystemParameters.VirtualScreenLeft, Math.Max(SystemParameters.VirtualScreenLeft, maxLeft));
+        _shelf.Top = Math.Clamp(vy - 80, SystemParameters.VirtualScreenTop, Math.Max(SystemParameters.VirtualScreenTop, maxTop));
+    }
 
     private void Shelf_Click(object sender, RoutedEventArgs e) => OpenShelf();
 
     /// <summary>Mở (hoặc đưa lên trước) khay tệp gom từ nhiều thư mục.</summary>
-    public void OpenShelf(IEnumerable<string>? paths = null)
+    public void OpenShelf(IEnumerable<string>? paths = null, bool activate = true)
     {
         if (_shelf is null)
         {
@@ -198,8 +244,9 @@ public partial class MainWindow : Window
                 batch => EnqueuePaths(batch),
                 feature => ShowUpgradeDialog(feature))
             {
-                Owner = this
+                Topmost = true
             };
+            _shelf.ShowActivated = activate;
             _shelf.Left = Math.Max(0, Left + Width - _shelf.Width - 24);
             _shelf.Top = Math.Max(0, Top + 96);
             _shelf.Closed += (_, _) => _shelf = null;
@@ -744,6 +791,7 @@ public partial class MainWindow : Window
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
         new SettingsWindow(_license) { Owner = this }.ShowDialog();
+        ApplyShakeSetting();
         UpdateLicenseState();
         _ = _vm.RebuildAsync();
     }

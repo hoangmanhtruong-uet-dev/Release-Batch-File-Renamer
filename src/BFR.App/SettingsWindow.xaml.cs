@@ -76,6 +76,22 @@ public class SettingsWindow : Window
         };
         content.Children.Add(theme);
 
+        // ---- Shelf ----
+        content.Children.Add(Header("SHELF"));
+        var shake = new CheckBox
+        {
+            Content = Loc.L("Lắc chuột khi đang kéo tệp để mở Shelf", "Shake the mouse while dragging files to open Shelf"),
+            IsChecked = _settings.ShakeToOpenShelf,
+            Style = (Style)Application.Current.FindResource("AppCheckBoxStyle"),
+            Margin = new Thickness(0, 0, 0, 4)
+        };
+        shake.Checked += (_, _) => { _settings.ShakeToOpenShelf = true; SettingsStore.Save(_settings); };
+        shake.Unchecked += (_, _) => { _settings.ShakeToOpenShelf = false; SettingsStore.Save(_settings); };
+        content.Children.Add(shake);
+        content.Children.Add(Caption(Loc.L(
+            "Cần theo dõi chuột toàn hệ thống khi bật. Chỉ xử lý trên máy, không ghi lại hay gửi đi.",
+            "Watches the mouse system-wide while enabled. Handled locally; nothing is recorded or sent.")));
+
         // ---- Cập nhật ----
         content.Children.Add(Header(Loc.T("SettingsUpdates")));
         var checkUpdates = new CheckBox
