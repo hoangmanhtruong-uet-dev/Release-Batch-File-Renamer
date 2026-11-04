@@ -195,6 +195,8 @@ public sealed class LicenseService
             ProFeature.CommandLine => limits.AllowCommandLine,
             ProFeature.RomanNumbering => limits.AllowRomanNumbering,
             ProFeature.UnlimitedShelf => limits.MaxShelfItems == int.MaxValue,
+            ProFeature.UnlimitedListRows => limits.MaxListRows == int.MaxValue,
+            ProFeature.ListCsvImport => limits.AllowListCsvImport,
             _ => true
         };
 
@@ -213,6 +215,9 @@ public sealed class LicenseService
 
     /// <summary>Số preset người dùng tối đa được lưu.</summary>
     public int MaxSavedPresets => Limits.MaxSavedPresets;
+
+    /// <summary>Số dòng tối đa của danh sách đổi tên (Free: 50, Pro: không giới hạn).</summary>
+    public int MaxListRows => Limits.MaxListRows;
 
     /// <summary>Số tệp tối đa trong Shelf (Free: 50, Pro: không giới hạn).</summary>
     public int MaxShelfItems => Limits.MaxShelfItems;
@@ -310,6 +315,8 @@ public static class FeatureMessages
         ProFeature.CommandLine => "Công cụ dòng lệnh bfr là tính năng Pro.",
         ProFeature.RomanNumbering => "Đánh số kiểu La Mã là tính năng Pro.",
         ProFeature.UnlimitedShelf => "Bản Free giữ tối đa 50 tệp trong Shelf. Nâng cấp Pro để không giới hạn.",
+        ProFeature.UnlimitedListRows => "Bản Free dùng tối đa 50 dòng trong danh sách đổi tên. Nâng cấp Pro để không giới hạn.",
+        ProFeature.ListCsvImport => "Nhập danh sách từ tệp CSV là tính năng Pro.",
         _ => "Tính năng này cần bản Pro."
     };
 }

@@ -35,6 +35,12 @@ public sealed record LicenseLimits
     /// <summary>Cho phép đánh số kiểu La Mã.</summary>
     public bool AllowRomanNumbering { get; init; }
 
+    /// <summary>Số dòng tối đa của danh sách đổi tên / từ điển thay thế.</summary>
+    public int MaxListRows { get; init; }
+
+    /// <summary>Cho phép nhập danh sách từ tệp CSV.</summary>
+    public bool AllowListCsvImport { get; init; }
+
     /// <summary>Số tệp tối đa trong Shelf.</summary>
     public int MaxShelfItems { get; init; }
 
@@ -51,7 +57,9 @@ public sealed record LicenseLimits
         AllowReportExport = false,
         AllowCommandLine = false,
         AllowRomanNumbering = false,
-        MaxShelfItems = 50
+        MaxShelfItems = 50,
+        MaxListRows = 50,
+        AllowListCsvImport = false
     };
 
     /// <summary>Giới hạn của bản Pro: không giới hạn.</summary>
@@ -67,7 +75,9 @@ public sealed record LicenseLimits
         AllowReportExport = true,
         AllowCommandLine = true,
         AllowRomanNumbering = true,
-        MaxShelfItems = int.MaxValue
+        MaxShelfItems = int.MaxValue,
+        MaxListRows = int.MaxValue,
+        AllowListCsvImport = true
     };
 
     public static LicenseLimits For(LicenseTier tier) =>

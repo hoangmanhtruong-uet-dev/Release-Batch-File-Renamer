@@ -36,5 +36,11 @@ public enum ProFeature
     RomanNumbering,
 
     /// <summary>Shelf không giới hạn số tệp (Free: tối đa 50 tệp mỗi lần).</summary>
-    UnlimitedShelf
+    UnlimitedShelf,
+
+    /// <summary>Danh sách đổi tên / từ điển thay thế không giới hạn dòng (Free: tối đa 50 dòng).</summary>
+    UnlimitedListRows,
+
+    /// <summary>Nhập danh sách từ tệp CSV.</summary>
+    ListCsvImport
 }
