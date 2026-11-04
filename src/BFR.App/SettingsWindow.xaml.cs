@@ -90,16 +90,14 @@ public class SettingsWindow : Ui.FluentWindow
         look.Children.Add(theme);
 
         // ---- Shelf & chạy nền ----
-        var shelf = Card(content, "SHELF");
+        var shelf = Card(content, Loc.T("SettingsShelf"));
         shelf.Children.Add(Toggle(
-            Loc.L("Lắc chuột khi đang kéo tệp để mở Shelf", "Shake the mouse while dragging files to open Shelf"),
+            Loc.T("SettingsShake"),
             _settings.ShakeToOpenShelf,
             on => _settings.ShakeToOpenShelf = on));
-        shelf.Children.Add(Caption(Loc.L(
-            "Cần theo dõi chuột toàn hệ thống khi bật. Chỉ xử lý trên máy, không ghi lại hay gửi đi.",
-            "Watches the mouse system-wide while enabled. Handled locally; nothing is recorded or sent.")));
+        shelf.Children.Add(Caption(Loc.T("SettingsShakeHint")));
         var bg = Toggle(
-            Loc.L("Chạy nền ở khay hệ thống khi đóng cửa sổ", "Keep running in the system tray when the window is closed"),
+            Loc.T("SettingsRunInBackground"),
             _settings.RunInBackground,
             on => _settings.RunInBackground = on);
         bg.Margin = new Thickness(0, 12, 0, 0);
@@ -216,7 +214,7 @@ public class SettingsWindow : Ui.FluentWindow
         // ---- Quyền riêng tư & giới thiệu ----
         var about = Card(content, Loc.T("SettingsPrivacy") + " · " + Loc.T("SettingsAbout"));
         about.Children.Add(Caption(Loc.T("SettingsPrivacyHint")));
-        about.Children.Add(Caption(Loc.F("SettingsVersion", "1.2.2")));
+        about.Children.Add(Caption(Loc.F("SettingsVersion", BFR.Core.AppVersion.Current)));
 
         var rateButton = new Ui.Button
         {
@@ -278,7 +276,9 @@ public class SettingsWindow : Ui.FluentWindow
     /// <summary>Công tắc bật/tắt: lưu ngay vào cài đặt khi đổi.</summary>
     private Ui.ToggleSwitch Toggle(string text, bool isOn, Action<bool> set)
     {
-        var toggle = new Ui.ToggleSwitch { Content = text, IsChecked = isOn };
+        // Content là TextBlock có xuống dòng: ToggleSwitch không tự wrap chuỗi dài (tiếng Pháp, tiếng Trung).
+        var label = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, MaxWidth = 460 };
+        var toggle = new Ui.ToggleSwitch { Content = label, IsChecked = isOn };
         AutomationProperties.SetName(toggle, text);
         toggle.Checked += (_, _) => { set(true); SettingsStore.Save(_settings); };
         toggle.Unchecked += (_, _) => { set(false); SettingsStore.Save(_settings); };

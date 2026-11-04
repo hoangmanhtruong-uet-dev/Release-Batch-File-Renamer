@@ -414,4 +414,18 @@
     <sys:String x:Key="RateApp">⭐ Évaluer sur le Microsoft Store</sys:String>
     <sys:String x:Key="RateAppTitle">Évaluer BFR</sys:String>
     <sys:String x:Key="RateAppPrompt">Appréciez-vous BFR ? Prenez un instant pour nous évaluer sur le Microsoft Store !</sys:String>
+    <sys:String x:Key="TrayOpen">Ouvrir Batch File Renamer</sys:String>
+    <sys:String x:Key="TrayShelf">Ouvrir le Shelf</sys:String>
+    <sys:String x:Key="TrayExit">Quitter</sys:String>
+    <sys:String x:Key="ShelfButton">Shelf</sys:String>
+    <sys:String x:Key="ShelfTooltip">Shelf (Ctrl+Shift+S)</sys:String>
+    <sys:String x:Key="ShelfCommand">Ouvrir le Shelf</sys:String>
+    <sys:String x:Key="ShelfTitle">Shelf</sys:String>
+    <sys:String x:Key="ShelfClear">Tout effacer</sys:String>
+    <sys:String x:Key="ShelfRename">Renommer…</sys:String>
+    <sys:String x:Key="ShelfHint">Faites glisser ici des fichiers ou dossiers de n'importe où, puis cliquez sur Renommer pour les traiter ensemble.</sys:String>
+    <sys:String x:Key="SettingsShelf">SHELF</sys:String>
+    <sys:String x:Key="SettingsShake">Secouer la souris en faisant glisser des fichiers pour ouvrir le Shelf</sys:String>
+    <sys:String x:Key="SettingsShakeHint">Surveille la souris sur tout le système lorsque l'option est activée. Traitement local ; rien n'est enregistré ni envoyé.</sys:String>
+    <sys:String x:Key="SettingsRunInBackground">Continuer en arrière-plan dans la zone de notification à la fermeture de la fenêtre</sys:String>
 </ResourceDictionary>

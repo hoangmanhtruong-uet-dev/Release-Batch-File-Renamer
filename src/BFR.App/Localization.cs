@@ -37,6 +37,12 @@ public static class Loc
     public static string T(string key) =>
         Application.Current?.TryFindResource(key) as string ?? key;
 
+    /// <summary>
+    /// Chuỗi dùng làm nhãn thường: bỏ ký hiệu phím tắt của menu ("_Mở", "打开(_O)").
+    /// Các khoá như WatchFolder viết cho MenuItem nên có "_"; trong TextBlock nó hiện nguyên văn.
+    /// </summary>
+    public static string Plain(string key) => BFR.Presentation.AccessKey.Strip(T(key));
+
     public static string F(string key, params object[] args) =>
         string.Format(CultureInfo.CurrentCulture, T(key), args);
 }

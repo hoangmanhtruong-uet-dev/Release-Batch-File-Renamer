@@ -81,7 +81,7 @@ public class WatchFolderWindow : Ui.FluentWindow
 
         var options = new StackPanel();
         options.Children.Add(Header(Loc.T("WatchOptionsTitle")));
-        options.Children.Add(Row(Loc.T("WatchFolder"), _folderBox, BrowseButton()));
+        options.Children.Add(Row(Loc.Plain("WatchFolder"), _folderBox, BrowseButton()));
         options.Children.Add(Row(Loc.T("WatchPreset"), _presetCombo));
         options.Children.Add(Row(Loc.T("WatchSettle"), _settleBox));
         options.Children.Add(Row(Loc.T("WatchInclude"), _includeBox));
@@ -135,7 +135,6 @@ public class WatchFolderWindow : Ui.FluentWindow
         _settleBox.Style = (Style)Application.Current.FindResource("AppTextBoxStyle");
         _includeBox.Style = (Style)Application.Current.FindResource("AppTextBoxStyle");
         _excludeBox.Style = (Style)Application.Current.FindResource("AppTextBoxStyle");
-        _presetCombo.Style = (Style)Application.Current.FindResource("AppComboBoxStyle");
         _logList.Style = (Style)Application.Current.FindResource("AppListBoxStyle");
         _recursive.Style = (Style)Application.Current.FindResource("AppCheckBoxStyle");
         _dryRun.Style = (Style)Application.Current.FindResource("AppCheckBoxStyle");
@@ -197,7 +196,7 @@ public class WatchFolderWindow : Ui.FluentWindow
         };
         button.Click += (_, _) =>
         {
-            var dialog = new OpenFolderDialog { Title = Loc.T("WatchFolder") };
+            var dialog = new OpenFolderDialog { Title = Loc.Plain("WatchFolder") };
             if (dialog.ShowDialog() == true) _folderBox.Text = dialog.FolderName;
         };
         return button;

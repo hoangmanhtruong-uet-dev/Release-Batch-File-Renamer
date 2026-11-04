@@ -32,12 +32,10 @@ public partial class ShelfWindow : Wpf.Ui.Controls.FluentWindow
         _sendToMain = sendToMain;
         _onLimitReached = onLimitReached;
 
-        Title = Loc.L("Khay tệp (Shelf)", "Shelf");
-        ClearButton.Content = Loc.L("Xóa hết", "Clear");
-        RenameButton.Content = Loc.L("Đổi tên…", "Rename…");
-        HintText.Text = Loc.L(
-            "Kéo tệp hoặc thư mục từ nhiều nơi vào đây,\nrồi bấm Đổi tên để xử lý cùng lúc.",
-            "Drag files or folders here from anywhere,\nthen press Rename to process them together.");
+        Title = Loc.T("ShelfTitle");
+        ClearButton.Content = Loc.T("ShelfClear");
+        RenameButton.Content = Loc.T("ShelfRename");
+        HintText.Text = Loc.T("ShelfHint");
 
         _model.Items.CollectionChanged += (_, _) => Refresh();
         Refresh();

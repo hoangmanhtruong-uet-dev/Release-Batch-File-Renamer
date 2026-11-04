@@ -38,6 +38,7 @@ public partial class HistoryWindow : Wpf.Ui.Controls.FluentWindow
             .ToList();
 
         HistoryGrid.ItemsSource = entries;
+        EmptyText.Visibility = entries.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void Refresh_Click(object sender, RoutedEventArgs e) => Refresh();

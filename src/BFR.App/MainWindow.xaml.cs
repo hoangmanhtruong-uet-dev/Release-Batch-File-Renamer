@@ -85,8 +85,8 @@ public partial class MainWindow : FluentWindow
             _shakeHook = null;
             _shelf?.Close();
         };
-        ShelfButtonText.Text = Loc.L("Khay tệp", "Shelf");
-        ShelfButton.ToolTip = Loc.L("Khay tệp (Ctrl+Shift+S)", "Shelf (Ctrl+Shift+S)");
+        ShelfButtonText.Text = Loc.T("ShelfButton");
+        ShelfButton.ToolTip = Loc.T("ShelfTooltip");
 
         _vm.ProLimitReached += (_, feature) => ShowUpgradeDialog(feature);
         Loaded += (_, _) => (Application.Current as App)?.ApplyBackgroundSetting();
@@ -248,8 +248,10 @@ public partial class MainWindow : FluentWindow
                 Topmost = true
             };
             _shelf.ShowActivated = activate;
-            _shelf.Left = Math.Max(0, Left + Width - _shelf.Width - 24);
-            _shelf.Top = Math.Max(0, Top + 96);
+            // Cửa sổ chính đang minimize thì Left/Top không dùng được: lấy vùng đã lưu trước khi thu nhỏ.
+            var area = WindowState == WindowState.Normal ? new Rect(Left, Top, Width, Height) : RestoreBounds;
+            _shelf.Left = Math.Max(0, area.Right - _shelf.Width - 24);
+            _shelf.Top = Math.Max(0, area.Top + 96);
             _shelf.Closed += (_, _) => _shelf = null;
             _shelf.Show();
         }
@@ -632,7 +634,7 @@ public partial class MainWindow : FluentWindow
 
         registry.Register(Loc.T("CommandAddFiles"), files, () => AddFiles_Click(this, new RoutedEventArgs()), "Ctrl+O");
         registry.Register(Loc.T("CommandAddFolder"), files, () => AddFolder_Click(this, new RoutedEventArgs()), "Ctrl+Shift+O");
-        registry.Register(Loc.L("Mở khay tệp (Shelf)", "Open Shelf"), files, () => OpenShelf(), "Ctrl+Shift+S");
+        registry.Register(Loc.T("ShelfCommand"), files, () => OpenShelf(), "Ctrl+Shift+S");
         registry.Register(Loc.T("CommandClearList"), files, () => ClearList_Click(this, new RoutedEventArgs()));
         registry.Register(Loc.T("CommandApply"), files, () => Apply_Click(this, new RoutedEventArgs()), "Ctrl+Enter");
         registry.Register(Loc.T("CommandUndo"), files, () => Undo_Click(this, new RoutedEventArgs()), "Ctrl+Z");

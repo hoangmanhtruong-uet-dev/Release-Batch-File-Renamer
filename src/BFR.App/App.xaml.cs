@@ -36,9 +36,9 @@ public partial class App : Application
             {
                 _tray = new TrayIcon(
                     "Batch File Renamer",
-                    Loc.L("Mở Batch File Renamer", "Open Batch File Renamer"),
-                    Loc.L("Mở Shelf", "Open Shelf"),
-                    Loc.L("Thoát", "Exit"),
+                    Loc.T("TrayOpen"),
+                    Loc.T("TrayShelf"),
+                    Loc.T("TrayExit"),
                     open: () => _mainWindow?.ActivateAndForeground(),
                     shelf: () => _mainWindow?.OpenShelf(),
                     exit: ExitApplication);
@@ -84,8 +84,9 @@ public partial class App : Application
         };
 
         SessionEnding += (_, _) => IsExiting = true;   // không chặn đăng xuất/tắt máy khi đang ẩn trong khay
-        var payload = ParseArgs(e.Args);
-        StartHidden = payload.Paths.RemoveAll(p => string.Equals(p, "--background", StringComparison.OrdinalIgnoreCase)) > 0;
+        var parsed = StartupArgs.Parse(e.Args);
+        var payload = parsed.Payload;
+        StartHidden = parsed.Background;
 
         // Hỗ trợ lệnh đăng ký nhanh menu chuột phải từ phím tắt hoặc cài đặt
         if (payload.Paths.Contains("--register-context-menu", StringComparer.OrdinalIgnoreCase))
@@ -223,33 +224,6 @@ public partial class App : Application
         });
     }
 
-    private static IpcPayload ParseArgs(string[] args)
-    {
-        var payload = new IpcPayload();
-        for (int i = 0; i < args.Length; i++)
-        {
-            var a = args[i];
-            if (string.Equals(a, "--file-list", StringComparison.OrdinalIgnoreCase))
-            {
-                if (i + 1 < args.Length)
-                {
-                    payload.FileListPath = args[++i];
-                }
-            }
-            else if (string.Equals(a, "--preset", StringComparison.OrdinalIgnoreCase))
-            {
-                if (i + 1 < args.Length)
-                {
-                    payload.PresetName = args[++i];
-                }
-            }
-            else
-            {
-                payload.Paths.Add(a);
-            }
-        }
-        return payload;
-    }
 
     protected override async void OnExit(ExitEventArgs e)
     {

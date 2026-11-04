@@ -75,7 +75,7 @@
                 <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,10,0" Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource AppTextBoxStyle}" AutomationProperties.Name="Regex test string" />
                 <ui:Button Grid.Row="2" Grid.Column="2" Content="{Binding UseSelectedLabel}"
-                        Appearance="Secondary" Click="UseSelected_Click"
+                        Appearance="Secondary" Click="UseSelected_Click" Padding="14,6"
                         AutomationProperties.Name="Use selected name" />
             </Grid>
 

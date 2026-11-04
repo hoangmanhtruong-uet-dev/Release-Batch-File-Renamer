@@ -750,7 +750,7 @@ public sealed class MainViewModel : ObservableObject
         try
         {
             var steps = new RenamePlanner().Plan(pairs);
-            var result = await Task.Run(() => new RenameExecutor(_fs, _journalDir).Execute(steps, "1.2.2"))
+            var result = await Task.Run(() => new RenameExecutor(_fs, _journalDir).Execute(steps, AppVersion.Current))
                 .ConfigureAwait(true);
 
             _history.Add(new HistoryEntry

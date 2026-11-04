@@ -37,6 +37,9 @@
             <DataGrid x:Name="HistoryGrid" AutoGenerateColumns="False" IsReadOnly="True"
                       CanUserAddRows="False" HeadersVisibility="Column"
                       Style="{StaticResource PreviewDataGridStyle}"
+                      ColumnHeaderStyle="{StaticResource PreviewHeaderStyle}"
+                      CellStyle="{StaticResource PreviewCellStyle}"
+                      RowStyle="{StaticResource PreviewRowStyle}"
                       AutomationProperties.Name="Rename Runs History Table">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Id}" Width="90" Header="{DynamicResource HistoryColId}" />
@@ -49,10 +52,9 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <TextBlock Text="{DynamicResource HistoryEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <TextBlock x:Name="EmptyText" Text="{DynamicResource HistoryEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center"
                        TextWrapping="Wrap" TextAlignment="Center" MaxWidth="420"
                        Foreground="{DynamicResource TextSecondary}"
-                       Visibility="{Binding HistoryGrid.ItemsSource.Count, Converter={StaticResource ZeroToVis}, RelativeSource={RelativeSource AncestorType=Window}}"
                        AutomationProperties.Name="History Empty" />
         </Grid>
 
