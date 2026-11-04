@@ -163,6 +163,17 @@ public class QuickRenamerTests
         }
     }
 
+    [Fact]
+    public void QuickPresets_HaveTitlesInBothLanguages()
+    {
+        foreach (var q in QuickPresets.All)
+        {
+            Assert.False(string.IsNullOrWhiteSpace(q.Title(vietnamese: true)), q.Key);
+            Assert.False(string.IsNullOrWhiteSpace(q.Title(vietnamese: false)), q.Key);
+        }
+        Assert.Equal(QuickPresets.All.Count, QuickPresets.All.Select(q => q.Title(false)).Distinct().Count());
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]

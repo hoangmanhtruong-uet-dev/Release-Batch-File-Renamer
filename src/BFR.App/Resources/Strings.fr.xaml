@@ -455,4 +455,12 @@
     <sys:String x:Key="SettingsHotkey">Raccourci global pour ouvrir le Shelf</sys:String>
     <sys:String x:Key="SettingsHotkeyHint">Fonctionne tant que BFR est lancé (même masqué dans la zone de notification). Seule la combinaison choisie est reçue.</sys:String>
     <sys:String x:Key="HotkeyRegisterFailed">Impossible d'enregistrer le raccourci {0} : une autre application l'utilise peut-être. Choisissez une autre combinaison dans les Paramètres.</sys:String>
+    <sys:String x:Key="QuickDone">{0} fichiers renommés · {1}</sys:String>
+    <sys:String x:Key="QuickDoneResolved">{0} fichiers renommés · {1} ({2} noms en double corrigés)</sys:String>
+    <sys:String x:Key="QuickNothing">Aucun fichier à renommer.</sys:String>
+    <sys:String x:Key="QuickBlocked">Aucun fichier renommé car : {0}</sys:String>
+    <sys:String x:Key="QuickFailed">Erreur pendant le renommage ({0}). Vous pouvez annuler ce qui a été renommé.</sys:String>
+    <sys:String x:Key="QuickUndo">Annuler</sys:String>
+    <sys:String x:Key="QuickUndone">{0} fichiers restaurés.</sys:String>
+    <sys:String x:Key="QuickUnknownPreset">Préréglage de renommage rapide inconnu : {0}</sys:String>
 </ResourceDictionary>

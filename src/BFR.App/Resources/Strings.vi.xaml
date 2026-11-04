@@ -455,4 +455,12 @@
     <sys:String x:Key="SettingsHotkey">Phím tắt toàn cục để mở Shelf</sys:String>
     <sys:String x:Key="SettingsHotkeyHint">Hoạt động khi BFR đang chạy (kể cả khi ẩn ở khay hệ thống). Chỉ nhận đúng tổ hợp phím đã chọn.</sys:String>
     <sys:String x:Key="HotkeyRegisterFailed">Không đăng ký được phím tắt {0}: có thể ứng dụng khác đang dùng. Hãy chọn tổ hợp khác trong Cài đặt.</sys:String>
+    <sys:String x:Key="QuickDone">Đã đổi tên {0} tệp · {1}</sys:String>
+    <sys:String x:Key="QuickDoneResolved">Đã đổi tên {0} tệp · {1} (tự xử lý {2} tên trùng)</sys:String>
+    <sys:String x:Key="QuickNothing">Không có tệp nào cần đổi tên.</sys:String>
+    <sys:String x:Key="QuickBlocked">Không đổi tên vì: {0}</sys:String>
+    <sys:String x:Key="QuickFailed">Có lỗi khi đổi tên ({0}). Có thể hoàn tác phần đã đổi.</sys:String>
+    <sys:String x:Key="QuickUndo">Hoàn tác</sys:String>
+    <sys:String x:Key="QuickUndone">Đã hoàn tác {0} tệp.</sys:String>
+    <sys:String x:Key="QuickUnknownPreset">Preset đổi tên nhanh không tồn tại: {0}</sys:String>
 </ResourceDictionary>

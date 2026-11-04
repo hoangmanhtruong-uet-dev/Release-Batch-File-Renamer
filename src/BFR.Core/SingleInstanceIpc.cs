@@ -16,6 +16,9 @@ public sealed class IpcPayload
     public List<string> Paths { get; set; } = new();
     public string? FileListPath { get; set; }
     public string? PresetName { get; set; }
+
+    /// <summary>Khoá preset đổi tên nhanh (--quick): áp dụng ngay, không mở cửa sổ chính.</summary>
+    public string? QuickPreset { get; set; }
 }
 
 /// <summary>

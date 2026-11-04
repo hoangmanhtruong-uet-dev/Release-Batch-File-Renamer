@@ -5,18 +5,22 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>Một preset "đổi tên nhanh" hiện trong menu chuột phải Explorer (B1).</summary>
-public sealed record QuickPreset(string Key, string PresetName);
+public sealed record QuickPreset(string Key, string PresetName, string TitleVi, string TitleEn)
+{
+    /// <summary>Tiêu đề trong menu con Explorer theo ngôn ngữ giao diện.</summary>
+    public string Title(bool vietnamese) => vietnamese ? TitleVi : TitleEn;
+}
 
 /// <summary>Danh sách preset nhanh; khoá ngắn được dùng trong dòng lệnh <c>--quick &lt;key&gt;</c>.</summary>
 public static class QuickPresets
 {
     public static IReadOnlyList<QuickPreset> All { get; } = new[]
     {
-        new QuickPreset("number", "Đánh số theo thứ tự"),
-        new QuickPreset("ascii", "Bỏ dấu tiếng Việt + gạch nối"),
-        new QuickPreset("date", "Ảnh theo ngày chụp"),
-        new QuickPreset("clean", "Dọn dẹp tên tệp"),
-        new QuickPreset("lower", "Chữ thường toàn bộ")
+        new QuickPreset("number", "Đánh số theo thứ tự", "Đánh số theo thứ tự", "Number in order"),
+        new QuickPreset("ascii", "Bỏ dấu tiếng Việt + gạch nối", "Bỏ dấu và chuẩn hoá tên", "Remove accents and slugify"),
+        new QuickPreset("date", "Ảnh theo ngày chụp", "Đặt tên theo ngày", "Name by date"),
+        new QuickPreset("clean", "Dọn dẹp tên tệp", "Dọn dẹp tên tệp", "Clean up names"),
+        new QuickPreset("lower", "Chữ thường toàn bộ", "Chữ thường toàn bộ", "All lowercase")
     };
 
     public static bool TryGet(string? key, out QuickPreset quick, out Preset preset)

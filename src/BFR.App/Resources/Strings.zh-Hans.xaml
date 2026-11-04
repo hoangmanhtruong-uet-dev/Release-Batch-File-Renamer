@@ -455,4 +455,12 @@
     <sys:String x:Key="SettingsHotkey">用于打开文件架的全局快捷键</sys:String>
     <sys:String x:Key="SettingsHotkeyHint">BFR 运行时有效（包括隐藏在系统托盘时）。仅接收所选的组合键。</sys:String>
     <sys:String x:Key="HotkeyRegisterFailed">无法注册快捷键 {0}：可能已被其他应用占用。请在设置中选择其他组合。</sys:String>
+    <sys:String x:Key="QuickDone">已重命名 {0} 个文件 · {1}</sys:String>
+    <sys:String x:Key="QuickDoneResolved">已重命名 {0} 个文件 · {1}（已自动处理 {2} 个重名）</sys:String>
+    <sys:String x:Key="QuickNothing">没有需要重命名的文件。</sys:String>
+    <sys:String x:Key="QuickBlocked">未重命名，原因：{0}</sys:String>
+    <sys:String x:Key="QuickFailed">重命名时出错（{0}）。可以撤销已完成的部分。</sys:String>
+    <sys:String x:Key="QuickUndo">撤销</sys:String>
+    <sys:String x:Key="QuickUndone">已撤销 {0} 个文件。</sys:String>
+    <sys:String x:Key="QuickUnknownPreset">未知的快速重命名预设：{0}</sys:String>
 </ResourceDictionary>

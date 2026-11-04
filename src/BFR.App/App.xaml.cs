@@ -7,6 +7,7 @@ using BFR.App.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -17,6 +18,7 @@ public partial class App : Application
     private MainWindow? _mainWindow;
     private LicenseCoordinator? _license;
     private TrayIcon? _tray;
+    private int _toasts;
 
     /// <summary>True khi đang bật chạy nền (có biểu tượng khay).</summary>
     public bool BackgroundEnabled => _tray is not null;
@@ -135,6 +137,16 @@ public partial class App : Application
             return;
         }
 
+        // B1: đổi tên nhanh từ menu chuột phải — không mở cửa sổ chính, chỉ hiện thông báo kèm Hoàn tác.
+        if (payload.QuickPreset is not null)
+        {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            _server = new SingleInstanceServer(OnIpcPayloadReceived);
+            _server.Start();
+            _ = RunQuickAsync(payload);
+            return;
+        }
+
         _mainWindow = new MainWindow(payload, _license);
         MainWindow = _mainWindow;
 
@@ -197,11 +209,105 @@ public partial class App : Application
         _mainWindow?.UpdateLicenseState();
     }
 
+    /// <summary>Tạo và hiện cửa sổ chính khi ứng dụng đang chạy ở chế độ đổi tên nhanh (chưa có cửa sổ).</summary>
+    private void EnsureMainWindow(IpcPayload payload)
+    {
+        if (_license is null || _mainWindow is not null) return;
+
+        _mainWindow = new MainWindow(payload, _license);
+        MainWindow = _mainWindow;
+        ShutdownMode = BackgroundEnabled ? ShutdownMode.OnExplicitShutdown : ShutdownMode.OnLastWindowClose;
+        _mainWindow.Show();
+        _mainWindow.ApplyShakeSetting();
+        _mainWindow.ApplyHotkeySetting();
+    }
+
+    /// <summary>Đổi tên nhanh theo preset (B1): quét tệp, áp dụng, rồi hiện thông báo có nút Hoàn tác.</summary>
+    private async Task RunQuickAsync(IpcPayload payload)
+    {
+        var vietnamese = Loc.Current == "vi";
+        try
+        {
+            var paths = new List<string>(payload.Paths);
+            if (!string.IsNullOrWhiteSpace(payload.FileListPath))
+            {
+                paths.AddRange(FileListReader.ReadAndDelete(payload.FileListPath));
+            }
+
+            if (!QuickPresets.TryGet(payload.QuickPreset, out var quick, out var preset))
+            {
+                ShowToast(Loc.F("QuickUnknownPreset", payload.QuickPreset ?? string.Empty), null, isProblem: true);
+                return;
+            }
+
+            var fs = new RealFileSystem();
+            var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BatchFileRenamer");
+            var history = new HistoryStore(fs, Path.Combine(dir, "history.json"));
+            var renamer = new QuickRenamer(fs, Path.Combine(dir, "journal"), history);
+            var limits = _license!.License;
+
+            var result = await Task.Run(() =>
+            {
+                var files = new FileScanner().Scan(paths, new ScanOptions());
+                return renamer.Run(files, preset, limits.MaxListRows, limits.MaxUndoEntries);
+            }).ConfigureAwait(true);
+
+            var title = quick.Title(vietnamese);
+            Func<string>? undo = null;
+            if (result.JournalPath is not null)
+            {
+                var journal = result.JournalPath;
+                undo = () =>
+                {
+                    var n = renamer.Undo(journal);
+                    history.Save(history.LoadAll().Where(e => !string.Equals(e.JournalPath, journal, StringComparison.OrdinalIgnoreCase)));
+                    return Loc.F("QuickUndone", n);
+                };
+            }
+
+            switch (result.Status)
+            {
+                case QuickRenameStatus.Done:
+                    ShowToast(result.AutoResolved > 0
+                        ? Loc.F("QuickDoneResolved", result.Renamed, title, result.AutoResolved)
+                        : Loc.F("QuickDone", result.Renamed, title), undo, isProblem: false);
+                    break;
+                case QuickRenameStatus.NothingToChange:
+                    ShowToast(Loc.T("QuickNothing"), null, isProblem: false);
+                    break;
+                case QuickRenameStatus.Blocked:
+                    ShowToast(Loc.F("QuickBlocked", result.Message ?? string.Empty), null, isProblem: true);
+                    break;
+                default:
+                    ShowToast(Loc.F("QuickFailed", result.Message ?? string.Empty), undo, isProblem: true);
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowToast(Loc.F("QuickFailed", ex.Message), null, isProblem: true);
+        }
+    }
+
+    private void ShowToast(string message, Func<string>? undo, bool isProblem)
+    {
+        var toast = new QuickToastWindow(message, undo, isProblem, _toasts);
+        _toasts++;
+        toast.Closed += (_, _) =>
+        {
+            _toasts--;
+            // Chế độ đổi tên nhanh không có cửa sổ chính: thoát khi thông báo cuối đóng.
+            if (_toasts == 0 && _mainWindow is null && !BackgroundEnabled) Shutdown();
+        };
+        toast.Show();
+    }
+
     private void OnIpcPayloadReceived(IpcPayload payload)
     {
         Dispatcher.BeginInvoke(() =>
         {
-            if (_mainWindow == null) return;
+            if (payload.QuickPreset is not null) { _ = RunQuickAsync(payload); return; }
+            if (_mainWindow == null) { EnsureMainWindow(payload); return; }
 
             var paths = new List<string>(payload.Paths);
             if (!string.IsNullOrWhiteSpace(payload.FileListPath))

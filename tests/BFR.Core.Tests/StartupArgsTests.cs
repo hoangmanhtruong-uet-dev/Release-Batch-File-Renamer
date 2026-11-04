@@ -53,6 +53,26 @@ public class StartupArgsTests
     }
 
     [Fact]
+    public void Quick_IsReadWithItsKey_AndNotTreatedAsPath()
+    {
+        var r = StartupArgs.Parse(new[] { "--quick", "number", "--file-list", @"C:\list.txt" });
+
+        Assert.Equal("number", r.Payload.QuickPreset);
+        Assert.Equal(@"C:\list.txt", r.Payload.FileListPath);
+        Assert.Empty(r.Payload.Paths);
+        Assert.False(r.Background);
+    }
+
+    [Fact]
+    public void Quick_WithoutKey_IsIgnored()
+    {
+        var r = StartupArgs.Parse(new[] { "--quick" });
+
+        Assert.Null(r.Payload.QuickPreset);
+        Assert.Empty(r.Payload.Paths);
+    }
+
+    [Fact]
     public void FlagWithoutValue_IsIgnored()
     {
         var r = StartupArgs.Parse(new[] { "--preset" });
