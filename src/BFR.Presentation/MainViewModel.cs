@@ -614,7 +614,8 @@ public sealed class MainViewModel : ObservableObject
             Rows.Where(r => !r.IsSelected).Select(r => r.File.FullPath),
             StringComparer.OrdinalIgnoreCase);
 
-        var result = new Dictionary<string, IReadOnlySet<string>>(StringComparer.OrdinalIgnoreCase);
+        // Khoá PHẢI là tên thư mục đã chuẩn hoá (ConflictDetector tra cứu bằng NormalizeDirectory).
+        var result = new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal);
 
         foreach (var directory in all.Select(f => f.Directory).Distinct(StringComparer.OrdinalIgnoreCase))
         {
@@ -635,7 +636,13 @@ public sealed class MainViewModel : ObservableObject
                 // Thư mục không truy cập được: bỏ qua.
             }
 
-            result[directory] = names;
+            foreach (var path in unselected)
+            {
+                if (string.Equals(Path.GetDirectoryName(path), directory, StringComparison.OrdinalIgnoreCase))
+                    names.Add(Path.GetFileName(path));
+            }
+
+            result[ConflictDetector.NormalizeDirectory(directory)] = names;
         }
 
         return result;
