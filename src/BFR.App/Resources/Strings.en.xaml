@@ -452,4 +452,7 @@
     <sys:String x:Key="ConflictAutoFix">Fix conflicts automatically</sys:String>
     <sys:String x:Key="ConflictAutoResolvedText">Added (2), (3)… to {0} duplicate names.</sys:String>
     <sys:String x:Key="ConflictAutoOff">Turn off</sys:String>
+    <sys:String x:Key="SettingsHotkey">Global hotkey to open Shelf</sys:String>
+    <sys:String x:Key="SettingsHotkeyHint">Works while BFR is running (even hidden in the tray). Only the chosen key combination is received.</sys:String>
+    <sys:String x:Key="HotkeyRegisterFailed">Could not register the hotkey {0}: another app may be using it. Choose a different combination in Settings.</sys:String>
 </ResourceDictionary>

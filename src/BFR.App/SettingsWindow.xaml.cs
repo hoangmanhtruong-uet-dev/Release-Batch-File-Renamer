@@ -96,6 +96,23 @@ public class SettingsWindow : Ui.FluentWindow
             _settings.ShakeToOpenShelf,
             on => _settings.ShakeToOpenShelf = on));
         shelf.Children.Add(Caption(Loc.T("SettingsShakeHint")));
+        var hotkeyToggle = Toggle(Loc.T("SettingsHotkey"), _settings.ShelfHotkeyEnabled, on => _settings.ShelfHotkeyEnabled = on);
+        hotkeyToggle.Margin = new Thickness(0, 12, 0, 0);
+        shelf.Children.Add(hotkeyToggle);
+
+        var hotkeyBox = new ComboBox { MinWidth = 200, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 6, 0, 0) };
+        AutomationProperties.SetName(hotkeyBox, "Shelf hotkey");
+        foreach (var h in BFR.Core.HotkeySpec.Presets) hotkeyBox.Items.Add(h);
+        hotkeyBox.SelectedItem = BFR.Core.HotkeySpec.TryParse(_settings.ShelfHotkey, out var currentHotkey)
+            ? currentHotkey.ToString()
+            : BFR.Core.HotkeySpec.Default;
+        hotkeyBox.SelectionChanged += (_, _) =>
+        {
+            if (hotkeyBox.SelectedItem is string chosen) { _settings.ShelfHotkey = chosen; SettingsStore.Save(_settings); }
+        };
+        shelf.Children.Add(hotkeyBox);
+        shelf.Children.Add(Caption(Loc.T("SettingsHotkeyHint")));
+
         var bg = Toggle(
             Loc.T("SettingsRunInBackground"),
             _settings.RunInBackground,

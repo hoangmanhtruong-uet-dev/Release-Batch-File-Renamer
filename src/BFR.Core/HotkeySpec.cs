@@ -14,10 +14,11 @@ public sealed record HotkeySpec(bool Ctrl, bool Alt, bool Shift, bool Win, strin
     /// <summary>Các tổ hợp mặc định cho người dùng chọn.</summary>
     public static IReadOnlyList<string> Presets { get; } = new[]
     {
-        "Ctrl+Alt+Space", "Ctrl+Alt+S", "Ctrl+Shift+Space", "Ctrl+Alt+Q"
+        "Ctrl+Shift+Space", "Ctrl+Alt+Q", "Ctrl+Alt+B", "Ctrl+Alt+Space", "Ctrl+Alt+S"
     };
 
-    public const string Default = "Ctrl+Alt+Space";
+    /// <summary>Mặc định ít đụng nhất: Ctrl+Alt+Space và Ctrl+Alt+S đã bị nhiều ứng dụng chiếm làm phím toàn cục.</summary>
+    public const string Default = "Ctrl+Shift+Space";
 
     /// <summary>Phím chính được hỗ trợ: A–Z, 0–9, F1–F12, Space.</summary>
     public static bool IsSupportedKey(string key)

@@ -151,6 +151,7 @@ public partial class App : Application
             _ = new System.Windows.Interop.WindowInteropHelper(_mainWindow).EnsureHandle();
             ApplyBackgroundSetting();
             _mainWindow.ApplyShakeSetting();
+            _mainWindow.ApplyHotkeySetting();
         }
         else
         {

@@ -452,4 +452,7 @@
     <sys:String x:Key="ConflictAutoFix">Corriger automatiquement</sys:String>
     <sys:String x:Key="ConflictAutoResolvedText">Ajout de (2), (3)… pour {0} noms en double.</sys:String>
     <sys:String x:Key="ConflictAutoOff">Désactiver</sys:String>
+    <sys:String x:Key="SettingsHotkey">Raccourci global pour ouvrir le Shelf</sys:String>
+    <sys:String x:Key="SettingsHotkeyHint">Fonctionne tant que BFR est lancé (même masqué dans la zone de notification). Seule la combinaison choisie est reçue.</sys:String>
+    <sys:String x:Key="HotkeyRegisterFailed">Impossible d'enregistrer le raccourci {0} : une autre application l'utilise peut-être. Choisissez une autre combinaison dans les Paramètres.</sys:String>
 </ResourceDictionary>

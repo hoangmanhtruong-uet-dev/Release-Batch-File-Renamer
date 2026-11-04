@@ -30,6 +30,12 @@ public sealed class AppSettings
     /// </summary>
     public bool ShakeToOpenShelf { get; set; } = false;
 
+    /// <summary>Phím tắt toàn cục mở Shelf (B4). Mặc định TẮT.</summary>
+    public bool ShelfHotkeyEnabled { get; set; } = false;
+
+    /// <summary>Tổ hợp phím, ví dụ "Ctrl+Alt+Space" (xem <c>HotkeySpec.Presets</c>).</summary>
+    public string ShelfHotkey { get; set; } = "Ctrl+Shift+Space";
+
     /// <summary>
     /// Chạy nền ở khay hệ thống: đóng cửa sổ chính chỉ ẩn đi, ứng dụng vẫn chạy
     /// (cần cho lắc chuột mở Shelf khi không mở cửa sổ). Mặc định TẮT.

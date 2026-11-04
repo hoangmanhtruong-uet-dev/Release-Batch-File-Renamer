@@ -78,10 +78,11 @@ public partial class MainWindow : FluentWindow
             PresetCombo.SelectedIndex = 0;
         }
         SortCombo.SelectedIndex = 0;
-        Loaded += (_, _) => ApplyShakeSetting();
+        Loaded += (_, _) => { ApplyShakeSetting(); ApplyHotkeySetting(); };
         Closed += (_, _) =>
         {
             _shakeHook?.Dispose();
+            _hotkey?.Dispose();
             _shakeHook = null;
             _shelf?.Close();
         };
@@ -194,6 +195,38 @@ public partial class MainWindow : FluentWindow
 
     private ShelfWindow? _shelf;
     private MouseHook? _shakeHook;
+    private GlobalHotkey? _hotkey;
+
+    /// <summary>Đăng ký/gỡ phím tắt toàn cục mở Shelf theo cài đặt hiện tại (B4).</summary>
+    public void ApplyHotkeySetting()
+    {
+        var settings = SettingsStore.Load();
+        BFR.Core.HotkeySpec? wanted = null;
+        if (settings.ShelfHotkeyEnabled && BFR.Core.HotkeySpec.TryParse(settings.ShelfHotkey, out var parsed)) wanted = parsed;
+
+        if (_hotkey is not null && (wanted is null || _hotkey.Spec != wanted))
+        {
+            _hotkey.Dispose();
+            _hotkey = null;
+        }
+
+        if (wanted is null || _hotkey is not null) return;
+
+        try
+        {
+            _hotkey = new GlobalHotkey(wanted, () => Dispatcher.BeginInvoke(() =>
+            {
+                var (x, y) = GlobalHotkey.CursorPosition();
+                OpenShelfAt(x, y, autoClose: false);
+            }));
+        }
+        catch (System.ComponentModel.Win32Exception)
+        {
+            // Tổ hợp đang được ứng dụng khác dùng: báo để người dùng chọn tổ hợp khác.
+            MessageBox.Show(Loc.F("HotkeyRegisterFailed", wanted.ToString()), "Batch File Renamer",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
 
     /// <summary>Bật/tắt hook lắc chuột theo cài đặt hiện tại.</summary>
     public void ApplyShakeSetting()
@@ -219,7 +252,7 @@ public partial class MainWindow : FluentWindow
     }
 
     /// <summary>Mở Shelf ngay tại con trỏ (toạ độ vật lý) để thả tệp đang kéo vào.</summary>
-    private void OpenShelfAt(int screenX, int screenY)
+    private void OpenShelfAt(int screenX, int screenY, bool autoClose = true)
     {
         var created = OpenShelf(activate: false);
         if (_shelf is null) return;
@@ -232,7 +265,7 @@ public partial class MainWindow : FluentWindow
         _shelf.Left = Math.Clamp(vx - _shelf.Width / 2, SystemParameters.VirtualScreenLeft, Math.Max(SystemParameters.VirtualScreenLeft, maxLeft));
         _shelf.Top = Math.Clamp(vy - 80, SystemParameters.VirtualScreenTop, Math.Max(SystemParameters.VirtualScreenTop, maxTop));
         // Mở bằng lắc mà không thả gì thì tự đóng, tránh để lại cửa sổ thừa.
-        if (created) _shelf.AutoCloseWhenUnused(TimeSpan.FromSeconds(6));
+        if (created && autoClose) _shelf.AutoCloseWhenUnused(TimeSpan.FromSeconds(6));
     }
 
     private void Shelf_Click(object sender, RoutedEventArgs e) => OpenShelf();
@@ -800,6 +833,7 @@ public partial class MainWindow : FluentWindow
         new SettingsWindow(_license) { Owner = this }.ShowDialog();
         (Application.Current as App)?.ApplyBackgroundSetting();
         ApplyShakeSetting();
+        ApplyHotkeySetting();
         UpdateLicenseState();
         _ = _vm.RebuildAsync();
     }
