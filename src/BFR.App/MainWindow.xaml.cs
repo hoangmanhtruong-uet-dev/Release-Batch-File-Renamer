@@ -260,10 +260,10 @@ public partial class MainWindow : FluentWindow
         }
         else
         {
-            if (activate) _shelf.Activate();
+            if (activate) _shelf?.Activate();
         }
 
-        if (paths is not null) _shelf.AddPaths(paths);
+        if (paths is not null) _shelf?.AddPaths(paths);
         return created;
     }
 
