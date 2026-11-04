@@ -92,6 +92,17 @@ public class SettingsWindow : Window
             "Cần theo dõi chuột toàn hệ thống khi bật. Chỉ xử lý trên máy, không ghi lại hay gửi đi.",
             "Watches the mouse system-wide while enabled. Handled locally; nothing is recorded or sent.")));
 
+        var background = new CheckBox
+        {
+            Content = Loc.L("Chạy nền ở khay hệ thống khi đóng cửa sổ", "Keep running in the system tray when the window is closed"),
+            IsChecked = _settings.RunInBackground,
+            Style = (Style)Application.Current.FindResource("AppCheckBoxStyle"),
+            Margin = new Thickness(0, 8, 0, 8)
+        };
+        background.Checked += (_, _) => { _settings.RunInBackground = true; SettingsStore.Save(_settings); };
+        background.Unchecked += (_, _) => { _settings.RunInBackground = false; SettingsStore.Save(_settings); };
+        content.Children.Add(background);
+
         // ---- Cập nhật ----
         content.Children.Add(Header(Loc.T("SettingsUpdates")));
         var checkUpdates = new CheckBox

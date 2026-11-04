@@ -90,6 +90,7 @@ public partial class MainWindow : Window
         ShelfButton.ToolTip = Loc.L("Khay tệp (Ctrl+Shift+S)", "Shelf (Ctrl+Shift+S)");
 
         _vm.ProLimitReached += (_, feature) => ShowUpgradeDialog(feature);
+        Loaded += (_, _) => (Application.Current as App)?.ApplyBackgroundSetting();
 
         if (_vm.IsEmptyStateVisible) _ = _vm.RebuildAsync();
     }
@@ -141,6 +142,7 @@ public partial class MainWindow : Window
     {
         try
         {
+            if (!IsVisible) Show();
             if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
 
             Activate();
@@ -195,7 +197,7 @@ public partial class MainWindow : Window
     private MouseHook? _shakeHook;
 
     /// <summary>Bật/tắt hook lắc chuột theo cài đặt hiện tại.</summary>
-    private void ApplyShakeSetting()
+    public void ApplyShakeSetting()
     {
         var enabled = SettingsStore.Load().ShakeToOpenShelf;
         if (enabled && _shakeHook is null)
@@ -791,6 +793,7 @@ public partial class MainWindow : Window
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
         new SettingsWindow(_license) { Owner = this }.ShowDialog();
+        (Application.Current as App)?.ApplyBackgroundSetting();
         ApplyShakeSetting();
         UpdateLicenseState();
         _ = _vm.RebuildAsync();
@@ -1100,6 +1103,18 @@ public partial class MainWindow : Window
     }
 
     private void TitleBar_Close_Click(object sender, RoutedEventArgs e) => Close();
+
+    /// <summary>Chạy nền: đóng cửa sổ chỉ ẩn đi, trừ khi người dùng chọn Thoát ở khay.</summary>
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        if (Application.Current is App { BackgroundEnabled: true, IsExiting: false })
+        {
+            e.Cancel = true;
+            Hide();
+            return;
+        }
+        base.OnClosing(e);
+    }
 
     private void UpdateMaximizeButton()
     {

@@ -30,6 +30,12 @@ public sealed class AppSettings
     /// </summary>
     public bool ShakeToOpenShelf { get; set; } = false;
 
+    /// <summary>
+    /// Chạy nền ở khay hệ thống: đóng cửa sổ chính chỉ ẩn đi, ứng dụng vẫn chạy
+    /// (cần cho lắc chuột mở Shelf khi không mở cửa sổ). Mặc định TẮT.
+    /// </summary>
+    public bool RunInBackground { get; set; } = false;
+
     /// <summary>Giao diện: "System", "Light" hoặc "Dark".</summary>
     public string Theme { get; set; } = "System";
 
