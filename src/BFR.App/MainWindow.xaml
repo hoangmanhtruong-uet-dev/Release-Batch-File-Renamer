@@ -80,8 +80,8 @@
                         </StackPanel>
 
                         <!-- Toggle Switch bật/tắt nhanh quy tắc -->
-                        <CheckBox Grid.Column="2" IsChecked="{Binding IsEnabled, Mode=TwoWay}"
-                                  Style="{StaticResource AppToggleSwitchStyle}" Margin="6,0,4,0"
+                        <ui:ToggleSwitch Grid.Column="2" IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+                                   Margin="6,0,4,0"
                                   VerticalAlignment="Center"
                                   AutomationProperties.Name="{DynamicResource RuleToggleA11y}" />
 
@@ -113,15 +113,13 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center"
                                                    Style="{StaticResource CaptionTextStyle}" />
-                                        <CheckBox Grid.Column="1" IsChecked="{Binding BoolValue, Mode=TwoWay}"
-                                                  Style="{StaticResource AppToggleSwitchStyle}"
+                                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding BoolValue, Mode=TwoWay}"
+                                                  
                                                   Visibility="{Binding Kind, Converter={StaticResource ParameterKindToVis}, ConverterParameter=Toggle}" />
                                         <TextBox Grid.Column="1" Text="{Binding TextValue, UpdateSourceTrigger=PropertyChanged}"
-                                                 Style="{StaticResource AppTextBoxStyle}"
                                                  Visibility="{Binding Kind, Converter={StaticResource ParameterKindToTextVis}, ConverterParameter=Text}" />
                                         <ComboBox Grid.Column="1" ItemsSource="{Binding Options}"
                                                   SelectedItem="{Binding SelectedOption, Mode=TwoWay}"
-                                                  Style="{StaticResource AppComboBoxStyle}"
                                                   Visibility="{Binding Kind, Converter={StaticResource ParameterKindToChoiceVis}, ConverterParameter=Choice}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
@@ -254,14 +252,16 @@
                                    Foreground="{DynamicResource Accent}" />
                     </Button>
 
-                    <Button x:Name="UpgradeButton" Style="{StaticResource PrimaryButtonStyle}"
+                    <ui:Button x:Name="UpgradeButton" Appearance="Primary"
                             Content="{DynamicResource Upgrade}" Click="Upgrade_Click"
                             Padding="8,2" Height="22" FontSize="11" Margin="6,0,0,0"
+                            Background="{DynamicResource AccentFillColorDefaultBrush}"
+                            Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
                             AutomationProperties.Name="Upgrade to Pro" />
                 </StackPanel>
             </ui:TitleBar.Header>
             <ui:TitleBar.TrailingContent>
-                <Button x:Name="SettingsButton" Style="{StaticResource SubtleButtonStyle}"
+                <ui:Button x:Name="SettingsButton" Appearance="Transparent"
                         Content="&#xE713;" FontFamily="{StaticResource IconFont}" FontSize="13"
                         Click="Settings_Click" Width="36" Height="32" Padding="0" Margin="0,0,6,0"
                         VerticalAlignment="Center"
@@ -281,28 +281,28 @@
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <!-- Nhóm nạp tệp nguồn -->
-                    <Button Style="{StaticResource PrimaryButtonStyle}" Click="AddFiles_Click" Padding="14,6">
+                    <ui:Button Appearance="Primary" Click="AddFiles_Click" Padding="14,6">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
                             <TextBlock Text="{DynamicResource AddFilesButton}" Margin="6,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
-                    </Button>
+                    </ui:Button>
 
-                    <Button Style="{StaticResource SecondaryButtonStyle}" Click="AddFolder_Click" Margin="6,0,0,0" Padding="12,6">
+                    <ui:Button Appearance="Secondary" Click="AddFolder_Click" Margin="6,0,0,0" Padding="12,6">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
                             <TextBlock Text="{DynamicResource AddFolderButton}" Margin="6,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
-                    </Button>
+                    </ui:Button>
 
                     <Rectangle Style="{StaticResource VerticalDividerStyle}" />
 
-                    <Button x:Name="ShelfButton" Style="{StaticResource SecondaryButtonStyle}" Click="Shelf_Click" Margin="6,0,0,0" Padding="12,6">
+                    <ui:Button x:Name="ShelfButton" Appearance="Secondary" Click="Shelf_Click" Margin="6,0,0,0" Padding="12,6">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE8A1;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
                             <TextBlock x:Name="ShelfButtonText" Margin="6,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
-                    </Button>
+                    </ui:Button>
 
                     <Rectangle Style="{StaticResource VerticalDividerStyle}" />
 
@@ -321,7 +321,6 @@
                         <TextBlock Text="{DynamicResource SortByLabel}" VerticalAlignment="Center"
                                    Style="{StaticResource CaptionTextStyle}" Margin="0,0,6,0" />
                         <ComboBox x:Name="SortCombo" Width="170" SelectionChanged="SortCombo_SelectionChanged"
-                                  Style="{StaticResource AppComboBoxStyle}"
                                   AutomationProperties.Name="Sort order">
                             <ComboBoxItem Content="{DynamicResource SortNameNatural}" Tag="NameNatural" />
                             <ComboBoxItem Content="{DynamicResource SortName}" Tag="NameOrdinal" />
@@ -335,22 +334,22 @@
 
                 <!-- Nhóm thao tác bên phải -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Style="{StaticResource SubtleButtonStyle}" Click="ClearList_Click"
+                    <ui:Button Appearance="Transparent" Click="ClearList_Click"
                             ToolTip="{DynamicResource ClearListButton}" Margin="0,0,4,0"
                             AutomationProperties.Name="Clear list">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="13" />
                             <TextBlock Text="{DynamicResource ClearListButton}" Margin="6,0,0,0" />
                         </StackPanel>
-                    </Button>
+                    </ui:Button>
 
-                    <Button Style="{StaticResource SecondaryButtonStyle}" Click="MoreMenu_Click" Padding="10,5"
+                    <ui:Button Appearance="Secondary" Click="MoreMenu_Click" Padding="10,5"
                             AutomationProperties.Name="More actions">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE712;" FontFamily="{StaticResource IconFont}" FontSize="13" />
                             <TextBlock Text="{DynamicResource MoreMenu}" Margin="6,0,0,0" />
                         </StackPanel>
-                    </Button>
+                    </ui:Button>
                 </StackPanel>
             </Grid>
         </Border>
@@ -377,7 +376,6 @@
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
                             <TextBlock Text="{DynamicResource RuleBuilderHeader}" Style="{StaticResource PanelHeaderTextStyle}" />
                             <ComboBox x:Name="PresetCombo" Margin="0,6,0,0"
-                                      Style="{StaticResource AppComboBoxStyle}"
                                       SelectionChanged="PresetCombo_SelectionChanged"
                                       AutomationProperties.Name="Preset selection">
                                 <ComboBox.ItemTemplate>
@@ -395,20 +393,20 @@
 
                     <!-- Nút thêm quy tắc / lưu preset dưới đáy -->
                     <DockPanel DockPanel.Dock="Bottom" Margin="4,10,4,2">
-                        <Button Style="{StaticResource SecondaryButtonStyle}" Click="SavePreset_Click" Margin="0,0,6,0"
+                        <ui:Button Appearance="Secondary" Click="SavePreset_Click" Margin="0,0,6,0"
                                 AutomationProperties.Name="Save as preset button">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE74E;" FontFamily="{StaticResource IconFont}" FontSize="13" />
                                 <TextBlock Text="{DynamicResource SaveAsPresetButton}" Margin="6,0,0,0" />
                             </StackPanel>
-                        </Button>
-                        <Button Style="{StaticResource PrimaryButtonStyle}" Click="AddRule_Click"
+                        </ui:Button>
+                        <ui:Button Appearance="Primary" Click="AddRule_Click"
                                 AutomationProperties.Name="Add rule button">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" />
                                 <TextBlock Text="{DynamicResource AddRuleButton}" Margin="6,0,0,0" />
                             </StackPanel>
-                        </Button>
+                        </ui:Button>
                     </DockPanel>
 
                     <!-- Danh sách rỗng -->
@@ -570,16 +568,10 @@
                         </Border>
 
                         <!-- Ô tìm kiếm tệp -->
-                        <Grid Grid.Column="1" Width="230" VerticalAlignment="Center">
-                            <TextBox x:Name="PreviewSearchBox"
-                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource AppTextBoxStyle}" Padding="26,5,8,5"
-                                     AutomationProperties.Name="Search files" />
-                            <TextBlock Text="&#xE721;" FontFamily="{StaticResource IconFont}" FontSize="12"
-                                       Foreground="{DynamicResource TextDisabled}"
-                                       VerticalAlignment="Center" HorizontalAlignment="Left"
-                                       Margin="8,0,0,0" IsHitTestVisible="False" />
-                        </Grid>
+                        <ui:TextBox Grid.Column="1" Width="230" VerticalAlignment="Center" x:Name="PreviewSearchBox"
+                                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                    Icon="{ui:SymbolIcon Search24}" ClearButtonEnabled="True"
+                                    AutomationProperties.Name="Search files" />
                     </Grid>
 
                     <!-- Ngăn Rule Trace (timeline theo dõi vết đổi tên) -->
@@ -633,19 +625,19 @@
                                Margin="0,8,0,0" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                        <Button Style="{StaticResource PrimaryButtonStyle}" Click="AddFiles_Click" Content="{DynamicResource AddFilesButton}" Padding="16,8" />
-                        <Button Style="{StaticResource SecondaryButtonStyle}" Click="AddFolder_Click" Margin="10,0,0,0"
+                        <ui:Button Appearance="Primary" Click="AddFiles_Click" Content="{DynamicResource AddFilesButton}" Padding="16,8" />
+                        <ui:Button Appearance="Secondary" Click="AddFolder_Click" Margin="10,0,0,0"
                                 Content="{DynamicResource AddFolderButton}" Padding="14,8" />
                     </StackPanel>
 
                     <TextBlock Text="{DynamicResource EmptySuggestions}" Style="{StaticResource PanelHeaderTextStyle}"
                                HorizontalAlignment="Center" Margin="0,28,0,10" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Style="{StaticResource SecondaryButtonStyle}" Click="SuggestPreset_Click" Tag="Đánh số theo thứ tự"
+                        <ui:Button Appearance="Secondary" Click="SuggestPreset_Click" Tag="Đánh số theo thứ tự"
                                 Content="{DynamicResource SuggestNumbering}" Padding="10,6" />
-                        <Button Style="{StaticResource SecondaryButtonStyle}" Click="SuggestPreset_Click" Tag="Dọn dẹp tên tệp"
+                        <ui:Button Appearance="Secondary" Click="SuggestPreset_Click" Tag="Dọn dẹp tên tệp"
                                 Content="{DynamicResource SuggestTrim}" Margin="8,0,0,0" Padding="10,6" />
-                        <Button Style="{StaticResource SecondaryButtonStyle}" Click="SuggestPreset_Click" Tag="Ảnh theo ngày chụp"
+                        <ui:Button Appearance="Secondary" Click="SuggestPreset_Click" Tag="Ảnh theo ngày chụp"
                                 Content="{DynamicResource SuggestDate}" Margin="8,0,0,0" Padding="10,6" />
                     </StackPanel>
                 </StackPanel>
@@ -685,11 +677,11 @@
                                        Foreground="{DynamicResource Success}" VerticalAlignment="Center" />
                             <TextBlock Text="{Binding SuccessMessage}" Foreground="{DynamicResource TextPrimary}"
                                        VerticalAlignment="Center" Margin="6,0,10,0" />
-                            <Button Style="{StaticResource SubtleButtonStyle}" Content="{DynamicResource Undo}"
+                            <ui:Button Appearance="Transparent" Content="{DynamicResource Undo}"
                                     Click="Undo_Click" Padding="6,2" />
-                            <Button Style="{StaticResource SubtleButtonStyle}" Content="{DynamicResource MenuHistory}"
+                            <ui:Button Appearance="Transparent" Content="{DynamicResource MenuHistory}"
                                     Click="History_Click" Padding="6,2" />
-                            <Button Style="{StaticResource SubtleButtonStyle}" Content="{DynamicResource MenuExportReport}"
+                            <ui:Button Appearance="Transparent" Content="{DynamicResource MenuExportReport}"
                                     Click="ExportReport_Click" Padding="6,2" />
                         </StackPanel>
                     </Border>
@@ -700,18 +692,18 @@
                         <ProgressBar IsIndeterminate="True" Width="120" Height="4" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding BusyText}" Margin="8,0,0,0" Style="{StaticResource CaptionTextStyle}"
                                    VerticalAlignment="Center" />
-                        <Button Style="{StaticResource SubtleButtonStyle}" Content="{DynamicResource Cancel}"
+                        <ui:Button Appearance="Transparent" Content="{DynamicResource Cancel}"
                                 Click="CancelWork_Click" Padding="6,2" Margin="6,0,0,0" />
                     </StackPanel>
                 </StackPanel>
 
                 <!-- Nút Hoàn tác & Áp dụng -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Style="{StaticResource SecondaryButtonStyle}" Content="{DynamicResource Undo}" Click="Undo_Click"
+                    <ui:Button Appearance="Secondary" Content="{DynamicResource Undo}" Click="Undo_Click"
                             Command="{Binding UndoCommand}" Margin="0,0,8,0" Padding="14,7"
                             AutomationProperties.Name="Undo last rename" />
 
-                    <Button x:Name="ApplyButton" Style="{StaticResource PrimaryButtonStyle}" Click="Apply_Click"
+                    <ui:Button x:Name="ApplyButton" Appearance="Primary" Click="Apply_Click"
                             Command="{Binding ApplyCommand}" MinWidth="200" Height="36"
                             AutomationProperties.Name="Apply renaming">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -720,7 +712,7 @@
                             <TextBlock Text="{Binding ApplyButtonText}" FontWeight="SemiBold" FontSize="13"
                                        VerticalAlignment="Center" />
                         </StackPanel>
-                    </Button>
+                    </ui:Button>
                 </StackPanel>
             </Grid>
         </Border>
