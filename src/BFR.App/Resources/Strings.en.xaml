@@ -469,4 +469,16 @@
     <sys:String x:Key="NavPresets">Presets</sys:String>
     <sys:String x:Key="NavWatch">Watch</sys:String>
     <sys:String x:Key="NavSettings">Settings</sys:String>
+    <sys:String x:Key="RuleLibraryTitle">Add a rule</sys:String>
+    <sys:String x:Key="RuleDescFindReplace">Find text (or a regex) and replace it with something else.</sys:String>
+    <sys:String x:Key="RuleDescNumbering">Add sequence numbers: 001, 002… (letters and Roman numerals too).</sys:String>
+    <sys:String x:Key="RuleDescTrim">Remove unwanted characters and spaces, or cut by position.</sys:String>
+    <sys:String x:Key="RuleDescInsert">Insert text at the start, end or any position of the name.</sys:String>
+    <sys:String x:Key="RuleDescCase">Change case: lower, UPPER, Title Case or sentence case.</sys:String>
+    <sys:String x:Key="RuleDescSanitize">Strip Vietnamese accents and illegal characters; tidy spaces and dashes.</sys:String>
+    <sys:String x:Key="RuleDescDate">Add the taken/created/modified date in your chosen format.</sys:String>
+    <sys:String x:Key="RuleDescExtension">Change the case of, replace or remove the extension.</sys:String>
+    <sys:String x:Key="RuleDescTemplate">Build the new name from a template: {name}, {n}, {created}…</sys:String>
+    <sys:String x:Key="RuleDescListMap">Paste a list from Excel: old name → new name (or by order).</sys:String>
+    <sys:String x:Key="RuleDescReplaceDict">Several find → replace pairs applied in one pass.</sys:String>
 </ResourceDictionary>

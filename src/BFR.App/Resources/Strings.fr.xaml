@@ -469,4 +469,16 @@
     <sys:String x:Key="NavPresets">Préréglages</sys:String>
     <sys:String x:Key="NavWatch">Surveillance</sys:String>
     <sys:String x:Key="NavSettings">Paramètres</sys:String>
+    <sys:String x:Key="RuleLibraryTitle">Ajouter une règle</sys:String>
+    <sys:String x:Key="RuleDescFindReplace">Rechercher un texte (ou une regex) et le remplacer.</sys:String>
+    <sys:String x:Key="RuleDescNumbering">Ajouter une numérotation : 001, 002… (lettres et chiffres romains aussi).</sys:String>
+    <sys:String x:Key="RuleDescTrim">Supprimer caractères et espaces superflus, ou couper par position.</sys:String>
+    <sys:String x:Key="RuleDescInsert">Insérer du texte au début, à la fin ou à une position.</sys:String>
+    <sys:String x:Key="RuleDescCase">Changer la casse : minuscules, MAJUSCULES, Titre ou phrase.</sys:String>
+    <sys:String x:Key="RuleDescSanitize">Retirer accents et caractères interdits ; nettoyer espaces et tirets.</sys:String>
+    <sys:String x:Key="RuleDescDate">Ajouter la date de prise de vue/création/modification au format choisi.</sys:String>
+    <sys:String x:Key="RuleDescExtension">Changer la casse, remplacer ou supprimer l'extension.</sys:String>
+    <sys:String x:Key="RuleDescTemplate">Construire le nom à partir d'un modèle : {name}, {n}, {created}…</sys:String>
+    <sys:String x:Key="RuleDescListMap">Coller une liste depuis Excel : ancien nom → nouveau nom (ou par ordre).</sys:String>
+    <sys:String x:Key="RuleDescReplaceDict">Plusieurs paires chercher → remplacer appliquées en une passe.</sys:String>
 </ResourceDictionary>

@@ -369,25 +369,29 @@ public partial class MainWindow : FluentWindow
         menu.IsOpen = true;
     }
 
-    private void AddRule_Click(object sender, RoutedEventArgs e)
+    /// <summary>Thêm quy tắc: thư viện thẻ có tìm kiếm trong hộp thoại nổi (thay cho menu chữ).</summary>
+    private async void AddRule_Click(object sender, RoutedEventArgs e)
     {
-        var menu = new ContextMenu { Style = (Style)FindResource("AppContextMenuStyle") };
-
-        foreach (var type in RuleCardViewModel.AllRuleTypes)
+        var library = new RuleLibraryContent();
+        var dialog = new Wpf.Ui.Controls.ContentDialog(DialogHost)
         {
-            var item = new MenuItem
-            {
-                Header = RuleTitles.Get(type, null, new LocStringProvider()),
-                Style = (Style)FindResource("AppMenuItemStyle")
-            };
-            var captured = type;
-            item.Click += (_, _) => _vm.AddRule(captured);
-            menu.Items.Add(item);
-        }
+            Title = Loc.T("RuleLibraryTitle"),
+            Content = library,
+            CloseButtonText = Loc.T("CloseDialog"),
+            DialogMaxWidth = 800
+        };
 
-        menu.PlacementTarget = (FrameworkElement)sender;
-        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Top;
-        menu.IsOpen = true;
+        string? chosen = null;
+        library.RuleChosen += (_, type) =>
+        {
+            chosen = type;
+            dialog.Hide();
+        };
+
+        ActivateAndForeground();
+        await dialog.ShowAsync();
+
+        if (chosen is not null) _vm.AddRule(chosen);
     }
 
     private void RuleToggleExpand_Click(object sender, RoutedEventArgs e)

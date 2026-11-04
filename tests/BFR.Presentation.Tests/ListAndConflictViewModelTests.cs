@@ -275,4 +275,47 @@ public class ListAndConflictViewModelTests : IDisposable
         var onDisk = Directory.GetFiles(_files).Select(Path.GetFileName).OrderBy(n => n, StringComparer.Ordinal).ToArray();
         Assert.Equal(new[] { "same (2).txt", "same.txt" }, onDisk);
     }
+
+    // ------------------------------------------------------------------ va chạm với tệp NGOÀI lô (lỗi có sẵn đã sửa)
+
+    private async Task<MainViewModel> OutsideCollisionSetup()
+    {
+        Touch("a.txt", "001.txt");                       // 001.txt đã có sẵn và không thuộc lô
+        var vm = CreateViewModel();
+        vm.AddPaths(new[] { Path.Combine(_files, "a.txt") });   // lô chỉ gồm a.txt
+        vm.AddRule("ReplaceDict");
+        SetParam(vm, "pairs", "a\t001");                // a.txt -> 001.txt
+        await vm.RebuildAsync();
+        return vm;
+    }
+
+    [Fact]
+    public async Task CollisionWithAFileOutsideTheBatch_IsDetected_AndBlocksApply()
+    {
+        var vm = await OutsideCollisionSetup();
+
+        var row = Assert.Single(vm.Rows);
+        Assert.Equal("001.txt", row.NewName);
+        Assert.Equal(PreviewStatus.Conflict, row.Status);
+        Assert.True(vm.HasConflicts);
+        Assert.False(vm.CanApply);   // trước khi sửa: không bao giờ phát hiện, đến lúc đổi tên mới lỗi
+    }
+
+    [Fact]
+    public async Task AutoResolve_AvoidsTheFileOutsideTheBatch()
+    {
+        var vm = await OutsideCollisionSetup();
+
+        vm.ResolveConflictsCommand.Execute(null);
+        await vm.RebuildAsync();
+
+        Assert.Equal("001 (2).txt", Assert.Single(vm.Rows).NewName);
+        Assert.False(vm.HasConflicts);
+        Assert.True(vm.CanApply);
+
+        await vm.ApplyAsync();
+
+        var onDisk = Directory.GetFiles(_files).Select(Path.GetFileName).OrderBy(n => n, StringComparer.Ordinal).ToArray();
+        Assert.Equal(new[] { "001 (2).txt", "001.txt" }, onDisk);   // 001.txt có sẵn không bị đè
+    }
 }

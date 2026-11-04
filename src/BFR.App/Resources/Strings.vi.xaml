@@ -469,4 +469,16 @@
     <sys:String x:Key="NavPresets">Preset</sys:String>
     <sys:String x:Key="NavWatch">Theo dõi</sys:String>
     <sys:String x:Key="NavSettings">Cài đặt</sys:String>
+    <sys:String x:Key="RuleLibraryTitle">Thêm quy tắc</sys:String>
+    <sys:String x:Key="RuleDescFindReplace">Tìm một đoạn chữ (hoặc regex) và thay bằng chữ khác.</sys:String>
+    <sys:String x:Key="RuleDescNumbering">Thêm số thứ tự: 001, 002… (có cả chữ cái, số La Mã).</sys:String>
+    <sys:String x:Key="RuleDescTrim">Xoá ký tự thừa, khoảng trắng hoặc cắt theo vị trí.</sys:String>
+    <sys:String x:Key="RuleDescInsert">Chèn chữ vào đầu, cuối hoặc vị trí bất kỳ của tên.</sys:String>
+    <sys:String x:Key="RuleDescCase">Đổi chữ hoa/thường, Title Case hoặc chữ đầu câu.</sys:String>
+    <sys:String x:Key="RuleDescSanitize">Bỏ dấu tiếng Việt và ký tự cấm; chuẩn hoá khoảng trắng, gạch nối.</sys:String>
+    <sys:String x:Key="RuleDescDate">Thêm ngày chụp/tạo/sửa vào tên theo định dạng bạn chọn.</sys:String>
+    <sys:String x:Key="RuleDescExtension">Đổi hoa/thường, thay hoặc xoá phần mở rộng.</sys:String>
+    <sys:String x:Key="RuleDescTemplate">Dựng tên mới từ mẫu với {name}, {n}, {created}…</sys:String>
+    <sys:String x:Key="RuleDescListMap">Dán danh sách từ Excel: tên cũ → tên mới (hoặc theo thứ tự).</sys:String>
+    <sys:String x:Key="RuleDescReplaceDict">Nhiều cặp tìm → thay áp dụng cùng một lượt.</sys:String>
 </ResourceDictionary>

@@ -469,4 +469,16 @@
     <sys:String x:Key="NavPresets">预设</sys:String>
     <sys:String x:Key="NavWatch">监视</sys:String>
     <sys:String x:Key="NavSettings">设置</sys:String>
+    <sys:String x:Key="RuleLibraryTitle">添加规则</sys:String>
+    <sys:String x:Key="RuleDescFindReplace">查找文本（或正则表达式）并替换。</sys:String>
+    <sys:String x:Key="RuleDescNumbering">添加序号：001、002……（也支持字母和罗马数字）。</sys:String>
+    <sys:String x:Key="RuleDescTrim">删除多余字符和空格，或按位置裁剪。</sys:String>
+    <sys:String x:Key="RuleDescInsert">在名称开头、结尾或任意位置插入文本。</sys:String>
+    <sys:String x:Key="RuleDescCase">更改大小写：小写、大写、标题式或句首大写。</sys:String>
+    <sys:String x:Key="RuleDescSanitize">去除越南语音调和非法字符，整理空格和连字符。</sys:String>
+    <sys:String x:Key="RuleDescDate">按所选格式添加拍摄/创建/修改日期。</sys:String>
+    <sys:String x:Key="RuleDescExtension">更改扩展名大小写、替换或删除扩展名。</sys:String>
+    <sys:String x:Key="RuleDescTemplate">用模板生成新名称：{name}、{n}、{created}……</sys:String>
+    <sys:String x:Key="RuleDescListMap">粘贴 Excel 列表：旧名称 → 新名称（或按顺序）。</sys:String>
+    <sys:String x:Key="RuleDescReplaceDict">一次应用多组 查找 → 替换。</sys:String>
 </ResourceDictionary>

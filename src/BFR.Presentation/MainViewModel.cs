@@ -225,6 +225,12 @@ public sealed class MainViewModel : ObservableObject
 
     public bool HasConflicts => ConflictCount > 0;
 
+    /// <summary>Dòng chữ của khung cảnh báo trùng tên.</summary>
+    public string ConflictBannerText => _strings.F("ConflictBannerText", ConflictCount);
+
+    /// <summary>Dòng chữ của khung thông tin sau khi bật tự xử lý trùng tên.</summary>
+    public string AutoResolvedText => _strings.F("ConflictAutoResolvedText", AutoResolvedCount);
+
     /// <summary>Số tệp đã được tự thêm hậu tố ở lượt xem trước gần nhất (khi bật tự xử lý).</summary>
     public int AutoResolvedCount
     {
@@ -656,7 +662,10 @@ public sealed class MainViewModel : ObservableObject
             Rows.Where(r => !r.IsSelected).Select(r => r.File.FullPath),
             StringComparer.OrdinalIgnoreCase);
 
-        var result = new Dictionary<string, IReadOnlySet<string>>(StringComparer.OrdinalIgnoreCase);
+        // Khoá PHẢI là tên thư mục đã chuẩn hoá: ConflictDetector tra cứu bằng NormalizeDirectory
+        // (chữ thường, dấu '/'). Dùng khoá thô thì không bao giờ khớp và mọi va chạm với tệp
+        // ngoài lô đều không được phát hiện.
+        var result = new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal);
 
         foreach (var directory in all.Select(f => f.Directory).Distinct(StringComparer.OrdinalIgnoreCase))
         {
@@ -677,7 +686,14 @@ public sealed class MainViewModel : ObservableObject
                 // Thư mục không truy cập được: bỏ qua.
             }
 
-            result[directory] = names;
+            // Tệp trong lô nhưng bị bỏ chọn vẫn giữ tên cũ nên cũng chiếm chỗ (FR-A6).
+            foreach (var path in unselected)
+            {
+                if (string.Equals(Path.GetDirectoryName(path), directory, StringComparison.OrdinalIgnoreCase))
+                    names.Add(Path.GetFileName(path));
+            }
+
+            result[ConflictDetector.NormalizeDirectory(directory)] = names;
         }
 
         return result;
@@ -961,6 +977,8 @@ public sealed class MainViewModel : ObservableObject
         Raise(nameof(SelectedCount));
         Raise(nameof(ConflictCount));
         Raise(nameof(HasConflicts));
+        Raise(nameof(ConflictBannerText));
+        Raise(nameof(AutoResolvedText));
         Raise(nameof(HasAutoResolved));
         Raise(nameof(AreAllRowsSelected));
         Raise(nameof(CanApply));
