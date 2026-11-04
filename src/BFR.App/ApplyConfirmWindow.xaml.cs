@@ -7,12 +7,14 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using BFR.App.Infrastructure;
+using Ui = Wpf.Ui.Controls;
 
 /// <summary>
 /// Hộp thoại xác nhận áp dụng (spec 7.4): tóm tắt số tệp, số thư mục bị tác động,
 /// số tệp đổi phần mở rộng và gợi ý rằng luôn có thể Hoàn tác.
 /// </summary>
-public class ApplyConfirmWindow : Window
+public class ApplyConfirmWindow : Ui.FluentWindow
 {
     public ApplyConfirmWindow(ApplySummary summary)
     {
@@ -23,7 +25,7 @@ public class ApplyConfirmWindow : Window
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         ShowInTaskbar = false;
         AutomationProperties.SetName(this, "Confirm apply renaming");
-        Background = (Brush)Application.Current.FindResource("SurfaceBackground");
+        DialogChrome.Apply(this);
 
         var root = new StackPanel { Margin = new Thickness(20) };
 
@@ -77,23 +79,20 @@ public class ApplyConfirmWindow : Window
             Margin = new Thickness(0, 18, 0, 0)
         };
 
-        var cancel = new Button
+        var cancel = new Ui.Button
         {
             Content = Loc.T("ConfirmCancel"),
-            Padding = new Thickness(18, 6, 18, 6),
             Margin = new Thickness(0, 0, 8, 0),
+            MinWidth = 96,
             IsCancel = true
         };
         cancel.Click += (_, _) => { DialogResult = false; Close(); };
 
-        var apply = new Button
+        var apply = new Ui.Button
         {
             Content = Loc.T("ConfirmApplyButton"),
-            Padding = new Thickness(18, 6, 18, 6),
-            FontWeight = FontWeights.SemiBold,
-            Background = (Brush)Application.Current.FindResource("Accent"),
-            Foreground = (Brush)Application.Current.FindResource("TextOnAccent"),
-            BorderThickness = new Thickness(0),
+            Appearance = Ui.ControlAppearance.Primary,
+            MinWidth = 96,
             IsDefault = true
         };
         apply.Click += (_, _) => { DialogResult = true; Close(); };
@@ -102,7 +101,7 @@ public class ApplyConfirmWindow : Window
         buttons.Children.Add(apply);
         root.Children.Add(buttons);
 
-        Content = root;
+        Content = DialogChrome.Wrap(this, root);
     }
 
     private static TextBlock Bullet(string text) => new()
