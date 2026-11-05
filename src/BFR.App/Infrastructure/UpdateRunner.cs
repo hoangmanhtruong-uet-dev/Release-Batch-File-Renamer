@@ -64,7 +64,8 @@ public static class UpdateRunner
         }
 
         var settings = SettingsStore.Load();
-        if (!Uri.TryCreate(settings.UpdateFeedUrl, UriKind.Absolute, out var feedUri))
+        if (!Uri.TryCreate(settings.UpdateFeedUrl, UriKind.Absolute, out var feedUri)
+            || settings.UpdateFeedUrl.Contains("YOUR-ORG", StringComparison.OrdinalIgnoreCase))
         {
             return new UpdateCheckResult(UpdateCheckStatus.InvalidFeed, Loc.T("UpdateFeedInvalid"));
         }
