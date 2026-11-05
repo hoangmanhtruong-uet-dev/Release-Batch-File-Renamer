@@ -54,7 +54,7 @@ public sealed class ReplaceDictRule : IRule
         var trace = new List<string>(state.Trace);
         if (_regex is null)
         {
-            trace.Add($"{Id}: ReplaceDict (trống)");
+            trace.Add($"{Id}: " + CoreText.Get("CoreDictEmpty", "ReplaceDict (trống)"));
             return state with { Trace = trace };
         }
 

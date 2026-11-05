@@ -32,6 +32,19 @@ public static class Loc
         if (existing is not null) app.Resources.MergedDictionaries.Remove(existing);
         app.Resources.MergedDictionaries.Add(dictionary);
         Current = language;
+
+        // Ảnh chụp bất biến các chuỗi của Core: Core chạy trên luồng nền nên không tra ResourceDictionary trực tiếp.
+        var snapshot = new System.Collections.Generic.Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var key in dictionary.Keys)
+        {
+            if (key is string name
+                && (name.StartsWith("Core", StringComparison.Ordinal) || name.StartsWith("PresetBuiltin", StringComparison.Ordinal))
+                && dictionary[name] is string value)
+            {
+                snapshot[name] = value;
+            }
+        }
+        BFR.Core.CoreText.Resolver = key => snapshot.TryGetValue(key, out var text) ? text : null;
     }
 
     public static string T(string key) =>

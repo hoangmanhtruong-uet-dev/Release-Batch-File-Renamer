@@ -23,7 +23,7 @@ public sealed class TokenEngine
             var value = Resolve(token, file, state, ctx, out var missing);
             if (value is null)
             {
-                errors?.Add(missing ?? $"Token không hợp lệ: {{{token}}}");
+                errors?.Add(missing ?? CoreText.Get("CoreInvalidToken", "Token không hợp lệ: {0}", "{" + token + "}"));
                 return match.Value; // giữ nguyên token
             }
             return value;
@@ -63,7 +63,7 @@ public sealed class TokenEngine
                 {
                     return FormatDate(DateTime.Parse(taken, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind), arg);
                 }
-                missing = "Thiếu dữ liệu: {taken}";
+                missing = CoreText.Get("CoreMissingData", "Thiếu dữ liệu: {0}", "{taken}");
                 return null;
             }
             case "media":
@@ -73,7 +73,7 @@ public sealed class TokenEngine
                 {
                     return FormatDate(DateTime.Parse(media, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind), arg);
                 }
-                missing = "Thiếu dữ liệu: {media}";
+                missing = CoreText.Get("CoreMissingData", "Thiếu dữ liệu: {0}", "{media}");
                 return null;
             }
             case "size":
@@ -84,7 +84,7 @@ public sealed class TokenEngine
                 return RandomString(ctx.RandomSeed, state.Index, len);
             }
             default:
-                missing = $"Token không hợp lệ: {{{token}}}";
+                missing = CoreText.Get("CoreInvalidToken", "Token không hợp lệ: {0}", "{" + token + "}");
                 return null;
         }
     }

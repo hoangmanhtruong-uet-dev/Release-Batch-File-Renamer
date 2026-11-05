@@ -38,8 +38,8 @@
                     <DataGridTextColumn Binding="{Binding Total}" Width="70" Header="{DynamicResource HistoryColTotal}" />
                     <DataGridTextColumn Binding="{Binding Succeeded}" Width="70" Header="{DynamicResource HistoryColOk}" />
                     <DataGridTextColumn Binding="{Binding Failed}" Width="70" Header="{DynamicResource HistoryColFailed}" />
-                    <DataGridTextColumn Binding="{Binding Status}" Width="110" Header="{DynamicResource HistoryColStatus}" />
-                    <DataGridTextColumn Binding="{Binding Preset}" Width="*" Header="{DynamicResource HistoryColPreset}" />
+                    <DataGridTextColumn Binding="{Binding StatusText}" Width="110" Header="{DynamicResource HistoryColStatus}" />
+                    <DataGridTextColumn Binding="{Binding PresetText}" Width="*" Header="{DynamicResource HistoryColPreset}" />
                 </DataGrid.Columns>
             </DataGrid>
 

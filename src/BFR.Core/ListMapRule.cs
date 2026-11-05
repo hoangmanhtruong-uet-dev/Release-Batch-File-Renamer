@@ -79,7 +79,7 @@ public sealed class ListMapRule : IRule
 
         if (replacement is null)
         {
-            trace.Add($"{Id}: ListMap (không khớp)");
+            trace.Add($"{Id}: " + CoreText.Get("CoreListNoMatch", "ListMap (không khớp)"));
             return state with { Trace = trace };
         }
 

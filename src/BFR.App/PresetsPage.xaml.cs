@@ -92,7 +92,7 @@ public class PresetsPage : PageBase
         _list = new ListBox
         {
             Style = (Style)Application.Current.FindResource("AppListBoxStyle"),
-            DisplayMemberPath = nameof(Preset.Name)
+            DisplayMemberPath = nameof(Preset.DisplayName)
         };
         _list.SelectionChanged += (_, _) => UpdateStatus();
         AutomationProperties.SetName(_list, "Saved presets");
@@ -167,7 +167,7 @@ public class PresetsPage : PageBase
         var query = _search.Text.Trim();
         _list.ItemsSource = query.Length == 0
             ? _all
-            : _all.Where(p => p.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            : _all.Where(p => p.DisplayName.Contains(query, StringComparison.CurrentCultureIgnoreCase)).ToList();
 
         _empty.Visibility = _list.Items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -266,7 +266,7 @@ public class PresetsPage : PageBase
 
             _store.Save(preset);
             Refresh();
-            _status.Text = Loc.F("PresetImported", preset.Name);
+            _status.Text = Loc.F("PresetImported", preset.DisplayName);
         }
         catch (Exception ex)
         {

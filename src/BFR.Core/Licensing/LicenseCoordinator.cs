@@ -66,7 +66,7 @@ public sealed class LicenseCoordinator
     {
         if (_provider is null || !_provider.IsAvailable)
         {
-            return new PurchaseOutcome(PurchaseStatus.NotSupported, "Mua Pro chỉ khả dụng trong bản cài từ Microsoft Store.");
+            return new PurchaseOutcome(PurchaseStatus.NotSupported, CoreText.Get("CoreStoreNotSupported", "Mua Pro chỉ khả dụng trong bản cài từ Microsoft Store."));
         }
 
         PurchaseOutcome outcome;

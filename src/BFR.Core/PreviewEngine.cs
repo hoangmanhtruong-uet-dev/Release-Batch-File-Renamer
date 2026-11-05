@@ -92,7 +92,7 @@ public sealed class PreviewEngine
             if (issue != NameIssue.None)
             {
                 status = issue == NameIssue.PathTooLong ? PreviewStatus.PathTooLong : PreviewStatus.InvalidName;
-                detail = $"Tên không hợp lệ: {issue}";
+                detail = CoreText.Get("CoreInvalidName", "Tên không hợp lệ: {0}", issue);
             }
 
             var conflict = conflicts[i];

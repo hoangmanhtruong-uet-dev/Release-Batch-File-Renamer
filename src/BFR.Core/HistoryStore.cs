@@ -18,6 +18,24 @@ public sealed class HistoryEntry
     public int Failed { get; set; }
     public string Status { get; set; } = "completed";
     public string JournalPath { get; set; } = string.Empty;
+
+    /// <summary>Trạng thái để hiển thị theo ngôn ngữ giao diện (giá trị lưu trong tệp giữ nguyên tiếng Anh).</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string StatusText => Status switch
+    {
+        "completed" => CoreText.Get("CoreStatusCompleted", "Hoàn tất"),
+        "partial" => CoreText.Get("CoreStatusPartial", "Một phần"),
+        "failed" => CoreText.Get("CoreStatusFailed", "Thất bại"),
+        "cancelled" => CoreText.Get("CoreStatusCancelled", "Đã hủy"),
+        "recovered" => CoreText.Get("CoreStatusRecovered", "Đã khôi phục"),
+        "recovered-with-errors" => CoreText.Get("CoreStatusRecoveredErrors", "Khôi phục (có lỗi)"),
+        "undone" => CoreText.Get("CoreStatusUndone", "Đã hoàn tác"),
+        _ => Status
+    };
+
+    /// <summary>Tên preset để hiển thị: preset dựng sẵn được dịch.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string PresetText => string.IsNullOrEmpty(Preset) ? string.Empty : BuiltInPresets.DisplayName(Preset);
 }
 
 public sealed class HistoryStore

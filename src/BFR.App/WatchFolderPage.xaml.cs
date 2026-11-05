@@ -27,7 +27,7 @@ public class WatchFolderPage : PageBase
     private readonly string _logPath;
 
     private readonly TextBox _folderBox = new() { Width = 320 };
-    private readonly ComboBox _presetCombo = new() { Width = 240, DisplayMemberPath = nameof(Preset.Name) };
+    private readonly ComboBox _presetCombo = new() { Width = 240, DisplayMemberPath = nameof(Preset.DisplayName) };
     private readonly CheckBox _recursive = new() { IsChecked = true };
     private readonly CheckBox _dryRun = new();
     private readonly TextBox _settleBox = new() { Text = "1500", Width = 80 };
@@ -245,7 +245,7 @@ public class WatchFolderPage : PageBase
 
             _startButton.IsEnabled = false;
             _stopButton.IsEnabled = true;
-            _status.Text = Loc.F("WatchStarted", folder, preset.Name);
+            _status.Text = Loc.F("WatchStarted", folder, preset.DisplayName);
         }
         catch (Exception ex)
         {

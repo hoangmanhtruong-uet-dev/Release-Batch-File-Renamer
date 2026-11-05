@@ -83,13 +83,13 @@ public sealed class FindReplaceRule : IRule
             catch (RegexMatchTimeoutException)
             {
                 // Không treo ứng dụng; giữ nguyên và đánh dấu trong trace
-                trace.Add($"{Id}: Regex quá chậm (timeout)");
+                trace.Add($"{Id}: " + CoreText.Get("CoreRegexTimeout", "Regex quá chậm (timeout)"));
                 return input;
             }
             catch (ArgumentException)
             {
                 // Mẫu không hợp lệ; giữ nguyên
-                trace.Add($"{Id}: Mẫu Regex không hợp lệ");
+                trace.Add($"{Id}: " + CoreText.Get("CoreRegexInvalid", "Mẫu Regex không hợp lệ"));
                 return input;
             }
         }
