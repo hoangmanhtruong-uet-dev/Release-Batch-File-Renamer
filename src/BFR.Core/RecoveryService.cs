@@ -78,14 +78,14 @@ public sealed class RecoveryService
             if (!_fs.FileExists(from))
             {
                 result.Failed++;
-                result.Errors.Add($"Không tìm thấy tệp nguồn: {from}");
+                result.Errors.Add(CoreText.Get("CoreRecSourceMissing", "Không tìm thấy tệp nguồn: {0}", from));
                 Append(journalPath, step, "failed");
                 continue;
             }
             if (_fs.FileExists(to))
             {
                 result.Failed++;
-                result.Errors.Add($"Tên đích đã tồn tại: {to}");
+                result.Errors.Add(CoreText.Get("CoreRecTargetExists", "Tên đích đã tồn tại: {0}", to));
                 Append(journalPath, step, "failed");
                 continue;
             }
@@ -156,12 +156,12 @@ public sealed class RecoveryService
             else if (!_fs.FileExists(from))
             {
                 result.Failed++;
-                result.Errors.Add($"{to}: cả tệp nguồn và đích đều không tồn tại");
+                result.Errors.Add(CoreText.Get("CoreRecBothMissing", "{0}: cả tệp nguồn và đích đều không tồn tại", to));
             }
             else
             {
                 result.Failed++;
-                result.Errors.Add($"{to}: tên nguồn đã bị chiếm");
+                result.Errors.Add(CoreText.Get("CoreRecSourceTaken", "{0}: tên nguồn đã bị chiếm", to));
             }
         }
 

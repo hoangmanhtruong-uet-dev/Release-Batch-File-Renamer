@@ -24,6 +24,24 @@ public sealed class AppSettings
     /// <summary>Preset dùng cho Watch Folder.</summary>
     public string? WatchPreset { get; set; }
 
+    /// <summary>
+    /// Lắc chuột khi đang kéo tệp để mở Shelf (dùng hook chuột toàn cục).
+    /// Mặc định TẮT theo nguyên tắc opt-in.
+    /// </summary>
+    public bool ShakeToOpenShelf { get; set; } = false;
+
+    /// <summary>Phím tắt toàn cục mở Shelf (B4). Mặc định TẮT.</summary>
+    public bool ShelfHotkeyEnabled { get; set; } = false;
+
+    /// <summary>Tổ hợp phím, ví dụ "Ctrl+Alt+Space" (xem <c>HotkeySpec.Presets</c>).</summary>
+    public string ShelfHotkey { get; set; } = "Ctrl+Shift+Space";
+
+    /// <summary>
+    /// Chạy nền ở khay hệ thống: đóng cửa sổ chính chỉ ẩn đi, ứng dụng vẫn chạy
+    /// (cần cho lắc chuột mở Shelf khi không mở cửa sổ). Mặc định TẮT.
+    /// </summary>
+    public bool RunInBackground { get; set; } = false;
+
     /// <summary>Giao diện: "System", "Light" hoặc "Dark".</summary>
     public string Theme { get; set; } = "System";
 

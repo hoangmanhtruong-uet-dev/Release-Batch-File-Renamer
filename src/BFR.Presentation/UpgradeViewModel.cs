@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 /// <summary>Trạng thái của hộp thoại nâng cấp Pro.</summary>
 public enum UpgradeState
 {
-    /// <summary>Chưa dùng thử: có cả "Mua Pro" và "Dùng thử Pro 14 ngày".</summary>
+    /// <summary>Chưa dùng thử: có cả "Mua Pro" và "Dùng thử Pro 30 ngày".</summary>
     NotTrialed,
 
     /// <summary>Đang dùng thử: ẩn nút dùng thử, hiện số ngày còn lại.</summary>
@@ -260,6 +260,9 @@ public sealed class UpgradeViewModel : ObservableObject
         ProFeature.ReportExport => "FeatureReportExport",
         ProFeature.CommandLine => "FeatureCommandLine",
         ProFeature.RomanNumbering => "FeatureUnlimitedRules",
+        ProFeature.UnlimitedShelf => "FeatureUnlimitedShelf",
+        ProFeature.UnlimitedListRows => "FeatureUnlimitedListRows",
+        ProFeature.ListCsvImport => "FeatureListCsvImport",
         _ => "FeatureUnlimitedRules"
     };
 
@@ -311,6 +314,24 @@ public sealed class UpgradeViewModel : ObservableObject
                 s.T("FeatureNotIncluded"),
                 s.T("FeatureIncluded"),
                 free.AllowCommandLine,
+                true),
+            new(
+                s.T("FeatureUnlimitedShelf"),
+                s.F("FeatureLimitShelf", free.MaxShelfItems),
+                s.T("FeatureUnlimited"),
+                free.MaxShelfItems == int.MaxValue,
+                true),
+            new(
+                s.T("FeatureUnlimitedListRows"),
+                s.F("FeatureLimitListRows", free.MaxListRows),
+                s.T("FeatureUnlimited"),
+                free.MaxListRows == int.MaxValue,
+                true),
+            new(
+                s.T("FeatureListCsvImport"),
+                s.T("FeatureNotIncluded"),
+                s.T("FeatureIncluded"),
+                free.AllowListCsvImport,
                 true)
         };
     }

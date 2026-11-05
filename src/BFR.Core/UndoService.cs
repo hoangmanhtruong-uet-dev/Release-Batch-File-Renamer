@@ -42,13 +42,13 @@ public sealed class UndoService
             if (!_fs.FileExists(to))
             {
                 result.Failed++;
-                result.Errors.Add((to, "Tệp tại vị trí mới không còn tồn tại"));
+                result.Errors.Add((to, CoreText.Get("CoreUndoMissing", "Tệp tại vị trí mới không còn tồn tại")));
                 continue;
             }
             if (_fs.FileExists(from))
             {
                 result.Failed++;
-                result.Errors.Add((from, "Tên cũ đã bị chiếm"));
+                result.Errors.Add((from, CoreText.Get("CoreUndoOldTaken", "Tên cũ đã bị chiếm")));
                 continue;
             }
 

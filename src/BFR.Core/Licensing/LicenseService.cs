@@ -14,8 +14,8 @@ public sealed class LicenseService
     /// <summary>Product ID của add-on Pro mua đứt trọn đời (khớp với Partner Center).</summary>
     public const string ProProductId = "BFR_PRO_LIFETIME";
 
-    /// <summary>Thời gian dùng thử Pro (14 ngày, một lần cho mỗi cài đặt).</summary>
-    public static readonly TimeSpan TrialDuration = TimeSpan.FromDays(14);
+    /// <summary>Thời gian dùng thử Pro (30 ngày, một lần cho mỗi cài đặt).</summary>
+    public static readonly TimeSpan TrialDuration = TimeSpan.FromDays(30);
 
     private readonly LicenseStore _store;
     private readonly Func<DateTime> _clock;
@@ -100,7 +100,7 @@ public sealed class LicenseService
     }
 
     /// <summary>
-    /// Bắt đầu dùng thử Pro 14 ngày nếu chưa dùng. Trả về true nếu lần này bắt đầu mới.
+    /// Bắt đầu dùng thử Pro 30 ngày nếu chưa dùng. Trả về true nếu lần này bắt đầu mới.
     /// </summary>
     public bool StartTrial()
     {
@@ -156,7 +156,7 @@ public sealed class LicenseService
         }
     }
 
-    /// <summary>True nếu bản cài này cho phép dùng thử Pro 14 ngày.</summary>
+    /// <summary>True nếu bản cài này cho phép dùng thử Pro 30 ngày.</summary>
     public bool IsTrialAvailable { get; }
 
     /// <summary>True nếu người dùng đã từng bắt đầu dùng thử (kể cả khi đã hết hạn).</summary>
@@ -194,6 +194,9 @@ public sealed class LicenseService
             ProFeature.ReportExport => limits.AllowReportExport,
             ProFeature.CommandLine => limits.AllowCommandLine,
             ProFeature.RomanNumbering => limits.AllowRomanNumbering,
+            ProFeature.UnlimitedShelf => limits.MaxShelfItems == int.MaxValue,
+            ProFeature.UnlimitedListRows => limits.MaxListRows == int.MaxValue,
+            ProFeature.ListCsvImport => limits.AllowListCsvImport,
             _ => true
         };
 
@@ -212,6 +215,12 @@ public sealed class LicenseService
 
     /// <summary>Số preset người dùng tối đa được lưu.</summary>
     public int MaxSavedPresets => Limits.MaxSavedPresets;
+
+    /// <summary>Số dòng tối đa của danh sách đổi tên (Free: 50, Pro: không giới hạn).</summary>
+    public int MaxListRows => Limits.MaxListRows;
+
+    /// <summary>Số tệp tối đa trong Shelf (Free: 50, Pro: không giới hạn).</summary>
+    public int MaxShelfItems => Limits.MaxShelfItems;
 
     /// <summary>Số mục lịch sử còn giữ để hoàn tác.</summary>
     public int MaxUndoEntries => Limits.MaxUndoEntries;
@@ -305,6 +314,9 @@ public static class FeatureMessages
         ProFeature.ReportExport => "Xuất báo cáo CSV/JSON là tính năng Pro.",
         ProFeature.CommandLine => "Công cụ dòng lệnh bfr là tính năng Pro.",
         ProFeature.RomanNumbering => "Đánh số kiểu La Mã là tính năng Pro.",
+        ProFeature.UnlimitedShelf => "Bản Free giữ tối đa 50 tệp trong Shelf. Nâng cấp Pro để không giới hạn.",
+        ProFeature.UnlimitedListRows => "Bản Free dùng tối đa 50 dòng trong danh sách đổi tên. Nâng cấp Pro để không giới hạn.",
+        ProFeature.ListCsvImport => "Nhập danh sách từ tệp CSV là tính năng Pro.",
         _ => "Tính năng này cần bản Pro."
     };
 }

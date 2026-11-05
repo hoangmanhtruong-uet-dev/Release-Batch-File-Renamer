@@ -52,6 +52,13 @@ public static class ThemeManager
 
         EnsureStylesLoaded(app);
 
+        // Đồng bộ theme của WPF-UI (FluentWindow, TitleBar, control gốc) với theme riêng của BFR.
+        // updateAccent: màu accent hệ thống để chữ trên nút Primary luôn đủ tương phản ở cả sáng/tối.
+        Wpf.Ui.Appearance.ApplicationThemeManager.Apply(
+            IsDark ? Wpf.Ui.Appearance.ApplicationTheme.Dark : Wpf.Ui.Appearance.ApplicationTheme.Light,
+            Wpf.Ui.Controls.WindowBackdropType.Mica,
+            updateAccent: true);
+
         var uri = new Uri($"Themes/Theme.{(IsDark ? "Dark" : "Light")}.xaml", UriKind.Relative);
         var dictionary = new ResourceDictionary { Source = uri };
 

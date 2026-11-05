@@ -33,5 +33,14 @@ public enum ProFeature
     CommandLine,
 
     /// <summary>Đánh số kiểu La Mã.</summary>
-    RomanNumbering
+    RomanNumbering,
+
+    /// <summary>Shelf không giới hạn số tệp (Free: tối đa 50 tệp mỗi lần).</summary>
+    UnlimitedShelf,
+
+    /// <summary>Danh sách đổi tên / từ điển thay thế không giới hạn dòng (Free: tối đa 50 dòng).</summary>
+    UnlimitedListRows,
+
+    /// <summary>Nhập danh sách từ tệp CSV.</summary>
+    ListCsvImport
 }

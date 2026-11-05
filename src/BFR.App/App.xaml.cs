@@ -7,6 +7,7 @@ using BFR.App.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -16,6 +17,59 @@ public partial class App : Application
     private SingleInstanceServer? _server;
     private MainWindow? _mainWindow;
     private LicenseCoordinator? _license;
+    private TrayIcon? _tray;
+    private int _toasts;
+
+    /// <summary>True khi đang bật chạy nền (có biểu tượng khay).</summary>
+    public bool BackgroundEnabled => _tray is not null;
+
+    /// <summary>True khi người dùng đã chọn Thoát: cho phép cửa sổ chính đóng thật.</summary>
+    public bool IsExiting { get; private set; }
+
+    private bool StartHidden { get; set; }
+
+    /// <summary>Bật/tắt biểu tượng khay và chế độ chạy nền theo cài đặt hiện tại.</summary>
+    public void ApplyBackgroundSetting()
+    {
+        var enabled = SettingsStore.Load().RunInBackground;
+        if (enabled && _tray is null)
+        {
+            try
+            {
+                _tray = new TrayIcon(
+                    "Batch File Renamer",
+                    Loc.T("TrayOpen"),
+                    Loc.T("TrayShelf"),
+                    Loc.T("TrayExit"),
+                    open: () => _mainWindow?.ActivateAndForeground(),
+                    shelf: () => _mainWindow?.OpenShelf(),
+                    exit: ExitApplication);
+                ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            }
+            catch
+            {
+                _tray = null;   // không tạo được biểu tượng khay: giữ hành vi thường
+            }
+        }
+        else if (!enabled && _tray is not null)
+        {
+            _tray.Dispose();
+            _tray = null;
+            ShutdownMode = ShutdownMode.OnLastWindowClose;
+            // Cửa sổ chính đang ẩn trong khay thì không còn gì giữ ứng dụng sống: hiện lại.
+            if (_mainWindow is { IsVisible: false }) _mainWindow.ActivateAndForeground();
+        }
+    }
+
+    /// <summary>Thoát hẳn ứng dụng (kể cả khi đang chạy nền).</summary>
+    public void ExitApplication()
+    {
+        IsExiting = true;
+        _tray?.Dispose();
+        _tray = null;
+        _mainWindow?.Close();
+        Shutdown();
+    }
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -31,7 +85,10 @@ public partial class App : Application
             try { File.WriteAllText(Path.Combine(Path.GetTempPath(), "bfr-crash.txt"), ev.Exception.ToString()); } catch { }
         };
 
-        var payload = ParseArgs(e.Args);
+        SessionEnding += (_, _) => IsExiting = true;   // không chặn đăng xuất/tắt máy khi đang ẩn trong khay
+        var parsed = StartupArgs.Parse(e.Args);
+        var payload = parsed.Payload;
+        StartHidden = parsed.Background;
 
         // Hỗ trợ lệnh đăng ký nhanh menu chuột phải từ phím tắt hoặc cài đặt
         if (payload.Paths.Contains("--register-context-menu", StringComparer.OrdinalIgnoreCase))
@@ -80,6 +137,16 @@ public partial class App : Application
             return;
         }
 
+        // B1: đổi tên nhanh từ menu chuột phải — không mở cửa sổ chính, chỉ hiện thông báo kèm Hoàn tác.
+        if (payload.QuickPreset is not null)
+        {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            _server = new SingleInstanceServer(OnIpcPayloadReceived);
+            _server.Start();
+            _ = RunQuickAsync(payload);
+            return;
+        }
+
         _mainWindow = new MainWindow(payload, _license);
         MainWindow = _mainWindow;
 
@@ -87,7 +154,21 @@ public partial class App : Application
         // xảy ra ngay khi cửa sổ đang khởi tạo.
         _server = new SingleInstanceServer(OnIpcPayloadReceived);
         _server.Start();
-        _mainWindow.Show();
+
+        // --background: khởi động thẳng vào khay (chỉ khi đã bật chạy nền), không hiện cửa sổ.
+        var startHidden = (StartHidden || AutoStart.LaunchedByStartup()) && settings.RunInBackground;
+        if (startHidden)
+        {
+            // Cần handle để cửa sổ chính nhận IPC và hook chuột dù chưa từng hiện.
+            _ = new System.Windows.Interop.WindowInteropHelper(_mainWindow).EnsureHandle();
+            ApplyBackgroundSetting();
+            _mainWindow.ApplyShakeSetting();
+            _mainWindow.ApplyHotkeySetting();
+        }
+        else
+        {
+            _mainWindow.Show();
+        }
 
         // Đồng bộ giấy phép Store (chạy nền, không chặn khởi động).
         _ = RefreshLicenseAsync();
@@ -128,11 +209,105 @@ public partial class App : Application
         _mainWindow?.UpdateLicenseState();
     }
 
+    /// <summary>Tạo và hiện cửa sổ chính khi ứng dụng đang chạy ở chế độ đổi tên nhanh (chưa có cửa sổ).</summary>
+    private void EnsureMainWindow(IpcPayload payload)
+    {
+        if (_license is null || _mainWindow is not null) return;
+
+        _mainWindow = new MainWindow(payload, _license);
+        MainWindow = _mainWindow;
+        ShutdownMode = BackgroundEnabled ? ShutdownMode.OnExplicitShutdown : ShutdownMode.OnLastWindowClose;
+        _mainWindow.Show();
+        _mainWindow.ApplyShakeSetting();
+        _mainWindow.ApplyHotkeySetting();
+    }
+
+    /// <summary>Đổi tên nhanh theo preset (B1): quét tệp, áp dụng, rồi hiện thông báo có nút Hoàn tác.</summary>
+    private async Task RunQuickAsync(IpcPayload payload)
+    {
+        var vietnamese = Loc.Current == "vi";
+        try
+        {
+            var paths = new List<string>(payload.Paths);
+            if (!string.IsNullOrWhiteSpace(payload.FileListPath))
+            {
+                paths.AddRange(FileListReader.ReadAndDelete(payload.FileListPath));
+            }
+
+            if (!QuickPresets.TryGet(payload.QuickPreset, out var quick, out var preset))
+            {
+                ShowToast(Loc.F("QuickUnknownPreset", payload.QuickPreset ?? string.Empty), null, isProblem: true);
+                return;
+            }
+
+            var fs = new RealFileSystem();
+            var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "BatchFileRenamer");
+            var history = new HistoryStore(fs, Path.Combine(dir, "history.json"));
+            var renamer = new QuickRenamer(fs, Path.Combine(dir, "journal"), history);
+            var limits = _license!.License;
+
+            var result = await Task.Run(() =>
+            {
+                var files = new FileScanner().Scan(paths, new ScanOptions());
+                return renamer.Run(files, preset, limits.MaxListRows, limits.MaxUndoEntries);
+            }).ConfigureAwait(true);
+
+            var title = quick.Title(vietnamese);
+            Func<string>? undo = null;
+            if (result.JournalPath is not null)
+            {
+                var journal = result.JournalPath;
+                undo = () =>
+                {
+                    var n = renamer.Undo(journal);
+                    history.Save(history.LoadAll().Where(e => !string.Equals(e.JournalPath, journal, StringComparison.OrdinalIgnoreCase)));
+                    return Loc.F("QuickUndone", n);
+                };
+            }
+
+            switch (result.Status)
+            {
+                case QuickRenameStatus.Done:
+                    ShowToast(result.AutoResolved > 0
+                        ? Loc.F("QuickDoneResolved", result.Renamed, title, result.AutoResolved)
+                        : Loc.F("QuickDone", result.Renamed, title), undo, isProblem: false);
+                    break;
+                case QuickRenameStatus.NothingToChange:
+                    ShowToast(Loc.T("QuickNothing"), null, isProblem: false);
+                    break;
+                case QuickRenameStatus.Blocked:
+                    ShowToast(Loc.F("QuickBlocked", result.Message ?? string.Empty), null, isProblem: true);
+                    break;
+                default:
+                    ShowToast(Loc.F("QuickFailed", result.Message ?? string.Empty), undo, isProblem: true);
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowToast(Loc.F("QuickFailed", ex.Message), null, isProblem: true);
+        }
+    }
+
+    private void ShowToast(string message, Func<string>? undo, bool isProblem)
+    {
+        var toast = new QuickToastWindow(message, undo, isProblem, _toasts);
+        _toasts++;
+        toast.Closed += (_, _) =>
+        {
+            _toasts--;
+            // Chế độ đổi tên nhanh không có cửa sổ chính: thoát khi thông báo cuối đóng.
+            if (_toasts == 0 && _mainWindow is null && !BackgroundEnabled) Shutdown();
+        };
+        toast.Show();
+    }
+
     private void OnIpcPayloadReceived(IpcPayload payload)
     {
         Dispatcher.BeginInvoke(() =>
         {
-            if (_mainWindow == null) return;
+            if (payload.QuickPreset is not null) { _ = RunQuickAsync(payload); return; }
+            if (_mainWindow == null) { EnsureMainWindow(payload); return; }
 
             var paths = new List<string>(payload.Paths);
             if (!string.IsNullOrWhiteSpace(payload.FileListPath))
@@ -156,33 +331,6 @@ public partial class App : Application
         });
     }
 
-    private static IpcPayload ParseArgs(string[] args)
-    {
-        var payload = new IpcPayload();
-        for (int i = 0; i < args.Length; i++)
-        {
-            var a = args[i];
-            if (string.Equals(a, "--file-list", StringComparison.OrdinalIgnoreCase))
-            {
-                if (i + 1 < args.Length)
-                {
-                    payload.FileListPath = args[++i];
-                }
-            }
-            else if (string.Equals(a, "--preset", StringComparison.OrdinalIgnoreCase))
-            {
-                if (i + 1 < args.Length)
-                {
-                    payload.PresetName = args[++i];
-                }
-            }
-            else
-            {
-                payload.Paths.Add(a);
-            }
-        }
-        return payload;
-    }
 
     protected override async void OnExit(ExitEventArgs e)
     {
