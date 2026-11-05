@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 /// <summary>Trạng thái của hộp thoại nâng cấp Pro.</summary>
 public enum UpgradeState
 {
-    /// <summary>Chưa dùng thử: có cả "Mua Pro" và "Dùng thử Pro 14 ngày".</summary>
+    /// <summary>Chưa dùng thử: có cả "Mua Pro" và "Dùng thử Pro 30 ngày".</summary>
     NotTrialed,
 
     /// <summary>Đang dùng thử: ẩn nút dùng thử, hiện số ngày còn lại.</summary>

@@ -79,12 +79,12 @@
     <sys:String x:Key="UpgradeTitle">Nâng cấp Batch File Renamer Pro</sys:String>
     <sys:String x:Key="UpgradeDescription">Pro mở khoá: chuỗi quy tắc không giới hạn, ngày chụp EXIF và ngày tạo media, quét đệ quy không giới hạn, hoàn tác nhiều bước (giữ 30 ngày), lưu preset không giới hạn, xuất báo cáo CSV/JSON và công cụ dòng lệnh bfr.</sys:String>
 
-    <sys:String x:Key="UpgradeTrial">Dùng thử Pro 14 ngày</sys:String>
+    <sys:String x:Key="UpgradeTrial">Dùng thử Pro miễn phí 30 ngày</sys:String>
     <sys:String x:Key="UpgradeStoreOnly">Chỉ có thể mua Pro trong bản cài từ Microsoft Store.</sys:String>
     <sys:String x:Key="UpgradeSuccess">Đã kích hoạt Pro. Cảm ơn bạn!</sys:String>
     <sys:String x:Key="UpgradeCancelled">Đã huỷ giao dịch mua.</sys:String>
     <sys:String x:Key="UpgradeFailed">Không hoàn tất được giao dịch mua: {0}</sys:String>
-    <sys:String x:Key="UpgradeTrialStarted">Đã bắt đầu dùng thử Pro 14 ngày.</sys:String>
+    <sys:String x:Key="UpgradeTrialStarted">Đã bắt đầu dùng thử Pro 30 ngày.</sys:String>
     <sys:String x:Key="UpgradeTrialUsed">Bạn đã dùng thử Pro trước đó.</sys:String>
     <sys:String x:Key="ProLockedTitle">Tính năng Pro</sys:String>
     <sys:String x:Key="ReportSaved">Đã lưu báo cáo: {0}</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="SettingsAbout">GIỚI THIỆU</sys:String>
     <sys:String x:Key="SettingsVersion">Phiên bản {0}</sys:String>
     <sys:String x:Key="SettingsClose">Đóng</sys:String>    <sys:String x:Key="UpgradeHeader">Nâng cấp lên Batch File Renamer Pro</sys:String>
-    <sys:String x:Key="UpgradeSubtitle">Mua một lần, dùng trọn đời</sys:String>
+    <sys:String x:Key="UpgradeSubtitle">Pro miễn phí trong 30 ngày. Dùng thử mọi tính năng Pro.</sys:String>
     <sys:String x:Key="UpgradeContext">Tính năng “{0}” chỉ có trong gói Pro.</sys:String>
     <sys:String x:Key="UpgradeColumnFree">Free</sys:String>
     <sys:String x:Key="UpgradeColumnPro">Pro</sys:String>

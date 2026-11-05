@@ -79,12 +79,12 @@
     <sys:String x:Key="UpgradeTitle">升级到 Batch File Renamer 专业版</sys:String>
     <sys:String x:Key="UpgradeDescription">专业版解锁：无限规则链、EXIF 拍摄日期与媒体创建日期、无限层级递归扫描、多步撤销（保留 30 天）、无限预设、CSV/JSON 报告导出以及 bfr 命令行工具。</sys:String>
 
-    <sys:String x:Key="UpgradeTrial">试用专业版 14 天</sys:String>
+    <sys:String x:Key="UpgradeTrial">免费试用专业版 30 天</sys:String>
     <sys:String x:Key="UpgradeStoreOnly">仅在 Microsoft Store 安装的版本中才能购买专业版。</sys:String>
     <sys:String x:Key="UpgradeSuccess">专业版已启用，感谢支持！</sys:String>
     <sys:String x:Key="UpgradeCancelled">已取消购买。</sys:String>
     <sys:String x:Key="UpgradeFailed">购买未完成：{0}</sys:String>
-    <sys:String x:Key="UpgradeTrialStarted">14 天专业版试用期已开始。</sys:String>
+    <sys:String x:Key="UpgradeTrialStarted">30 天专业版试用期已开始。</sys:String>
     <sys:String x:Key="UpgradeTrialUsed">您已使用过专业版试用。</sys:String>
     <sys:String x:Key="ProLockedTitle">专业版功能</sys:String>
     <sys:String x:Key="ReportSaved">报告已保存：{0}</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="SettingsAbout">关于</sys:String>
     <sys:String x:Key="SettingsVersion">版本 {0}</sys:String>
     <sys:String x:Key="SettingsClose">关闭</sys:String>    <sys:String x:Key="UpgradeHeader">升级到 Batch File Renamer 专业版</sys:String>
-    <sys:String x:Key="UpgradeSubtitle">一次购买，终身使用</sys:String>
+    <sys:String x:Key="UpgradeSubtitle">专业版免费使用 30 天，可体验全部专业版功能。</sys:String>
     <sys:String x:Key="UpgradeContext">“{0}”功能仅包含在专业版中。</sys:String>
     <sys:String x:Key="UpgradeColumnFree">免费版</sys:String>
     <sys:String x:Key="UpgradeColumnPro">专业版</sys:String>

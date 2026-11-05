@@ -14,8 +14,8 @@ public sealed class LicenseService
     /// <summary>Product ID của add-on Pro mua đứt trọn đời (khớp với Partner Center).</summary>
     public const string ProProductId = "BFR_PRO_LIFETIME";
 
-    /// <summary>Thời gian dùng thử Pro (14 ngày, một lần cho mỗi cài đặt).</summary>
-    public static readonly TimeSpan TrialDuration = TimeSpan.FromDays(14);
+    /// <summary>Thời gian dùng thử Pro (30 ngày, một lần cho mỗi cài đặt).</summary>
+    public static readonly TimeSpan TrialDuration = TimeSpan.FromDays(30);
 
     private readonly LicenseStore _store;
     private readonly Func<DateTime> _clock;
@@ -100,7 +100,7 @@ public sealed class LicenseService
     }
 
     /// <summary>
-    /// Bắt đầu dùng thử Pro 14 ngày nếu chưa dùng. Trả về true nếu lần này bắt đầu mới.
+    /// Bắt đầu dùng thử Pro 30 ngày nếu chưa dùng. Trả về true nếu lần này bắt đầu mới.
     /// </summary>
     public bool StartTrial()
     {
@@ -156,7 +156,7 @@ public sealed class LicenseService
         }
     }
 
-    /// <summary>True nếu bản cài này cho phép dùng thử Pro 14 ngày.</summary>
+    /// <summary>True nếu bản cài này cho phép dùng thử Pro 30 ngày.</summary>
     public bool IsTrialAvailable { get; }
 
     /// <summary>True nếu người dùng đã từng bắt đầu dùng thử (kể cả khi đã hết hạn).</summary>

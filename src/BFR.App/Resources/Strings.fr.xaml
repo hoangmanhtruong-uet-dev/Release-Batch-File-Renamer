@@ -79,12 +79,12 @@
     <sys:String x:Key="UpgradeTitle">Passer à Batch File Renamer Pro</sys:String>
     <sys:String x:Key="UpgradeDescription">Pro débloque : chaînes de règles illimitées, date de prise de vue EXIF et date de création des médias, analyse récursive illimitée, annulation multi-étapes (30 jours), préréglages illimités, export de rapports CSV/JSON et l'outil en ligne de commande bfr.</sys:String>
 
-    <sys:String x:Key="UpgradeTrial">Essayer Pro pendant 14 jours</sys:String>
+    <sys:String x:Key="UpgradeTrial">Essayer Pro gratuitement pendant 30 jours</sys:String>
     <sys:String x:Key="UpgradeStoreOnly">Pro ne peut être acheté que dans la version installée depuis le Microsoft Store.</sys:String>
     <sys:String x:Key="UpgradeSuccess">Pro est maintenant actif. Merci !</sys:String>
     <sys:String x:Key="UpgradeCancelled">Achat annulé.</sys:String>
     <sys:String x:Key="UpgradeFailed">L'achat n'a pas pu aboutir : {0}</sys:String>
-    <sys:String x:Key="UpgradeTrialStarted">Votre essai Pro de 14 jours a commencé.</sys:String>
+    <sys:String x:Key="UpgradeTrialStarted">Votre essai Pro de 30 jours a commencé.</sys:String>
     <sys:String x:Key="UpgradeTrialUsed">Vous avez déjà utilisé l'essai Pro.</sys:String>
     <sys:String x:Key="ProLockedTitle">Fonctionnalité Pro</sys:String>
     <sys:String x:Key="ReportSaved">Rapport enregistré : {0}</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="SettingsAbout">À PROPOS</sys:String>
     <sys:String x:Key="SettingsVersion">Version {0}</sys:String>
     <sys:String x:Key="SettingsClose">Fermer</sys:String>    <sys:String x:Key="UpgradeHeader">Passer à Batch File Renamer Pro</sys:String>
-    <sys:String x:Key="UpgradeSubtitle">Un achat unique, utilisation à vie</sys:String>
+    <sys:String x:Key="UpgradeSubtitle">Pro est gratuit pendant 30 jours. Essayez toutes ses fonctions.</sys:String>
     <sys:String x:Key="UpgradeContext">La fonctionnalité « {0} » est réservée à Pro.</sys:String>
     <sys:String x:Key="UpgradeColumnFree">Free</sys:String>
     <sys:String x:Key="UpgradeColumnPro">Pro</sys:String>

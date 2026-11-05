@@ -79,12 +79,12 @@
     <sys:String x:Key="UpgradeTitle">Upgrade to Batch File Renamer Pro</sys:String>
     <sys:String x:Key="UpgradeDescription">Pro unlocks: unlimited rule chains, EXIF capture date and media creation date, unlimited recursion, multi-step undo (30 days), unlimited saved presets, CSV/JSON report export and the bfr command-line tool.</sys:String>
 
-    <sys:String x:Key="UpgradeTrial">Try Pro for 14 days</sys:String>
+    <sys:String x:Key="UpgradeTrial">Try Pro free for 30 days</sys:String>
     <sys:String x:Key="UpgradeStoreOnly">Pro can only be purchased in the Microsoft Store build.</sys:String>
     <sys:String x:Key="UpgradeSuccess">Pro is now active. Thank you!</sys:String>
     <sys:String x:Key="UpgradeCancelled">Purchase cancelled.</sys:String>
     <sys:String x:Key="UpgradeFailed">Purchase could not be completed: {0}</sys:String>
-    <sys:String x:Key="UpgradeTrialStarted">Your 14-day Pro trial has started.</sys:String>
+    <sys:String x:Key="UpgradeTrialStarted">Your 30-day Pro trial has started.</sys:String>
     <sys:String x:Key="UpgradeTrialUsed">You have already used the Pro trial.</sys:String>
     <sys:String x:Key="ProLockedTitle">Pro feature</sys:String>
     <sys:String x:Key="ReportSaved">Report saved: {0}</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="SettingsAbout">ABOUT</sys:String>
     <sys:String x:Key="SettingsVersion">Version {0}</sys:String>
     <sys:String x:Key="SettingsClose">Close</sys:String>    <sys:String x:Key="UpgradeHeader">Upgrade to Batch File Renamer Pro</sys:String>
-    <sys:String x:Key="UpgradeSubtitle">Buy once, use forever</sys:String>
+    <sys:String x:Key="UpgradeSubtitle">Pro is free for 30 days. Try every Pro feature.</sys:String>
     <sys:String x:Key="UpgradeContext">The “{0}” feature is part of Pro.</sys:String>
     <sys:String x:Key="UpgradeColumnFree">Free</sys:String>
     <sys:String x:Key="UpgradeColumnPro">Pro</sys:String>

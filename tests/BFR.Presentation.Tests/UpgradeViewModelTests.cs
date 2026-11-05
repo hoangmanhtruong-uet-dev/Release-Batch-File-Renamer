@@ -55,7 +55,7 @@ public class UpgradeViewModelTests : IDisposable
         Assert.Equal(UpgradeState.Trialing, vm.State);
         Assert.False(vm.ShowTrialButton);
         Assert.True(vm.ShowTrialRemaining);
-        Assert.Equal(14, vm.TrialDaysRemaining);
+        Assert.Equal(30, vm.TrialDaysRemaining);
         Assert.False(string.IsNullOrWhiteSpace(vm.TrialRemainingText));
     }
 
@@ -71,7 +71,7 @@ public class UpgradeViewModelTests : IDisposable
 
         service.StartTrial();
 
-        now = now.AddDays(15);
+        now = now.AddDays(31);
         service.Evaluate();
 
         var vm = new UpgradeViewModel(new LicenseCoordinator(service), priceProvider: null);

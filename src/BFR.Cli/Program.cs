@@ -592,7 +592,7 @@ async Task<int> LicenseCommand(string[] rest)
         {
             if (licenseService.StartTrial())
             {
-                Console.WriteLine("Đã bắt đầu dùng thử Pro 14 ngày.");
+                Console.WriteLine("Đã bắt đầu dùng thử Pro 30 ngày.");
                 return 0;
             }
             Console.Error.WriteLine("Không bắt đầu được dùng thử (đã dùng trước đó hoặc bản portable không hỗ trợ).");

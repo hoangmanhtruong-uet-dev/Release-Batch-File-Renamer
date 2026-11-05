@@ -113,7 +113,7 @@ Justification for runFullTrust:
 Notes:
 - The package submitted to the Store is signed with a trusted code-signing certificate whose Publisher matches the package Identity.
 - The modern context menu is declared through desktop4/desktop5 extensions; the folder-background item uses desktop10 and is supported on Windows 11 22H2+.
-- The app offers one durable in-app add-on (Product ID BFR_PRO_LIFETIME, lifetime license). The purchase and license check are performed by the operating system through Windows.Services.Store; the app itself has no server and never transmits user file names, paths or contents. A 14-day trial is available once per installation. The portable ZIP build is Free only.
+- The app offers one durable in-app add-on (Product ID BFR_PRO_LIFETIME, lifetime license). The purchase and license check are performed by the operating system through Windows.Services.Store; the app itself has no server and never transmits user file names, paths or contents. A free 30-day Pro trial is available once per installation. The portable ZIP build is Free only.
 
 ```
 
@@ -162,7 +162,7 @@ Notes:
 | Product ID | `BFR_PRO_LIFETIME` |
 | Loại | Durable add-on (mua đứt trọn đời) |
 | Giá đề xuất | 3,99–4,99 USD (Partner Center tự tính theo sức mua khu vực) |
-| Dùng thử | 14 ngày, một lần cho mỗi cài đặt (ghi cục bộ) |
+| Dùng thử | 30 ngày, một lần cho mỗi cài đặt (ghi cục bộ) |
 | Nâng cấp trong app | Hộp thoại *"Nâng cấp lên Batch File Renamer Pro"* (so sánh Free/Pro, nút Mua Pro, nhập mã kích hoạt) |
 | Bản portable (ZIP) | Có thể dùng thử và nhập **mã kích hoạt**; không mua được trong Store |
 | Bản portable (ZIP) | **Không** bán Pro (Store IAP không hoạt động ngoài Store) |
