@@ -481,4 +481,6 @@
     <sys:String x:Key="RuleDescTemplate">用模板生成新名称：{name}、{n}、{created}……</sys:String>
     <sys:String x:Key="RuleDescListMap">粘贴 Excel 列表：旧名称 → 新名称（或按顺序）。</sys:String>
     <sys:String x:Key="RuleDescReplaceDict">一次应用多组 查找 → 替换。</sys:String>
+    <sys:String x:Key="EmptyTips">提示：拖动文件时摇动鼠标可打开文件托盘 · 使用全局快捷键（设置） · 或在资源管理器中右键文件 → Batch File Renamer。</sys:String>
+    <sys:String x:Key="FeatureLimitListRows">最多 {0} 行</sys:String>
 </ResourceDictionary>

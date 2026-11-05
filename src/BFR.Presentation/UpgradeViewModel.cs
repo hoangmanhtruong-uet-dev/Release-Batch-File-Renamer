@@ -320,6 +320,18 @@ public sealed class UpgradeViewModel : ObservableObject
                 s.F("FeatureLimitShelf", free.MaxShelfItems),
                 s.T("FeatureUnlimited"),
                 free.MaxShelfItems == int.MaxValue,
+                true),
+            new(
+                s.T("FeatureUnlimitedListRows"),
+                s.F("FeatureLimitListRows", free.MaxListRows),
+                s.T("FeatureUnlimited"),
+                free.MaxListRows == int.MaxValue,
+                true),
+            new(
+                s.T("FeatureListCsvImport"),
+                s.T("FeatureNotIncluded"),
+                s.T("FeatureIncluded"),
+                free.AllowListCsvImport,
                 true)
         };
     }

@@ -481,4 +481,6 @@
     <sys:String x:Key="RuleDescTemplate">Build the new name from a template: {name}, {n}, {created}…</sys:String>
     <sys:String x:Key="RuleDescListMap">Paste a list from Excel: old name → new name (or by order).</sys:String>
     <sys:String x:Key="RuleDescReplaceDict">Several find → replace pairs applied in one pass.</sys:String>
+    <sys:String x:Key="EmptyTips">Tip: shake the mouse while dragging files to open the Shelf · use the global hotkey (Settings) · or right-click files in Explorer → Batch File Renamer.</sys:String>
+    <sys:String x:Key="FeatureLimitListRows">Up to {0} rows</sys:String>
 </ResourceDictionary>

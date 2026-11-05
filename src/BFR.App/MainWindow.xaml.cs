@@ -434,6 +434,7 @@ public partial class MainWindow : FluentWindow
             Header = card.IsExpanded ? Loc.T("RuleCollapse") : Loc.T("RuleEditHint"),
             Style = (Style)FindResource("AppMenuItemStyle")
         };
+        System.Windows.Automation.AutomationProperties.SetName(expandItem, "Rule menu expand");
         expandItem.Click += (_, _) => card.IsExpanded = !card.IsExpanded;
         menu.Items.Add(expandItem);
 
@@ -443,6 +444,7 @@ public partial class MainWindow : FluentWindow
             Style = (Style)FindResource("AppMenuItemStyle"),
             IsEnabled = card.MoveUpCommand.CanExecute(null)
         };
+        System.Windows.Automation.AutomationProperties.SetName(upItem, "Rule menu move up");
         upItem.Click += (_, _) => card.MoveUpCommand.Execute(null);
         menu.Items.Add(upItem);
 
@@ -452,6 +454,7 @@ public partial class MainWindow : FluentWindow
             Style = (Style)FindResource("AppMenuItemStyle"),
             IsEnabled = card.MoveDownCommand.CanExecute(null)
         };
+        System.Windows.Automation.AutomationProperties.SetName(downItem, "Rule menu move down");
         downItem.Click += (_, _) => card.MoveDownCommand.Execute(null);
         menu.Items.Add(downItem);
 

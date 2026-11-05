@@ -14,7 +14,7 @@ public static class LicenseInfoContent
     public static UIElement Build(LicenseService license, LicenseStatus status)
     {
         var root = new StackPanel { MinWidth = 400 };
-        System.Windows.Automation.AutomationProperties.SetName(root, "License information");
+
 
         root.Children.Add(new TextBlock
         {
@@ -34,7 +34,10 @@ public static class LicenseInfoContent
             AddRow(root, Loc.T("LicenseInfoPurchased"), license.PurchasedUtc.Value.ToLocalTime().ToString("dd/MM/yyyy"));
         }
         AddRow(root, Loc.T("LicenseInfoSource"), license.ActivatedByKey ? Loc.T("LicenseInfoSourceKey") : Loc.T("LicenseInfoSourceStore"));
-        return root;
+        // UserControl (không phải Panel) để có automation peer: Panel không lộ ra UI Automation.
+        var host = new UserControl { Content = root };
+        System.Windows.Automation.AutomationProperties.SetName(host, "License information");
+        return host;
     }
 
     private static void AddRow(Panel parent, string label, string value)

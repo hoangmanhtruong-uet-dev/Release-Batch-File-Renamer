@@ -481,4 +481,6 @@
     <sys:String x:Key="RuleDescTemplate">Construire le nom à partir d'un modèle : {name}, {n}, {created}…</sys:String>
     <sys:String x:Key="RuleDescListMap">Coller une liste depuis Excel : ancien nom → nouveau nom (ou par ordre).</sys:String>
     <sys:String x:Key="RuleDescReplaceDict">Plusieurs paires chercher → remplacer appliquées en une passe.</sys:String>
+    <sys:String x:Key="EmptyTips">Astuce : secouez la souris en faisant glisser des fichiers pour ouvrir le Plateau · raccourci global (Paramètres) · ou clic droit dans l'Explorateur → Batch File Renamer.</sys:String>
+    <sys:String x:Key="FeatureLimitListRows">Jusqu'à {0} lignes</sys:String>
 </ResourceDictionary>

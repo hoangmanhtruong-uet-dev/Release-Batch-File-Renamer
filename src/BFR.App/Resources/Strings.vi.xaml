@@ -481,4 +481,6 @@
     <sys:String x:Key="RuleDescTemplate">Dựng tên mới từ mẫu với {name}, {n}, {created}…</sys:String>
     <sys:String x:Key="RuleDescListMap">Dán danh sách từ Excel: tên cũ → tên mới (hoặc theo thứ tự).</sys:String>
     <sys:String x:Key="RuleDescReplaceDict">Nhiều cặp tìm → thay áp dụng cùng một lượt.</sys:String>
+    <sys:String x:Key="EmptyTips">Mẹo: lắc chuột khi đang kéo tệp để mở Khay tệp · dùng phím tắt toàn cục (Cài đặt) · hoặc chuột phải tệp trong Explorer → Batch File Renamer.</sys:String>
+    <sys:String x:Key="FeatureLimitListRows">Tối đa {0} dòng</sys:String>
 </ResourceDictionary>

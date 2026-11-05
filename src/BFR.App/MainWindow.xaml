@@ -719,7 +719,10 @@
             <Border Grid.Column="0" Grid.ColumnSpan="3" Background="{DynamicResource AppBackground}"
                     CornerRadius="{StaticResource RadiusCard}"
                     Visibility="{Binding IsEmptyStateVisible, Converter={StaticResource BoolToVis}}">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="640">
+                <Border VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="640" Padding="40,32"
+                        CornerRadius="16" BorderThickness="2" BorderBrush="{DynamicResource Divider}"
+                        Background="{DynamicResource SurfaceBackground}">
+                <StackPanel>
                     <Border Width="64" Height="64" CornerRadius="16" Background="{DynamicResource AccentSoft}"
                             HorizontalAlignment="Center" Margin="0,0,0,16">
                         <TextBlock Text="&#xE8B7;" FontFamily="{StaticResource IconFont}" FontSize="32"
@@ -747,7 +750,13 @@
                         <ui:Button Appearance="Secondary" Click="SuggestPreset_Click" Tag="Ảnh theo ngày chụp"
                                 Content="{DynamicResource SuggestDate}" Margin="8,0,0,0" Padding="10,6" />
                     </StackPanel>
+
+                    <!-- Mẹo: ba cách khác để đưa tệp vào mà không cần mở cửa sổ này -->
+                    <TextBlock Text="{DynamicResource EmptyTips}" Style="{StaticResource CaptionTextStyle}"
+                               TextAlignment="Center" TextWrapping="Wrap" Margin="0,24,0,0"
+                               AutomationProperties.Name="Empty state tips" />
                 </StackPanel>
+                </Border>
             </Border>
         </Grid>
 
