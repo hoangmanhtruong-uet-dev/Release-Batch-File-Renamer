@@ -15,7 +15,6 @@
 
             <!-- Bộ chuyển đổi dùng chung cho MỌI cửa sổ (không khai báo lại trong từng view). -->
             <conv:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
-            <conv:StringToVisibilityConverter x:Key="StringToVis" />
             <conv:ZeroCountToVisibilityConverter x:Key="ZeroToVis" />
             <conv:ParameterKindToVisibilityConverter x:Key="ParameterKindToVis" />
             <conv:ParameterKindToVisibilityConverter x:Key="ParameterKindToTextVis" />

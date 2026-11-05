@@ -136,7 +136,7 @@
     <sys:String x:Key="MoreMenu">更多</sys:String>
     <sys:String x:Key="SettingsButton">设置</sys:String>
     <sys:String x:Key="RuleBuilderHeader">规则链</sys:String>
-    <sys:String x:Key="AddRuleButton">＋ 添加规则</sys:String>
+    <sys:String x:Key="AddRuleButton">添加规则</sys:String>
     <sys:String x:Key="SaveAsPresetButton">保存为预设</sys:String>
     <sys:String x:Key="RulesEmpty">还没有规则。选择一个预设，或添加第一条规则。</sys:String>
     <sys:String x:Key="RuleDragHint">通过预设菜单调整顺序（暂不支持拖放）</sys:String>

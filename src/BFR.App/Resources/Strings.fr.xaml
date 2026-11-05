@@ -136,8 +136,8 @@
     <sys:String x:Key="MoreMenu">Plus</sys:String>
     <sys:String x:Key="SettingsButton">Paramètres</sys:String>
     <sys:String x:Key="RuleBuilderHeader">CHAÎNE DE RÈGLES</sys:String>
-    <sys:String x:Key="AddRuleButton">＋ Ajouter une règle</sys:String>
-    <sys:String x:Key="SaveAsPresetButton">Enregistrer comme préréglage</sys:String>
+    <sys:String x:Key="AddRuleButton">Ajouter une règle</sys:String>
+    <sys:String x:Key="SaveAsPresetButton">Enregistrer le préréglage</sys:String>
     <sys:String x:Key="RulesEmpty">Aucune règle. Choisissez un préréglage ou ajoutez votre première règle.</sys:String>
     <sys:String x:Key="RuleDragHint">Réordonnez via le menu du préréglage (glisser-déposer pas encore disponible)</sys:String>
     <sys:String x:Key="RuleToggleA11y">Activer ou désactiver la règle</sys:String>

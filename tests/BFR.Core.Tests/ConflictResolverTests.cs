@@ -157,4 +157,29 @@ public class ConflictResolverTests
         Assert.False(result.HasBlockingError);
         Assert.Equal("final (2).txt", result.Items[0].NewName);
     }
+
+    [Fact]
+    public void ManyDuplicates_AreResolvedQuickly_AndAllNamesAreUnique()
+    {
+        // Trước khi sửa: dò lại từ (2) cho mỗi tệp => O(n²) và dừng ở (99999), tệp thứ 100.000 vẫn trùng.
+        var items = Enumerable.Range(0, 120_000).Select(i => Item($"f{i}.txt", "a.txt")).ToArray();
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var r = ConflictResolver.Resolve(items, None);
+        sw.Stop();
+
+        Assert.True(sw.Elapsed < TimeSpan.FromSeconds(5), $"mất {sw.Elapsed.TotalSeconds:F1}s");
+        Assert.Equal(120_000, r.Items.Select(i => i.NewName.ToLowerInvariant()).Distinct().Count());
+        Assert.Equal(119_999, r.ResolvedCount);
+    }
+
+    [Fact]
+    public void SuffixSearch_SkipsNamesTakenOutsideTheBatch_WithTheCache()
+    {
+        var items = new[] { Item("1.txt", "a.txt"), Item("2.txt", "a.txt"), Item("3.txt", "a.txt") };
+
+        var r = ConflictResolver.Resolve(items, _ => Set("a (3).txt"));
+
+        Assert.Equal(new[] { "a.txt", "a (2).txt", "a (4).txt" }, r.Items.Select(i => i.NewName));
+    }
 }

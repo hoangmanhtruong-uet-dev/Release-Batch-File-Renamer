@@ -136,7 +136,7 @@
     <sys:String x:Key="MoreMenu">Thêm</sys:String>
     <sys:String x:Key="SettingsButton">Cài đặt</sys:String>
     <sys:String x:Key="RuleBuilderHeader">CHUỖI QUY TẮC</sys:String>
-    <sys:String x:Key="AddRuleButton">＋ Thêm quy tắc</sys:String>
+    <sys:String x:Key="AddRuleButton">Thêm quy tắc</sys:String>
     <sys:String x:Key="SaveAsPresetButton">Lưu thành preset</sys:String>
     <sys:String x:Key="RulesEmpty">Chưa có quy tắc. Chọn một preset hoặc thêm quy tắc đầu tiên.</sys:String>
     <sys:String x:Key="RuleDragHint">Sắp xếp thứ tự bằng cách dùng preset hoặc kéo thả (chưa hỗ trợ kéo-thả)</sys:String>

@@ -463,22 +463,28 @@
                     </Grid>
 
                     <!-- Nút thêm quy tắc / lưu preset dưới đáy -->
-                    <DockPanel DockPanel.Dock="Bottom" Margin="4,10,4,2">
-                        <ui:Button Appearance="Secondary" Click="SavePreset_Click" Margin="0,0,6,0"
+                    <Grid DockPanel.Dock="Bottom" Margin="4,10,4,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:Button Grid.Column="0" Appearance="Secondary" Click="SavePreset_Click" Margin="0,0,6,0"
+                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                ToolTip="{DynamicResource SaveAsPresetButton}"
                                 AutomationProperties.Name="Save as preset button">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE74E;" FontFamily="{StaticResource IconFont}" FontSize="13" />
-                                <TextBlock Text="{DynamicResource SaveAsPresetButton}" Margin="6,0,0,0" />
+                                <TextBlock Text="&#xE74E;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
+                                <TextBlock Text="{DynamicResource SaveAsPresetButton}" Margin="6,0,0,0" TextTrimming="CharacterEllipsis" />
                             </StackPanel>
                         </ui:Button>
-                        <ui:Button Appearance="Primary" Click="AddRule_Click"
+                        <ui:Button Grid.Column="1" Appearance="Primary" Click="AddRule_Click"
                                 AutomationProperties.Name="Add rule button">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" />
+                                <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="13" VerticalAlignment="Center" />
                                 <TextBlock Text="{DynamicResource AddRuleButton}" Margin="6,0,0,0" />
                             </StackPanel>
                         </ui:Button>
-                    </DockPanel>
+                    </Grid>
 
                     <!-- Danh sách rỗng -->
                     <Grid DockPanel.Dock="Top" Margin="4,6">

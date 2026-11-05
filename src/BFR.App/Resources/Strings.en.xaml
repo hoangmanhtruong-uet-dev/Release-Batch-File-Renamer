@@ -136,7 +136,7 @@
     <sys:String x:Key="MoreMenu">More</sys:String>
     <sys:String x:Key="SettingsButton">Settings</sys:String>
     <sys:String x:Key="RuleBuilderHeader">RULE CHAIN</sys:String>
-    <sys:String x:Key="AddRuleButton">＋ Add rule</sys:String>
+    <sys:String x:Key="AddRuleButton">Add rule</sys:String>
     <sys:String x:Key="SaveAsPresetButton">Save as preset</sys:String>
     <sys:String x:Key="RulesEmpty">No rules yet. Pick a preset or add your first rule.</sys:String>
     <sys:String x:Key="RuleDragHint">Reorder via the preset menu (drag &amp; drop not available yet)</sys:String>
