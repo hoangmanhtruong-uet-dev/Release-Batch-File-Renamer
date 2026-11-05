@@ -20,6 +20,8 @@ Batch File Renamer ("BFR") là công cụ tiện ích dành cho Windows được
 - **Danh sách tệp và đường dẫn:** Chỉ được nạp vào bộ nhớ tạm của ứng dụng khi bạn chủ động chọn tệp/thư mục, kéo thả vào giao diện hoặc mở qua menu ngữ cảnh Windows Explorer.
 - **Siêu dữ liệu EXIF / Media:** Ứng dụng chỉ đọc các trường ngày giờ (như `DateTimeOriginal`, `DateTimeDigitized`) từ ảnh hoặc tài liệu do bạn chỉ định khi bạn áp dụng quy tắc đổi tên theo ngày tháng (`DateRule` hoặc token `{taken}`). Dữ liệu này chỉ dùng duy nhất cho mục đích tạo tên tệp mới và không bao giờ được gửi đi bất cứ đâu.
 - **Nhật ký phục hồi (Journal):** Lưu cục bộ tại `%LocalAppData%\BatchFileRenamer\journal` để phục vụ tính năng Hoàn tác (Undo) và Khôi phục sau sự cố mất điện/tắt máy đột ngột.
+- **Đổi tên nhanh từ menu Explorer (v1.4):** các mục con của menu chuột phải chuyển danh sách tệp và tên mẫu đổi tên cho ứng dụng cục bộ; kết quả hiện ở thông báo nhỏ, không có dữ liệu nào rời khỏi máy.
+- **Tệp danh sách (CSV/TSV/TXT) do bạn chọn (v1.4):** khi bạn bấm "Nhập từ tệp CSV…" hoặc dán danh sách vào quy tắc "Đổi tên theo danh sách", nội dung chỉ được đọc cục bộ vào ô nhập của quy tắc và lưu cùng preset nếu bạn lưu; không được gửi đi.
 - **Danh sách tệp tạm từ Explorer:** Khi chọn nhiều tệp, COM server cục bộ ghi danh sách vào `%TEMP%\BatchFileRenamer\shell`; ứng dụng đọc và xóa tệp này ngay sau khi xử lý. Tệp không được gửi qua mạng.
 - **Không có telemetry/analytics:** Ứng dụng không gửi số liệu sử dụng, lỗi hoặc thông tin thiết bị tới máy chủ nào.
 
@@ -34,6 +36,10 @@ Chỉ khi bạn **bật** "Lắc chuột khi đang kéo tệp để mở Shelf" 
 - Hook **không đọc bàn phím**, nội dung cửa sổ, nội dung màn hình hay nội dung tệp đang kéo.
 - Thao tác bắt đầu bên trong cửa sổ của BFR được bỏ qua.
 - Tắt tuỳ chọn (mặc định) hoặc thoát ứng dụng thì hook được gỡ ngay.
+
+**Phím tắt toàn cục để mở Shelf (v1.4, tuỳ chọn, mặc định TẮT).** Chỉ khi bạn bật tuỳ chọn trong Cài đặt, BFR đăng ký một tổ hợp phím toàn hệ thống bằng API `RegisterHotKey` của Windows.
+- Hệ điều hành chỉ báo cho BFR khi **đúng tổ hợp bạn đã chọn** được nhấn. BFR **không cài hook bàn phím** và **không nhận hay ghi lại các phím khác**.
+- Tắt tuỳ chọn hoặc thoát ứng dụng thì tổ hợp phím được huỷ đăng ký ngay.
 
 ### 5. Chạy nền và khởi động cùng Windows (tuỳ chọn, mặc định TẮT)
 - **Chạy nền:** đóng cửa sổ chỉ ẩn BFR vào khay hệ thống; chọn "Thoát" trong menu khay để thoát hẳn. Không tạo thêm kết nối mạng.
@@ -73,6 +79,8 @@ Batch File Renamer ("BFR") is a Windows utility built with **Privacy by Design**
 - **Files and Paths:** Only accessed in memory when you explicitly select files/folders, drag and drop them into the app window, or invoke the app via Windows File Explorer context menu.
 - **EXIF / Media Metadata:** Read locally only when you use date-based renaming rules (such as `DateRule` or `{taken}` token). Metadata is used solely to construct the target file names and never leaves your computer.
 - **Rollback Journals:** Stored locally in `%LocalAppData%\BatchFileRenamer\journal` exclusively to support Undo and crash recovery.
+- **Quick rename from the Explorer menu (v1.4):** the right-click submenu items pass the file list and a preset name to the local app; the result is shown as a small notification and no data leaves your device.
+- **List files (CSV/TSV/TXT) you choose (v1.4):** when you press "Import from CSV…" or paste a list into the "Rename by list" rule, the content is only read locally into the rule's input box and saved with the preset if you save one; it is never transmitted.
 - **Temporary Explorer file lists:** When many files are selected, the local COM server writes the list to `%TEMP%\BatchFileRenamer\shell`; the app reads and deletes it immediately after processing. The file is never transmitted over a network.
 - **No telemetry/analytics:** The app does not send usage data, error reports, or device information to any server.
 
@@ -87,6 +95,10 @@ Only when you **turn on** "Shake the mouse while dragging files to open Shelf" i
 - The hook **does not read the keyboard**, window contents, screen contents or the contents of files being dragged.
 - Gestures that start inside a BFR window are ignored.
 - Turning the option off (the default) or quitting the app removes the hook immediately.
+
+**Global hotkey to open Shelf (v1.4, optional, off by default).** Only when you turn the option on in Settings does BFR register a system-wide key combination through the Windows `RegisterHotKey` API.
+- The operating system notifies BFR only when **exactly the combination you chose** is pressed. BFR **installs no keyboard hook** and **does not receive or record any other keys**.
+- Turning the option off or quitting the app unregisters the combination immediately.
 
 ### 5. Background mode and start with Windows (optional, off by default)
 - **Background mode:** closing the window only hides BFR to the system tray; choose "Exit" in the tray menu to quit. No additional network connections.

@@ -11,7 +11,7 @@ Tài liệu chuẩn bị cho Giai đoạn 2: Phát hành Free lên Microsoft Sto
 - **Subtitle (EN):** Fast, safe batch file renaming with instant preview and undo
 - **Thể loại (Category):** Utilities & Tools (Tiện ích & Công cụ)
 - **Độ tuổi (Age Rating):** 3+ / Everyone (Không chứa nội dung nhạy cảm)
-- **Phiên bản (Version):** 1.3.0.0
+- **Phiên bản (Version):** 1.4.0.0
 - **Giá (Pricing):** Miễn phí (Free)
 - **Hệ điều hành hỗ trợ:** Windows 10 (Build 19041+) và Windows 11 (x64)
 - **Mã thực thi dòng lệnh (AppExecutionAlias):** `bfr.exe`
@@ -43,6 +43,11 @@ Các tính năng nổi bật:
 - **Builder quy tắc trực quan:** Thêm, sắp xếp lại (kéo-thả) và chỉnh tham số tại chỗ, không cần rời khỏi màn hình chính.
 - **Hỗ trợ đầy đủ tiếng Việt, tiếng Anh, tiếng Pháp và tiếng Trung (Giản thể):** chuẩn hóa tiếng Việt có dấu/không dấu, bỏ dấu chuẩn xác.
 - **Shelf (khay tệp):** Gom tệp và thư mục từ nhiều thư mục khác nhau vào một khay nổi rồi đổi tên cùng lúc (Free: tối đa 50 tệp, Pro: không giới hạn). Mở bằng Ctrl+Shift+S.
+- **Đổi tên theo danh sách (Excel/CSV):** Dán hai cột tên cũ → tên mới từ Excel, hoặc dùng từ điển thay thế nhiều cặp một lượt (Free: 50 dòng, Pro: không giới hạn và nhập tệp CSV).
+- **Tự xử lý trùng tên:** Một cú bấm thêm " (2)", " (3)"… khi tên mới trùng nhau hoặc trùng tệp có sẵn.
+- **Đổi tên nhanh từ menu chuột phải Explorer:** Đánh số, bỏ dấu, thêm ngày, dọn dẹp tên hoặc chữ thường mà không mở cửa sổ; có nút Hoàn tác.
+- **Phím tắt toàn cục mở Shelf (tuỳ chọn):** Chọn tổ hợp phím trong Cài đặt. Mặc định tắt.
+- **Giao diện điều hướng bên trái:** Mỗi chức năng một trang, hộp thoại ngay trong cửa sổ, thư viện quy tắc dạng thẻ.
 - **Lắc chuột để mở Shelf (tuỳ chọn):** Khi đang kéo tệp, lắc chuột để Shelf hiện ngay dưới con trỏ. Mặc định tắt, chỉ xử lý cục bộ.
 - **Chạy nền ở khay hệ thống & khởi động cùng Windows (tuỳ chọn):** Giữ BFR sẵn sàng mà không chiếm chỗ trên thanh tác vụ. Mặc định tắt.
 - **Giao diện Windows 11 Fluent:** Nền Mica, nút gạt, thẻ và hộp thoại đồng bộ, hỗ trợ giao diện sáng/tối.
@@ -69,6 +74,11 @@ Key Features:
 - **Visual Rule Builder:** Add, reorder (drag and drop) and fine-tune rule parameters in place.
 - **Four Languages:** Vietnamese, English, French and Simplified Chinese, including accent-free Vietnamese normalization.
 - **Shelf:** Collect files and folders from many different locations in a floating tray and rename them together (Free: up to 50 files, Pro: unlimited). Open it with Ctrl+Shift+S.
+- **Rename from a list (Excel/CSV):** Paste two columns (old name → new name) from Excel, or use a replace dictionary of several pairs in one pass (Free: 50 rows, Pro: unlimited plus CSV import).
+- **Fix duplicate names automatically:** One click adds " (2)", " (3)"… when new names collide with each other or with an existing file.
+- **Quick rename from the Explorer right-click menu:** Number, remove accents, add date, clean up or lowercase without opening a window; with Undo.
+- **Global hotkey to open Shelf (optional):** Pick the key combination in Settings. Off by default.
+- **Left navigation layout:** One page per feature, dialogs inside the window, and a card-based rule library.
 - **Shake to open Shelf (optional):** While dragging files, shake the mouse and the Shelf appears right under the pointer. Off by default, processed locally only.
 - **Background mode & start with Windows (optional):** Keep BFR ready from the system tray. Off by default.
 - **Windows 11 Fluent look:** Mica backdrop, toggle switches, cards and dialogs, with light and dark themes.
@@ -97,6 +107,8 @@ Justification for runFullTrust:
    - A Write-Ahead Journal is maintained in LocalAppData to protect user files against data loss or corruption during power loss.
 5. Optional "Shake to open Shelf" (v1.3.0): when the user turns this on in Settings (it is OFF by default), the app installs a low-level mouse hook (WH_MOUSE_LL) on a dedicated thread. It only reads the pointer position and the left-button state in memory to recognise a shake gesture while the button is held; it does not read the keyboard, window or screen contents, and nothing is recorded, stored or transmitted. The hook is removed as soon as the option is turned off or the app exits. The privacy policy section 4 describes this.
 6. Optional background mode and startup task (v1.3.0): the app can stay in the system tray (OFF by default). The manifest declares a windows.startupTask (TaskId BFRStartup, Enabled=false); it is only enabled if the user turns on "Start with Windows" in Settings, and the user can disable it at any time in Windows Settings > Apps > Startup. The app starts hidden in the tray only when background mode is on.
+7. Optional global hotkey (v1.4.0): when the user turns it on in Settings (OFF by default) the app registers one system-wide key combination with the Win32 RegisterHotKey API on a message-only window, only to bring up the Shelf. No keyboard hook is installed and no other keystrokes are received. The combination is unregistered when the option is turned off or the app exits.
+8. Explorer submenu (v1.4.0): the Explorer command exposes a submenu ("Open in Batch File Renamer" plus five quick presets). A quick preset launches the packaged app with --quick <preset>, which renames the selected items with a built-in preset and shows a small toast with Undo; all work is local and journaled.
 
 Notes:
 - The package submitted to the Store is signed with a trusted code-signing certificate whose Publisher matches the package Identity.
@@ -139,7 +151,7 @@ Notes:
 | Ảnh phụ (Pro) | `docs/store-assets/screenshot-watch-folder.png` | Sẵn sàng |
 | Logo/icon | `packaging/msix/Assets/*.png` | Sẵn sàng |
 | Privacy policy | `docs/privacy.html` | Cần host công khai |
-| Gói cài đặt | `artifacts/BatchFileRenamer-1.2.0.msix` (v1.2 — có Pro) | Cần ký |
+| Gói cài đặt | `artifacts/BatchFileRenamer-1.4.0.msix` (v1.4) | Cần ký bằng chứng chỉ phát hành |
 
 ---
 
@@ -165,6 +177,7 @@ Notes:
 - Công cụ dòng lệnh `bfr` cho tự động hoá.
 - Đánh số kiểu La Mã.
 - **Shelf không giới hạn số tệp** (Free: tối đa 50 tệp mỗi lần).
+- **Danh sách đổi tên không giới hạn dòng và nhập tệp CSV** (Free: tối đa 50 dòng, không nhập CSV).
 - **Watch Folder:** tự động đổi tên tệp mới trong thư mục bạn chọn (chờ tệp ghi xong, có nhật ký, chống thao tác lặp, hỗ trợ hoàn tác).
 
 **Tên hiển thị gợi ý:** `Batch File Renamer Pro` — mô tả: “Mở khoá toàn bộ quy tắc nâng cao, EXIF, undo nhiều bước, báo cáo và CLI.”
@@ -192,6 +205,6 @@ Notes:
 5. Chạy checklist Explorer + Narrator/High Contrast trong `docs/PHASE2_QA.md`.
 6. Tạo add-on `BFR_PRO_LIFETIME` trong Partner Center, gắn với ứng dụng, rồi kiểm thử luồng mua trên tài khoản thật (`docs/PHASE3_QA.md`).
 7. Tải `.msix`, ảnh, mô tả và Notes for Certification lên Partner Center.
-8. Dán nội dung `docs/RELEASE_NOTES_v1.3.0.md` vào mục *What's new* (en-US và vi-VN).
-9. Chụp lại ảnh Store với giao diện mới (sáng và tối) — ảnh hiện có trong `docs/store-assets` là của giao diện cũ.
+8. Dán nội dung `docs/RELEASE_NOTES_v1.4.0.md` vào mục *What's new* (en-US và vi-VN).
+9. Chụp lại ảnh Store với giao diện mới (sáng và tối) — ảnh hiện có trong `docs/store-assets` là của giao diện cũ. Bộ ảnh giao diện v1.4 (sáng/tối × 4 ngôn ngữ × 8 màn hình) sinh bằng `packaging/capture-ui-matrix.ps1` nằm ở `docs/ui-v1.4`; chọn từ đó và cắt về 1600×900.
 10. Cài gói đã ký và kiểm tra `StartupTask` (bật/tắt trong Cài đặt BFR và trong Task Manager) — chỉ kiểm chứng được với gói MSIX thật.

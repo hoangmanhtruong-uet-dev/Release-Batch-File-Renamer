@@ -170,6 +170,14 @@
             việc xóa sẽ làm mất khả năng hoàn tác các lần đổi tên trước đó.
           </li>
           <li>
+            <strong>Đổi tên nhanh từ menu Explorer (v1.4):</strong> các mục con của menu chuột phải chuyển danh sách tệp và
+            tên mẫu đổi tên cho ứng dụng cục bộ; kết quả hiện ở thông báo nhỏ, không có dữ liệu nào rời khỏi máy.
+          </li>
+          <li>
+            <strong>Tệp danh sách (CSV/TSV/TXT) do bạn chọn (v1.4):</strong> nội dung chỉ được đọc cục bộ vào ô nhập của
+            quy tắc “Đổi tên theo danh sách” và lưu cùng preset nếu bạn lưu; không được gửi đi.
+          </li>
+          <li>
             <strong>Danh sách tệp tạm từ Explorer:</strong> khi bạn chọn nhiều tệp, COM server cục bộ ghi danh sách
             vào <code>%TEMP%\BatchFileRenamer\shell</code>, sau đó ứng dụng đọc và xóa tệp này ngay khi xử lý xong.
             Tệp tạm không được gửi qua mạng.
@@ -194,6 +202,14 @@
           <li>Hook <strong>không đọc bàn phím</strong>, nội dung cửa sổ, nội dung màn hình hay nội dung tệp bạn đang kéo.</li>
           <li>Thao tác bắt đầu bên trong cửa sổ của BFR được bỏ qua.</li>
           <li>Khi bạn tắt tuỳ chọn (mặc định) hoặc thoát ứng dụng, hook được gỡ ngay.</li>
+        </ul>
+        <p>
+          <strong>Phím tắt toàn cục để mở Shelf (v1.4, tuỳ chọn, mặc định TẮT).</strong> Chỉ khi bạn bật tuỳ chọn trong Cài đặt,
+          BFR đăng ký một tổ hợp phím toàn hệ thống bằng API <code>RegisterHotKey</code> của Windows.
+        </p>
+        <ul>
+          <li>Hệ điều hành chỉ báo cho BFR khi <strong>đúng tổ hợp bạn đã chọn</strong> được nhấn. BFR <strong>không cài hook bàn phím</strong> và <strong>không nhận hay ghi lại các phím khác</strong>.</li>
+          <li>Khi bạn tắt tuỳ chọn hoặc thoát ứng dụng, tổ hợp phím được huỷ đăng ký ngay.</li>
         </ul>
         <h3>5. Chạy nền và khởi động cùng Windows (tuỳ chọn, mặc định TẮT)</h3>
         <ul>
@@ -292,6 +308,14 @@
             previous rename operations.
           </li>
           <li>
+            <strong>Quick rename from the Explorer menu (v1.4):</strong> the right-click submenu items pass the file list and a
+            preset name to the local app; the result is shown as a small notification and no data leaves your device.
+          </li>
+          <li>
+            <strong>List files (CSV/TSV/TXT) you choose (v1.4):</strong> the content is only read locally into the input box of
+            the “Rename by list” rule and saved with the preset if you save one; it is never transmitted.
+          </li>
+          <li>
             <strong>Temporary Explorer file list:</strong> when you select many files, the local COM server writes
             the list to <code>%TEMP%\BatchFileRenamer\shell</code>; the app reads and deletes it as soon as the
             batch is processed. The file is never transmitted over a network.
@@ -316,6 +340,14 @@
           <li>The hook <strong>does not read the keyboard</strong>, window contents, screen contents or the contents of files you are dragging.</li>
           <li>Gestures that start inside a BFR window are ignored.</li>
           <li>When you turn the option off (the default) or quit the app, the hook is removed immediately.</li>
+        </ul>
+        <p>
+          <strong>Global hotkey to open Shelf (v1.4, optional, off by default).</strong> Only when you turn the option on in Settings
+          does BFR register a system-wide key combination through the Windows <code>RegisterHotKey</code> API.
+        </p>
+        <ul>
+          <li>The operating system notifies BFR only when <strong>exactly the combination you chose</strong> is pressed. BFR <strong>installs no keyboard hook</strong> and <strong>does not receive or record any other keys</strong>.</li>
+          <li>When you turn the option off or quit the app, the combination is unregistered immediately.</li>
         </ul>
         <h3>5. Background mode and start with Windows (optional, off by default)</h3>
         <ul>
