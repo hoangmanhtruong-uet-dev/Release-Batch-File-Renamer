@@ -7,12 +7,14 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using BFR.App.Infrastructure;
+using Ui = Wpf.Ui.Controls;
 
 /// <summary>
 /// Màn hình thông tin license (mở khi người dùng đã là Pro và bấm badge "Pro").
 /// Không phải hộp thoại nâng cấp — chỉ hiển thị trạng thái và hành động bảo trì.
 /// </summary>
-public class LicenseInfoWindow : Window
+public class LicenseInfoWindow : Ui.FluentWindow
 {
     public LicenseInfoWindow(LicenseService license, LicenseStatus status)
     {
@@ -22,7 +24,7 @@ public class LicenseInfoWindow : Window
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         ShowInTaskbar = false;
         ResizeMode = ResizeMode.NoResize;
-        Background = (Brush)Application.Current.FindResource("SurfaceBackground");
+        DialogChrome.Apply(this);
         FontFamily = (FontFamily)Application.Current.FindResource("AppFont");
         FontSize = (double)Application.Current.FindResource("AppFontSizeBody");
         AutomationProperties.SetName(this, "License information");
@@ -64,13 +66,11 @@ public class LicenseInfoWindow : Window
             Margin = new Thickness(0, 18, 0, 0)
         };
 
-        var close = new Button
+        var close = new Ui.Button
         {
             Content = Loc.T("SettingsClose"),
-            Padding = new Thickness(18, 6, 18, 6),
-            Background = (Brush)Application.Current.FindResource("Accent"),
-            Foreground = (Brush)Application.Current.FindResource("TextOnAccent"),
-            BorderThickness = new Thickness(0),
+            Appearance = Ui.ControlAppearance.Primary,
+            MinWidth = 96,
             IsDefault = true,
             IsCancel = true
         };
@@ -78,7 +78,7 @@ public class LicenseInfoWindow : Window
         buttons.Children.Add(close);
         root.Children.Add(buttons);
 
-        Content = root;
+        Content = DialogChrome.Wrap(this, root);
     }
 
     private static void AddRow(Panel parent, string label, string value)

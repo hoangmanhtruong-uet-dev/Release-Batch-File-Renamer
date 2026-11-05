@@ -110,7 +110,7 @@ public class UpgradeViewModelTests : IDisposable
     {
         var (_, vm) = Create();
 
-        Assert.Equal(7, vm.Features.Count);
+        Assert.Equal(8, vm.Features.Count);
         Assert.All(vm.Features, row => Assert.False(row.FreeHasIt));
         Assert.All(vm.Features, row => Assert.True(row.ProHasIt));
     }
@@ -157,5 +157,18 @@ public class UpgradeViewModelTests : IDisposable
         Assert.True(upgraded);
         Assert.Equal(LicenseTier.Pro, service.Status.Tier);
         Assert.True(service.HasUsedTrial);
+    }
+
+    [Fact]
+    public void ShelfRow_UsesRealFreeLimit_AndShelfHasContextKey()
+    {
+        var (_, vm) = Create();
+
+        var row = Assert.Single(vm.Features, r => r.Feature == "FeatureUnlimitedShelf");
+        Assert.Equal("FeatureLimitShelf(50)", row.FreeText);   // KeyOnlyStringProvider: "Key(arg)" — số lấy từ LicenseLimits.Free
+        Assert.False(row.FreeHasIt);
+        Assert.True(row.ProHasIt);
+        Assert.Equal("FeatureUnlimitedShelf", UpgradeViewModel.FeatureResourceKey(ProFeature.UnlimitedShelf));
+        Assert.Equal(50, LicenseLimits.Free.MaxShelfItems);
     }
 }

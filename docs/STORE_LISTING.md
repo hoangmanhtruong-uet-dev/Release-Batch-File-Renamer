@@ -11,6 +11,7 @@ Tài liệu chuẩn bị cho Giai đoạn 2: Phát hành Free lên Microsoft Sto
 - **Subtitle (EN):** Fast, safe batch file renaming with instant preview and undo
 - **Thể loại (Category):** Utilities & Tools (Tiện ích & Công cụ)
 - **Độ tuổi (Age Rating):** 3+ / Everyone (Không chứa nội dung nhạy cảm)
+- **Phiên bản (Version):** 1.3.0.0
 - **Giá (Pricing):** Miễn phí (Free)
 - **Hệ điều hành hỗ trợ:** Windows 10 (Build 19041+) và Windows 11 (x64)
 - **Mã thực thi dòng lệnh (AppExecutionAlias):** `bfr.exe`
@@ -41,6 +42,10 @@ Các tính năng nổi bật:
 - **Bảng lệnh nhanh (Ctrl+K):** Gõ để tìm và chạy bất kỳ lệnh nào trong ứng dụng.
 - **Builder quy tắc trực quan:** Thêm, sắp xếp lại (kéo-thả) và chỉnh tham số tại chỗ, không cần rời khỏi màn hình chính.
 - **Hỗ trợ đầy đủ tiếng Việt, tiếng Anh, tiếng Pháp và tiếng Trung (Giản thể):** chuẩn hóa tiếng Việt có dấu/không dấu, bỏ dấu chuẩn xác.
+- **Shelf (khay tệp):** Gom tệp và thư mục từ nhiều thư mục khác nhau vào một khay nổi rồi đổi tên cùng lúc (Free: tối đa 50 tệp, Pro: không giới hạn). Mở bằng Ctrl+Shift+S.
+- **Lắc chuột để mở Shelf (tuỳ chọn):** Khi đang kéo tệp, lắc chuột để Shelf hiện ngay dưới con trỏ. Mặc định tắt, chỉ xử lý cục bộ.
+- **Chạy nền ở khay hệ thống & khởi động cùng Windows (tuỳ chọn):** Giữ BFR sẵn sàng mà không chiếm chỗ trên thanh tác vụ. Mặc định tắt.
+- **Giao diện Windows 11 Fluent:** Nền Mica, nút gạt, thẻ và hộp thoại đồng bộ, hỗ trợ giao diện sáng/tối.
 - **Bộ công cụ dòng lệnh (CLI, Pro):** Lệnh `bfr` hỗ trợ người dùng nâng cao và tự động hóa qua script.
 - **Quyền riêng tư tuyệt đối:** 100% xử lý cục bộ trên thiết bị của bạn, không gửi bất kỳ dữ liệu nào lên mạng.
 
@@ -63,6 +68,10 @@ Key Features:
 - **Command Palette (Ctrl+K):** Type to find and run any command in the app.
 - **Visual Rule Builder:** Add, reorder (drag and drop) and fine-tune rule parameters in place.
 - **Four Languages:** Vietnamese, English, French and Simplified Chinese, including accent-free Vietnamese normalization.
+- **Shelf:** Collect files and folders from many different locations in a floating tray and rename them together (Free: up to 50 files, Pro: unlimited). Open it with Ctrl+Shift+S.
+- **Shake to open Shelf (optional):** While dragging files, shake the mouse and the Shelf appears right under the pointer. Off by default, processed locally only.
+- **Background mode & start with Windows (optional):** Keep BFR ready from the system tray. Off by default.
+- **Windows 11 Fluent look:** Mica backdrop, toggle switches, cards and dialogs, with light and dark themes.
 - **Command-Line Interface (Pro):** Seamless `bfr` command for automation and scripting.
 - **Accessibility & Privacy First:** Full keyboard navigation, Narrator support, High Contrast compliance, and 100% offline local processing.
 
@@ -75,7 +84,7 @@ Key Features:
 ```text
 Application: Batch File Renamer
 Target Framework: .NET 8, self-contained win-x64 (Windows Desktop Bridge)
-Capabilities Declared: runFullTrust, appExecutionAlias, windows.fileExplorerContextMenus
+Capabilities Declared: runFullTrust, appExecutionAlias, windows.fileExplorerContextMenus, windows.startupTask
 
 Justification for runFullTrust:
 1. Core Functionality: Batch File Renamer is a file management and renaming utility. It requires full filesystem access to inspect file attributes, read metadata (such as photo EXIF creation dates), plan atomic renaming operations, and execute renaming of files and folders explicitly chosen by the user.
@@ -86,6 +95,8 @@ Justification for runFullTrust:
    - The app does NOT transmit any user data, telemetry, file names, or contents over the network; all operations are strictly 100% local and offline.
    - Temporary file-lists created by the Explorer COM server are stored under %TEMP%\BatchFileRenamer\shell and deleted by the app after it reads them.
    - A Write-Ahead Journal is maintained in LocalAppData to protect user files against data loss or corruption during power loss.
+5. Optional "Shake to open Shelf" (v1.3.0): when the user turns this on in Settings (it is OFF by default), the app installs a low-level mouse hook (WH_MOUSE_LL) on a dedicated thread. It only reads the pointer position and the left-button state in memory to recognise a shake gesture while the button is held; it does not read the keyboard, window or screen contents, and nothing is recorded, stored or transmitted. The hook is removed as soon as the option is turned off or the app exits. The privacy policy section 4 describes this.
+6. Optional background mode and startup task (v1.3.0): the app can stay in the system tray (OFF by default). The manifest declares a windows.startupTask (TaskId BFRStartup, Enabled=false); it is only enabled if the user turns on "Start with Windows" in Settings, and the user can disable it at any time in Windows Settings > Apps > Startup. The app starts hidden in the tray only when background mode is on.
 
 Notes:
 - The package submitted to the Store is signed with a trusted code-signing certificate whose Publisher matches the package Identity.
@@ -153,6 +164,7 @@ Notes:
 - Xuất báo cáo CSV/JSON.
 - Công cụ dòng lệnh `bfr` cho tự động hoá.
 - Đánh số kiểu La Mã.
+- **Shelf không giới hạn số tệp** (Free: tối đa 50 tệp mỗi lần).
 - **Watch Folder:** tự động đổi tên tệp mới trong thư mục bạn chọn (chờ tệp ghi xong, có nhật ký, chống thao tác lặp, hỗ trợ hoàn tác).
 
 **Tên hiển thị gợi ý:** `Batch File Renamer Pro` — mô tả: “Mở khoá toàn bộ quy tắc nâng cao, EXIF, undo nhiều bước, báo cáo và CLI.”
@@ -180,3 +192,6 @@ Notes:
 5. Chạy checklist Explorer + Narrator/High Contrast trong `docs/PHASE2_QA.md`.
 6. Tạo add-on `BFR_PRO_LIFETIME` trong Partner Center, gắn với ứng dụng, rồi kiểm thử luồng mua trên tài khoản thật (`docs/PHASE3_QA.md`).
 7. Tải `.msix`, ảnh, mô tả và Notes for Certification lên Partner Center.
+8. Dán nội dung `docs/RELEASE_NOTES_v1.3.0.md` vào mục *What's new* (en-US và vi-VN).
+9. Chụp lại ảnh Store với giao diện mới (sáng và tối) — ảnh hiện có trong `docs/store-assets` là của giao diện cũ.
+10. Cài gói đã ký và kiểm tra `StartupTask` (bật/tắt trong Cài đặt BFR và trong Task Manager) — chỉ kiểm chứng được với gói MSIX thật.

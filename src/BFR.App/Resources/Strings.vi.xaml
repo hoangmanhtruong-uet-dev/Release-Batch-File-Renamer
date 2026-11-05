@@ -414,4 +414,23 @@
     <sys:String x:Key="RateApp">⭐ Đánh giá ứng dụng trên Microsoft Store</sys:String>
     <sys:String x:Key="RateAppTitle">Đánh giá BFR</sys:String>
     <sys:String x:Key="RateAppPrompt">Bạn có thấy BFR hữu ích không? Hãy dành chút thời gian đánh giá trên Microsoft Store để ủng hộ nhà phát triển nhé!</sys:String>
+    <sys:String x:Key="TrayOpen">Mở Batch File Renamer</sys:String>
+    <sys:String x:Key="TrayShelf">Mở Shelf</sys:String>
+    <sys:String x:Key="TrayExit">Thoát</sys:String>
+    <sys:String x:Key="ShelfButton">Khay tệp</sys:String>
+    <sys:String x:Key="ShelfTooltip">Khay tệp (Ctrl+Shift+S)</sys:String>
+    <sys:String x:Key="ShelfCommand">Mở khay tệp (Shelf)</sys:String>
+    <sys:String x:Key="ShelfTitle">Khay tệp (Shelf)</sys:String>
+    <sys:String x:Key="ShelfClear">Xóa hết</sys:String>
+    <sys:String x:Key="ShelfRename">Đổi tên…</sys:String>
+    <sys:String x:Key="ShelfHint">Kéo tệp hoặc thư mục từ nhiều nơi vào đây, rồi bấm Đổi tên để xử lý cùng lúc.</sys:String>
+    <sys:String x:Key="SettingsShelf">SHELF</sys:String>
+    <sys:String x:Key="SettingsShake">Lắc chuột khi đang kéo tệp để mở Shelf</sys:String>
+    <sys:String x:Key="SettingsShakeHint">Cần theo dõi chuột toàn hệ thống khi bật. Chỉ xử lý trên máy, không ghi lại hay gửi đi.</sys:String>
+    <sys:String x:Key="SettingsRunInBackground">Chạy nền ở khay hệ thống khi đóng cửa sổ</sys:String>
+    <sys:String x:Key="SettingsStartWithWindows">Khởi động cùng Windows (chạy nền ở khay)</sys:String>
+    <sys:String x:Key="SettingsStartupBlocked">Windows đang chặn mục khởi động này. Bật lại trong Cài đặt > Ứng dụng > Khởi động.</sys:String>
+    <sys:String x:Key="SettingsOpenStartupApps">Mở cài đặt Khởi động</sys:String>
+    <sys:String x:Key="FeatureUnlimitedShelf">Shelf không giới hạn số tệp</sys:String>
+    <sys:String x:Key="FeatureLimitShelf">Tối đa {0} tệp</sys:String>
 </ResourceDictionary>

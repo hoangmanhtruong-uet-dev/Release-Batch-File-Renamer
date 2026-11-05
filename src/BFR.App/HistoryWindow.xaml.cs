@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Windows;
 
-public partial class HistoryWindow : Window
+public partial class HistoryWindow : Wpf.Ui.Controls.FluentWindow
 {
     private readonly HistoryStore _history;
     private readonly IFileSystem _fs;
@@ -38,6 +38,7 @@ public partial class HistoryWindow : Window
             .ToList();
 
         HistoryGrid.ItemsSource = entries;
+        EmptyText.Visibility = entries.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void Refresh_Click(object sender, RoutedEventArgs e) => Refresh();

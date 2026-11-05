@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using BFR.App.Infrastructure;
+using Ui = Wpf.Ui.Controls;
 using System.Windows.Controls;
 using System.Windows.Automation;
 
@@ -13,7 +15,7 @@ using System.Windows.Automation;
 /// Cửa sổ Thư viện preset: lưu preset hiện tại vào thư viện cục bộ, áp dụng hoặc xoá.
 /// Bản Free lưu tối đa 3 preset; Pro lưu không giới hạn (PHẦN 3.6).
 /// </summary>
-public class PresetLibraryWindow : Window
+public class PresetLibraryWindow : Ui.FluentWindow
 {
     private readonly PresetStore _store;
     private readonly LicenseService _license;
@@ -39,7 +41,7 @@ public class PresetLibraryWindow : Window
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         AutomationProperties.SetName(this, "Preset library window");
 
-        Background = (System.Windows.Media.Brush)Application.Current.FindResource("AppBackground");
+        DialogChrome.Apply(this);
         FontFamily = (System.Windows.Media.FontFamily)Application.Current.FindResource("AppFont");
         FontSize = (double)Application.Current.FindResource("AppFontSizeBody");
 
@@ -118,7 +120,6 @@ public class PresetLibraryWindow : Window
         var content = new DockPanel();
         DockPanel.SetDock(_status, Dock.Bottom);
         content.Children.Add(_status);
-        content.Children.Add(listGrid);
 
         var header = new StackPanel { Margin = new Thickness(0, 0, 0, 12) };
         header.Children.Add(new TextBlock
@@ -133,22 +134,23 @@ public class PresetLibraryWindow : Window
         content.Children.Add(header);
 
         // DockPanel: phần tử con đầu được đặt sát mép, phần tử cuối chiếm phần còn lại.
+        content.Children.Add(listGrid);   // phần tử cuối: chiếm phần còn lại của DockPanel
         root.Children.Add(buttons);
         root.Children.Add(content);
 
-        Content = root;
+        Content = DialogChrome.Wrap(this, root);
 
         Refresh();
         UpdateStatus();
     }
 
     /// <summary>Tạo nút theo style của theme hiện tại.</summary>
-    private static Button MakeButton(string content, string styleKey)
+    private static Ui.Button MakeButton(string content, string styleKey)
     {
-        var button = new Button
+        var button = new Ui.Button
         {
             Content = content,
-            Style = (Style)Application.Current.FindResource(styleKey),
+            Appearance = DialogChrome.AppearanceFor(styleKey),
             Margin = new Thickness(0, 0, 6, 0),
             Padding = new Thickness(12, 6, 12, 6)
         };

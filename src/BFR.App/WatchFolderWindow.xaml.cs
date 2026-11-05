@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using BFR.App.Infrastructure;
+using Ui = Wpf.Ui.Controls;
 using System.Windows.Controls;
 using System.Windows.Automation;
 
@@ -16,7 +18,7 @@ using System.Windows.Automation;
 /// Cửa sổ Watch Folder (FR-D4, tính năng Pro của v1.2):
 /// theo dõi một thư mục và tự áp dụng preset cho tệp mới.
 /// </summary>
-public class WatchFolderWindow : Window
+public class WatchFolderWindow : Ui.FluentWindow
 {
     private readonly PresetStore _presetStore;
     private readonly LicenseService _license;
@@ -34,8 +36,8 @@ public class WatchFolderWindow : Window
     private readonly ListBox _logList = new();
     private readonly TextBlock _status = new() { Margin = new Thickness(0, 6, 0, 0) };
     private readonly TextBlock _logEmpty = new();
-    private readonly Button _startButton = new();
-    private readonly Button _stopButton = new();
+    private readonly Ui.Button _startButton = new();
+    private readonly Ui.Button _stopButton = new();
 
     private WatchFolderService? _service;
 
@@ -56,7 +58,7 @@ public class WatchFolderWindow : Window
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         AutomationProperties.SetName(this, "Watch folder window");
 
-        Background = (System.Windows.Media.Brush)Application.Current.FindResource("AppBackground");
+        DialogChrome.Apply(this);
         FontFamily = (System.Windows.Media.FontFamily)Application.Current.FindResource("AppFont");
         FontSize = (double)Application.Current.FindResource("AppFontSizeBody");
 
@@ -79,7 +81,7 @@ public class WatchFolderWindow : Window
 
         var options = new StackPanel();
         options.Children.Add(Header(Loc.T("WatchOptionsTitle")));
-        options.Children.Add(Row(Loc.T("WatchFolder"), _folderBox, BrowseButton()));
+        options.Children.Add(Row(Loc.Plain("WatchFolder"), _folderBox, BrowseButton()));
         options.Children.Add(Row(Loc.T("WatchPreset"), _presetCombo));
         options.Children.Add(Row(Loc.T("WatchSettle"), _settleBox));
         options.Children.Add(Row(Loc.T("WatchInclude"), _includeBox));
@@ -120,7 +122,7 @@ public class WatchFolderWindow : Window
         root.Children.Add(buttons);
         root.Children.Add(body);
         DockPanel.SetDock(buttons, Dock.Bottom);
-        Content = root;
+        Content = DialogChrome.Wrap(this, root);
 
         RefreshPresets();
         _stopButton.IsEnabled = false;
@@ -133,7 +135,6 @@ public class WatchFolderWindow : Window
         _settleBox.Style = (Style)Application.Current.FindResource("AppTextBoxStyle");
         _includeBox.Style = (Style)Application.Current.FindResource("AppTextBoxStyle");
         _excludeBox.Style = (Style)Application.Current.FindResource("AppTextBoxStyle");
-        _presetCombo.Style = (Style)Application.Current.FindResource("AppComboBoxStyle");
         _logList.Style = (Style)Application.Current.FindResource("AppListBoxStyle");
         _recursive.Style = (Style)Application.Current.FindResource("AppCheckBoxStyle");
         _dryRun.Style = (Style)Application.Current.FindResource("AppCheckBoxStyle");
@@ -142,12 +143,12 @@ public class WatchFolderWindow : Window
         _status.Foreground = (System.Windows.Media.Brush)Application.Current.FindResource("TextSecondary");
 
         _startButton.Content = Loc.T("WatchStart");
-        _startButton.Style = (Style)Application.Current.FindResource("PrimaryButtonStyle");
+        _startButton.Appearance = Ui.ControlAppearance.Primary;
         _startButton.Margin = new Thickness(0, 0, 6, 0);
         _startButton.Padding = new Thickness(12, 6, 12, 6);
 
         _stopButton.Content = Loc.T("WatchStop");
-        _stopButton.Style = (Style)Application.Current.FindResource("SecondaryButtonStyle");
+        _stopButton.Appearance = Ui.ControlAppearance.Secondary;
         _stopButton.Margin = new Thickness(0, 0, 6, 0);
         _stopButton.Padding = new Thickness(12, 6, 12, 6);
     }
@@ -160,10 +161,10 @@ public class WatchFolderWindow : Window
         Foreground = (System.Windows.Media.Brush)Application.Current.FindResource("TextPrimary")
     };
 
-    private static Button MakeButton(string content, string styleKey) => new()
+    private static Ui.Button MakeButton(string content, string styleKey) => new()
     {
         Content = content,
-        Style = (Style)Application.Current.FindResource(styleKey),
+        Appearance = DialogChrome.AppearanceFor(styleKey),
         Margin = new Thickness(0, 0, 6, 0),
         Padding = new Thickness(12, 6, 12, 6)
     };
@@ -183,19 +184,19 @@ public class WatchFolderWindow : Window
         return panel;
     }
 
-    private Button BrowseButton()
+    private Ui.Button BrowseButton()
     {
-        var button = new Button
+        var button = new Ui.Button
         {
             Content = "…",
             Margin = new Thickness(4, 0, 0, 0),
             Padding = new Thickness(8, 4, 8, 4),
-            Style = (Style)Application.Current.FindResource("SecondaryButtonStyle"),
+            Appearance = Ui.ControlAppearance.Secondary,
             ToolTip = Loc.T("WatchBrowseButton")
         };
         button.Click += (_, _) =>
         {
-            var dialog = new OpenFolderDialog { Title = Loc.T("WatchFolder") };
+            var dialog = new OpenFolderDialog { Title = Loc.Plain("WatchFolder") };
             if (dialog.ShowDialog() == true) _folderBox.Text = dialog.FolderName;
         };
         return button;

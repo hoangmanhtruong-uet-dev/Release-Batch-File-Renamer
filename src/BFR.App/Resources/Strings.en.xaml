@@ -414,4 +414,23 @@
     <sys:String x:Key="RateApp">⭐ Rate on Microsoft Store</sys:String>
     <sys:String x:Key="RateAppTitle">Rate BFR</sys:String>
     <sys:String x:Key="RateAppPrompt">Are you enjoying BFR? Please take a moment to rate us on the Microsoft Store to support future updates!</sys:String>
+    <sys:String x:Key="TrayOpen">Open Batch File Renamer</sys:String>
+    <sys:String x:Key="TrayShelf">Open Shelf</sys:String>
+    <sys:String x:Key="TrayExit">Exit</sys:String>
+    <sys:String x:Key="ShelfButton">Shelf</sys:String>
+    <sys:String x:Key="ShelfTooltip">Shelf (Ctrl+Shift+S)</sys:String>
+    <sys:String x:Key="ShelfCommand">Open Shelf</sys:String>
+    <sys:String x:Key="ShelfTitle">Shelf</sys:String>
+    <sys:String x:Key="ShelfClear">Clear</sys:String>
+    <sys:String x:Key="ShelfRename">Rename…</sys:String>
+    <sys:String x:Key="ShelfHint">Drag files or folders here from anywhere, then press Rename to process them together.</sys:String>
+    <sys:String x:Key="SettingsShelf">SHELF</sys:String>
+    <sys:String x:Key="SettingsShake">Shake the mouse while dragging files to open Shelf</sys:String>
+    <sys:String x:Key="SettingsShakeHint">Watches the mouse system-wide while enabled. Handled locally; nothing is recorded or sent.</sys:String>
+    <sys:String x:Key="SettingsRunInBackground">Keep running in the system tray when the window is closed</sys:String>
+    <sys:String x:Key="SettingsStartWithWindows">Start with Windows (in the tray)</sys:String>
+    <sys:String x:Key="SettingsStartupBlocked">Windows is blocking this startup entry. Turn it back on in Settings > Apps > Startup.</sys:String>
+    <sys:String x:Key="SettingsOpenStartupApps">Open Startup settings</sys:String>
+    <sys:String x:Key="FeatureUnlimitedShelf">Unlimited files in Shelf</sys:String>
+    <sys:String x:Key="FeatureLimitShelf">Up to {0} files</sys:String>
 </ResourceDictionary>

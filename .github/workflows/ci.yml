@@ -69,7 +69,10 @@ jobs:
           try {
             & "$layout/bfr.exe" context-menu register --path "$layout/BatchFileRenamer.exe"
             if ($LASTEXITCODE -ne 0) { throw "Đăng ký COM thất bại." }
-            dotnet run --project tests/BFR.Shell.SmokeTest/BFR.Shell.SmokeTest.csproj -c Release --no-build
+            # Solution build dat dau ra o bin/x64/Release. dotnet run --no-build khong nhan Platform va se tim o bin/Release
+            # (bao thieu tep), nen chay thang tep exe da build.
+            $smoke = (Resolve-Path "tests/BFR.Shell.SmokeTest/bin/x64/Release/net8.0-windows/BFR.Shell.SmokeTest.exe").Path
+            & $smoke
             if ($LASTEXITCODE -ne 0) { throw "COM smoke test thất bại." }
           } finally {
             & "$layout/bfr.exe" context-menu unregister

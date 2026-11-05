@@ -33,5 +33,8 @@ public enum ProFeature
     CommandLine,
 
     /// <summary>Đánh số kiểu La Mã.</summary>
-    RomanNumbering
+    RomanNumbering,
+
+    /// <summary>Shelf không giới hạn số tệp (Free: tối đa 50 tệp mỗi lần).</summary>
+    UnlimitedShelf
 }

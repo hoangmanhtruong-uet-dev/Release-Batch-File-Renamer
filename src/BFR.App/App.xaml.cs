@@ -16,6 +16,58 @@ public partial class App : Application
     private SingleInstanceServer? _server;
     private MainWindow? _mainWindow;
     private LicenseCoordinator? _license;
+    private TrayIcon? _tray;
+
+    /// <summary>True khi đang bật chạy nền (có biểu tượng khay).</summary>
+    public bool BackgroundEnabled => _tray is not null;
+
+    /// <summary>True khi người dùng đã chọn Thoát: cho phép cửa sổ chính đóng thật.</summary>
+    public bool IsExiting { get; private set; }
+
+    private bool StartHidden { get; set; }
+
+    /// <summary>Bật/tắt biểu tượng khay và chế độ chạy nền theo cài đặt hiện tại.</summary>
+    public void ApplyBackgroundSetting()
+    {
+        var enabled = SettingsStore.Load().RunInBackground;
+        if (enabled && _tray is null)
+        {
+            try
+            {
+                _tray = new TrayIcon(
+                    "Batch File Renamer",
+                    Loc.T("TrayOpen"),
+                    Loc.T("TrayShelf"),
+                    Loc.T("TrayExit"),
+                    open: () => _mainWindow?.ActivateAndForeground(),
+                    shelf: () => _mainWindow?.OpenShelf(),
+                    exit: ExitApplication);
+                ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            }
+            catch
+            {
+                _tray = null;   // không tạo được biểu tượng khay: giữ hành vi thường
+            }
+        }
+        else if (!enabled && _tray is not null)
+        {
+            _tray.Dispose();
+            _tray = null;
+            ShutdownMode = ShutdownMode.OnLastWindowClose;
+            // Cửa sổ chính đang ẩn trong khay thì không còn gì giữ ứng dụng sống: hiện lại.
+            if (_mainWindow is { IsVisible: false }) _mainWindow.ActivateAndForeground();
+        }
+    }
+
+    /// <summary>Thoát hẳn ứng dụng (kể cả khi đang chạy nền).</summary>
+    public void ExitApplication()
+    {
+        IsExiting = true;
+        _tray?.Dispose();
+        _tray = null;
+        _mainWindow?.Close();
+        Shutdown();
+    }
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -31,7 +83,10 @@ public partial class App : Application
             try { File.WriteAllText(Path.Combine(Path.GetTempPath(), "bfr-crash.txt"), ev.Exception.ToString()); } catch { }
         };
 
-        var payload = ParseArgs(e.Args);
+        SessionEnding += (_, _) => IsExiting = true;   // không chặn đăng xuất/tắt máy khi đang ẩn trong khay
+        var parsed = StartupArgs.Parse(e.Args);
+        var payload = parsed.Payload;
+        StartHidden = parsed.Background;
 
         // Hỗ trợ lệnh đăng ký nhanh menu chuột phải từ phím tắt hoặc cài đặt
         if (payload.Paths.Contains("--register-context-menu", StringComparer.OrdinalIgnoreCase))
@@ -87,7 +142,20 @@ public partial class App : Application
         // xảy ra ngay khi cửa sổ đang khởi tạo.
         _server = new SingleInstanceServer(OnIpcPayloadReceived);
         _server.Start();
-        _mainWindow.Show();
+
+        // --background: khởi động thẳng vào khay (chỉ khi đã bật chạy nền), không hiện cửa sổ.
+        var startHidden = (StartHidden || AutoStart.LaunchedByStartup()) && settings.RunInBackground;
+        if (startHidden)
+        {
+            // Cần handle để cửa sổ chính nhận IPC và hook chuột dù chưa từng hiện.
+            _ = new System.Windows.Interop.WindowInteropHelper(_mainWindow).EnsureHandle();
+            ApplyBackgroundSetting();
+            _mainWindow.ApplyShakeSetting();
+        }
+        else
+        {
+            _mainWindow.Show();
+        }
 
         // Đồng bộ giấy phép Store (chạy nền, không chặn khởi động).
         _ = RefreshLicenseAsync();
@@ -156,33 +224,6 @@ public partial class App : Application
         });
     }
 
-    private static IpcPayload ParseArgs(string[] args)
-    {
-        var payload = new IpcPayload();
-        for (int i = 0; i < args.Length; i++)
-        {
-            var a = args[i];
-            if (string.Equals(a, "--file-list", StringComparison.OrdinalIgnoreCase))
-            {
-                if (i + 1 < args.Length)
-                {
-                    payload.FileListPath = args[++i];
-                }
-            }
-            else if (string.Equals(a, "--preset", StringComparison.OrdinalIgnoreCase))
-            {
-                if (i + 1 < args.Length)
-                {
-                    payload.PresetName = args[++i];
-                }
-            }
-            else
-            {
-                payload.Paths.Add(a);
-            }
-        }
-        return payload;
-    }
 
     protected override async void OnExit(ExitEventArgs e)
     {

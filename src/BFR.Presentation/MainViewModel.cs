@@ -294,6 +294,7 @@ public sealed class MainViewModel : ObservableObject
         var definition = new RuleDefinition { Type = type, Enabled = true };
         _preset.Rules.Add(definition);
         var card = new RuleCardViewModel(definition, _strings, MoveRule);
+        card.Changed += (_, _) => ScheduleRebuild();   // như LoadPreset
         Rules.Add(card);
         RefreshRuleOrder();
         _ = RebuildAsync();
@@ -405,8 +406,10 @@ public sealed class MainViewModel : ObservableObject
     {
         try
         {
-            await Task.Delay(150, cts.Token).ConfigureAwait(false);
-            if (!cts.IsCancellationRequested) await RebuildAsync().ConfigureAwait(false);
+            // Không ConfigureAwait(false): RebuildAsync sửa ObservableCollection gắn với DataGrid nên phải
+            // chạy trên luồng giao diện (lỗi ở luồng nền bị nuốt bên dưới và bảng đứng im).
+            await Task.Delay(150, cts.Token);
+            if (!cts.IsCancellationRequested) await RebuildAsync();
             CheckProDateSource();
         }
         catch (OperationCanceledException)
@@ -614,7 +617,8 @@ public sealed class MainViewModel : ObservableObject
             Rows.Where(r => !r.IsSelected).Select(r => r.File.FullPath),
             StringComparer.OrdinalIgnoreCase);
 
-        var result = new Dictionary<string, IReadOnlySet<string>>(StringComparer.OrdinalIgnoreCase);
+        // Khoá PHẢI là tên thư mục đã chuẩn hoá (ConflictDetector tra cứu bằng NormalizeDirectory).
+        var result = new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal);
 
         foreach (var directory in all.Select(f => f.Directory).Distinct(StringComparer.OrdinalIgnoreCase))
         {
@@ -635,7 +639,13 @@ public sealed class MainViewModel : ObservableObject
                 // Thư mục không truy cập được: bỏ qua.
             }
 
-            result[directory] = names;
+            foreach (var path in unselected)
+            {
+                if (string.Equals(Path.GetDirectoryName(path), directory, StringComparison.OrdinalIgnoreCase))
+                    names.Add(Path.GetFileName(path));
+            }
+
+            result[ConflictDetector.NormalizeDirectory(directory)] = names;
         }
 
         return result;
@@ -750,7 +760,7 @@ public sealed class MainViewModel : ObservableObject
         try
         {
             var steps = new RenamePlanner().Plan(pairs);
-            var result = await Task.Run(() => new RenameExecutor(_fs, _journalDir).Execute(steps, "1.2.2"))
+            var result = await Task.Run(() => new RenameExecutor(_fs, _journalDir).Execute(steps, AppVersion.Current))
                 .ConfigureAwait(true);
 
             _history.Add(new HistoryEntry

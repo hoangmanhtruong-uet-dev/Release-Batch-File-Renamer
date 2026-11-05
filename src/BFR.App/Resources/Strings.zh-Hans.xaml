@@ -414,4 +414,23 @@
     <sys:String x:Key="RateApp">⭐ 在 Microsoft Store 评价应用</sys:String>
     <sys:String x:Key="RateAppTitle">评价 BFR</sys:String>
     <sys:String x:Key="RateAppPrompt">您喜欢使用 BFR 吗？请花一点时间在 Microsoft Store 给我们评价以支持后续开发！</sys:String>
+    <sys:String x:Key="TrayOpen">打开 Batch File Renamer</sys:String>
+    <sys:String x:Key="TrayShelf">打开文件架</sys:String>
+    <sys:String x:Key="TrayExit">退出</sys:String>
+    <sys:String x:Key="ShelfButton">文件架</sys:String>
+    <sys:String x:Key="ShelfTooltip">文件架 (Ctrl+Shift+S)</sys:String>
+    <sys:String x:Key="ShelfCommand">打开文件架</sys:String>
+    <sys:String x:Key="ShelfTitle">文件架</sys:String>
+    <sys:String x:Key="ShelfClear">全部清除</sys:String>
+    <sys:String x:Key="ShelfRename">重命名…</sys:String>
+    <sys:String x:Key="ShelfHint">将来自不同位置的文件或文件夹拖到这里，然后点击“重命名”一并处理。</sys:String>
+    <sys:String x:Key="SettingsShelf">文件架</sys:String>
+    <sys:String x:Key="SettingsShake">拖动文件时晃动鼠标以打开文件架</sys:String>
+    <sys:String x:Key="SettingsShakeHint">启用后会在系统范围内监视鼠标。仅在本机处理，不会记录或发送任何内容。</sys:String>
+    <sys:String x:Key="SettingsRunInBackground">关闭窗口后在系统托盘中继续运行</sys:String>
+    <sys:String x:Key="SettingsStartWithWindows">随 Windows 启动（在系统托盘中运行）</sys:String>
+    <sys:String x:Key="SettingsStartupBlocked">Windows 已阻止此启动项。请在“设置 > 应用 > 启动”中重新启用。</sys:String>
+    <sys:String x:Key="SettingsOpenStartupApps">打开启动设置</sys:String>
+    <sys:String x:Key="FeatureUnlimitedShelf">文件架不限文件数</sys:String>
+    <sys:String x:Key="FeatureLimitShelf">最多 {0} 个文件</sys:String>
 </ResourceDictionary>

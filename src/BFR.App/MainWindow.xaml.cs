@@ -18,6 +18,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using FluentWindow = Wpf.Ui.Controls.FluentWindow;
 
 /// <summary>
 /// Cửa sổ chính (bố cục v2.0 theo docs/Plan/BFR_UIUX_REBUILD_PLAN.md):
@@ -26,7 +27,7 @@ using System.Windows.Threading;
 /// Code-behind chỉ làm việc nối view ↔ <see cref="MainViewModel"/>; toàn bộ logic đổi tên
 /// vẫn nằm trong BFR.Core nên kết quả test INV-1..INV-6 không đổi.
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : FluentWindow
 {
     [DllImport("user32.dll")]
     private static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -60,12 +61,10 @@ public partial class MainWindow : Window
         _collectorTimer.Tick += (_, _) => OnCollectorTimeout();
 
         KeyDown += MainWindow_KeyDown;
-        StateChanged += (_, _) => UpdateMaximizeButton();
         Loaded += (_, _) =>
         {
             ThemeManager.RefreshBackdrop(this);
             UpdateLicenseState();
-            UpdateMaximizeButton();
         };
 
         PresetCombo.ItemsSource = _vm.Presets;
@@ -79,8 +78,18 @@ public partial class MainWindow : Window
             PresetCombo.SelectedIndex = 0;
         }
         SortCombo.SelectedIndex = 0;
+        Loaded += (_, _) => ApplyShakeSetting();
+        Closed += (_, _) =>
+        {
+            _shakeHook?.Dispose();
+            _shakeHook = null;
+            _shelf?.Close();
+        };
+        ShelfButtonText.Text = Loc.T("ShelfButton");
+        ShelfButton.ToolTip = Loc.T("ShelfTooltip");
 
         _vm.ProLimitReached += (_, feature) => ShowUpgradeDialog(feature);
+        Loaded += (_, _) => (Application.Current as App)?.ApplyBackgroundSetting();
 
         if (_vm.IsEmptyStateVisible) _ = _vm.RebuildAsync();
     }
@@ -132,6 +141,7 @@ public partial class MainWindow : Window
     {
         try
         {
+            if (!IsVisible) Show();
             if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
 
             Activate();
@@ -181,6 +191,81 @@ public partial class MainWindow : Window
     }
 
     private void ClearList_Click(object sender, RoutedEventArgs e) => _vm.ClearList();
+
+    private ShelfWindow? _shelf;
+    private MouseHook? _shakeHook;
+
+    /// <summary>Bật/tắt hook lắc chuột theo cài đặt hiện tại.</summary>
+    public void ApplyShakeSetting()
+    {
+        var enabled = SettingsStore.Load().ShakeToOpenShelf;
+        if (enabled && _shakeHook is null)
+        {
+            try
+            {
+                _shakeHook = new MouseHook(new ShakeDetector());
+                _shakeHook.Shaken += (x, y) => Dispatcher.BeginInvoke(() => OpenShelfAt(x, y));
+            }
+            catch
+            {
+                _shakeHook = null;   // không cài được hook: bỏ qua, không làm hỏng ứng dụng
+            }
+        }
+        else if (!enabled && _shakeHook is not null)
+        {
+            _shakeHook.Dispose();
+            _shakeHook = null;
+        }
+    }
+
+    /// <summary>Mở Shelf ngay tại con trỏ (toạ độ vật lý) để thả tệp đang kéo vào.</summary>
+    private void OpenShelfAt(int screenX, int screenY)
+    {
+        var created = OpenShelf(activate: false);
+        if (_shelf is null) return;
+
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var vx = screenX / dpi.DpiScaleX;
+        var vy = screenY / dpi.DpiScaleY;
+        var maxLeft = SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - _shelf.Width;
+        var maxTop = SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - _shelf.Height;
+        _shelf.Left = Math.Clamp(vx - _shelf.Width / 2, SystemParameters.VirtualScreenLeft, Math.Max(SystemParameters.VirtualScreenLeft, maxLeft));
+        _shelf.Top = Math.Clamp(vy - 80, SystemParameters.VirtualScreenTop, Math.Max(SystemParameters.VirtualScreenTop, maxTop));
+        // Mở bằng lắc mà không thả gì thì tự đóng, tránh để lại cửa sổ thừa.
+        if (created) _shelf.AutoCloseWhenUnused(TimeSpan.FromSeconds(6));
+    }
+
+    private void Shelf_Click(object sender, RoutedEventArgs e) => OpenShelf();
+
+    /// <summary>Mở (hoặc đưa lên trước) khay tệp gom từ nhiều thư mục.</summary>
+    public bool OpenShelf(IEnumerable<string>? paths = null, bool activate = true)
+    {
+        var created = _shelf is null;
+        if (created)
+        {
+            _shelf = new ShelfWindow(
+                _license.License,
+                batch => EnqueuePaths(batch),
+                feature => ShowUpgradeDialog(feature))
+            {
+                Topmost = true
+            };
+            _shelf.ShowActivated = activate;
+            // Cửa sổ chính đang minimize thì Left/Top không dùng được: lấy vùng đã lưu trước khi thu nhỏ.
+            var area = WindowState == WindowState.Normal ? new Rect(Left, Top, Width, Height) : RestoreBounds;
+            _shelf.Left = Math.Max(0, area.Right - _shelf.Width - 24);
+            _shelf.Top = Math.Max(0, area.Top + 96);
+            _shelf.Closed += (_, _) => _shelf = null;
+            _shelf.Show();
+        }
+        else
+        {
+            if (activate) _shelf?.Activate();
+        }
+
+        if (paths is not null) _shelf?.AddPaths(paths);
+        return created;
+    }
 
     private void SortCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -553,6 +638,7 @@ public partial class MainWindow : Window
 
         registry.Register(Loc.T("CommandAddFiles"), files, () => AddFiles_Click(this, new RoutedEventArgs()), "Ctrl+O");
         registry.Register(Loc.T("CommandAddFolder"), files, () => AddFolder_Click(this, new RoutedEventArgs()), "Ctrl+Shift+O");
+        registry.Register(Loc.T("ShelfCommand"), files, () => OpenShelf(), "Ctrl+Shift+S");
         registry.Register(Loc.T("CommandClearList"), files, () => ClearList_Click(this, new RoutedEventArgs()));
         registry.Register(Loc.T("CommandApply"), files, () => Apply_Click(this, new RoutedEventArgs()), "Ctrl+Enter");
         registry.Register(Loc.T("CommandUndo"), files, () => Undo_Click(this, new RoutedEventArgs()), "Ctrl+Z");
@@ -712,6 +798,8 @@ public partial class MainWindow : Window
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
         new SettingsWindow(_license) { Owner = this }.ShowDialog();
+        (Application.Current as App)?.ApplyBackgroundSetting();
+        ApplyShakeSetting();
         UpdateLicenseState();
         _ = _vm.RebuildAsync();
     }
@@ -832,6 +920,13 @@ public partial class MainWindow : Window
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {
+        if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.S)
+        {
+            OpenShelf();
+            e.Handled = true;
+            return;
+        }
+
         if (Keyboard.Modifiers == ModifierKeys.Control)
         {
             switch (e.Key)
@@ -1004,21 +1099,15 @@ public partial class MainWindow : Window
         return null;
     }
 
-    private void TitleBar_Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
-
-    private void TitleBar_Maximize_Click(object sender, RoutedEventArgs e)
+    /// <summary>Chạy nền: đóng cửa sổ chỉ ẩn đi, trừ khi người dùng chọn Thoát ở khay.</summary>
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
-        WindowState = (WindowState == WindowState.Maximized) ? WindowState.Normal : WindowState.Maximized;
-        UpdateMaximizeButton();
-    }
-
-    private void TitleBar_Close_Click(object sender, RoutedEventArgs e) => Close();
-
-    private void UpdateMaximizeButton()
-    {
-        if (MaximizeButtonGlyph != null)
+        if (Application.Current is App { BackgroundEnabled: true, IsExiting: false })
         {
-            MaximizeButtonGlyph.Text = (WindowState == WindowState.Maximized) ? "\uE923" : "\uE922";
+            e.Cancel = true;
+            Hide();
+            return;
         }
+        base.OnClosing(e);
     }
 }
