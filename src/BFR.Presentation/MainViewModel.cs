@@ -294,6 +294,7 @@ public sealed class MainViewModel : ObservableObject
         var definition = new RuleDefinition { Type = type, Enabled = true };
         _preset.Rules.Add(definition);
         var card = new RuleCardViewModel(definition, _strings, MoveRule);
+        card.Changed += (_, _) => ScheduleRebuild();   // như LoadPreset
         Rules.Add(card);
         RefreshRuleOrder();
         _ = RebuildAsync();
@@ -405,8 +406,10 @@ public sealed class MainViewModel : ObservableObject
     {
         try
         {
-            await Task.Delay(150, cts.Token).ConfigureAwait(false);
-            if (!cts.IsCancellationRequested) await RebuildAsync().ConfigureAwait(false);
+            // Không ConfigureAwait(false): RebuildAsync sửa ObservableCollection gắn với DataGrid nên phải
+            // chạy trên luồng giao diện (lỗi ở luồng nền bị nuốt bên dưới và bảng đứng im).
+            await Task.Delay(150, cts.Token);
+            if (!cts.IsCancellationRequested) await RebuildAsync();
             CheckProDateSource();
         }
         catch (OperationCanceledException)

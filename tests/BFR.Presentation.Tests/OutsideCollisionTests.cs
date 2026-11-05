@@ -47,4 +47,26 @@ public class OutsideCollisionTests : IDisposable
         Assert.Equal(PreviewStatus.Conflict, row.Status);
         Assert.False(vm.CanApply);
     }
+
+    [Fact]
+    public async Task EditingAParameterOfAFreshlyAddedRule_RefreshesThePreview()
+    {
+        var files = Path.Combine(_temp, "f2");
+        Directory.CreateDirectory(files);
+        File.WriteAllText(Path.Combine(files, "a.txt"), "x");
+
+        var fs = new RealFileSystem();
+        var license = new LicenseService(new LicenseStore(fs, Path.Combine(_temp, "license2.json")), trialEnabled: false);
+        var vm = new MainViewModel(new LicenseCoordinator(license), null, _temp);
+        vm.AddPaths(new[] { Path.Combine(files, "a.txt") });
+        vm.AddRule("FindReplace");
+        await vm.RebuildAsync();
+
+        var card = vm.Rules.Single();
+        card.Parameters.Single(p => p.Key == "pattern").TextValue = "a";
+        card.Parameters.Single(p => p.Key == "replacement").TextValue = "Z";
+
+        for (var i = 0; i < 40 && vm.Rows.Single().NewName != "Z.txt"; i++) await Task.Delay(50);
+        Assert.Equal("Z.txt", vm.Rows.Single().NewName);
+    }
 }
