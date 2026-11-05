@@ -318,4 +318,28 @@ public class ListAndConflictViewModelTests : IDisposable
         var onDisk = Directory.GetFiles(_files).Select(Path.GetFileName).OrderBy(n => n, StringComparer.Ordinal).ToArray();
         Assert.Equal(new[] { "001 (2).txt", "001.txt" }, onDisk);   // 001.txt có sẵn không bị đè
     }
+
+    [Fact]
+    public void NewlyAddedRule_IsExpandedSoItsParametersCanBeFilledIn()
+    {
+        var vm = CreateViewModel();
+        vm.AddRule("ListMap");
+        Assert.True(vm.Rules.Single().IsExpanded);
+    }
+
+    [Fact]
+    public async Task EditingAParameterOfAFreshlyAddedRule_RefreshesThePreview()
+    {
+        Touch("a.txt");
+        var vm = CreateViewModel();
+        vm.AddPaths(new[] { Path.Combine(_files, "a.txt") });
+        vm.AddRule("ReplaceDict");
+        await vm.RebuildAsync();
+        Assert.Equal("a.txt", Assert.Single(vm.Rows).NewName);
+
+        SetParam(vm, "pairs", "a\tZ1");   // chỉ sửa tham số, không gọi RebuildAsync
+
+        for (var i = 0; i < 40 && vm.Rows.Single().NewName != "Z1.txt"; i++) await Task.Delay(50);
+        Assert.Equal("Z1.txt", vm.Rows.Single().NewName);
+    }
 }

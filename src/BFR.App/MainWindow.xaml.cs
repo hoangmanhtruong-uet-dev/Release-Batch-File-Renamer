@@ -369,6 +369,25 @@ public partial class MainWindow : FluentWindow
         menu.IsOpen = true;
     }
 
+    /// <summary>Nhập danh sách từ tệp CSV/TSV vào ô tham số nhiều dòng (tính năng Pro).</summary>
+    private void ImportListFile_Click(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.DataContext is not RuleParameterViewModel parameter) return;
+        if (!_vm.CanImportListFile()) return;
+
+        var dialog = new OpenFileDialog { Filter = Loc.T("ListImportFilter"), Multiselect = false };
+        if (dialog.ShowDialog(this) != true) return;
+
+        try
+        {
+            parameter.TextValue = System.IO.File.ReadAllText(dialog.FileName);
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+        {
+            MessageBox.Show(ex.Message, "Batch File Renamer", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
     /// <summary>Thêm quy tắc: thư viện thẻ có tìm kiếm trong hộp thoại nổi (thay cho menu chữ).</summary>
     private async void AddRule_Click(object sender, RoutedEventArgs e)
     {

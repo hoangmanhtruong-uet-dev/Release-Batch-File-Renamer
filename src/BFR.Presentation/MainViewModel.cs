@@ -338,6 +338,10 @@ public sealed class MainViewModel : ObservableObject
         ApplyDefaultParams(definition);
         _preset.Rules.Add(definition);
         var card = new RuleCardViewModel(definition, _strings, MoveRule);
+        // Quy tắc vừa thêm mở sẵn để nhập tham số ngay (đặc biệt ListMap/ReplaceDict cần dán dữ liệu).
+        card.IsExpanded = true;
+        // Như LoadPreset: sửa tham số của thẻ vừa thêm phải làm mới xem trước.
+        card.Changed += (_, _) => ScheduleRebuild();
         Rules.Add(card);
         RefreshRuleOrder();
         _ = RebuildAsync();
@@ -449,8 +453,11 @@ public sealed class MainViewModel : ObservableObject
     {
         try
         {
-            await Task.Delay(150, cts.Token).ConfigureAwait(false);
-            if (!cts.IsCancellationRequested) await RebuildAsync().ConfigureAwait(false);
+            // Không ConfigureAwait(false): RebuildAsync sửa ObservableCollection đang gắn với DataGrid,
+            // nên phải tiếp tục trên luồng giao diện (ném NotSupportedException ở luồng nền sẽ bị nuốt
+            // ở dưới và bảng xem trước đứng im dù số đếm đã đổi).
+            await Task.Delay(150, cts.Token);
+            if (!cts.IsCancellationRequested) await RebuildAsync();
             CheckProDateSource();
         }
         catch (OperationCanceledException)
